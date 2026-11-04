@@ -9,6 +9,7 @@ const services = [
   { key: "Sakal Tasarımı", name: { tr: "Sakal Tasarımı", en: "Beard Shape" }, detail: { tr: "Sıcak havlu ve ustura dokunuşu", en: "Hot towel and straight-razor finish" }, price: "₺450", duration: { tr: "25 dk", en: "25 min" } },
 ];
 
+
 const timeSlots = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
 type Language = "tr" | "en";
 type Theme = "light" | "dark";
