@@ -224,8 +224,17 @@
   .time-grid button:focus-visible { @apply outline outline-2 outline-offset-2 outline-olive; }
   .time-grid button:disabled { @apply cursor-not-allowed opacity-40; }
   .time-grid button.is-active { @apply border-olive bg-olive text-white; }
+  .time-grid button.is-booked, .time-grid button.is-booked:disabled { @apply border-copper bg-copper text-white opacity-100; }
+  .time-grid button small { @apply text-[7px] font-bold uppercase tracking-wider; }
   .time-fieldset.has-error legend { @apply text-danger; }
   .time-fieldset.has-error .time-grid button { @apply border-danger; }
+  .availability-message { @apply mt-3 block text-[9px] text-muted; }
+  .availability-message.error { @apply text-danger; }
+  .whatsapp-consent { @apply mt-5 flex cursor-pointer items-start gap-3 border border-line p-3; }
+  .whatsapp-consent input { @apply mt-1 h-4 w-4 shrink-0 accent-olive; }
+  .whatsapp-consent > span { @apply grid gap-1; }
+  .whatsapp-consent strong { @apply flex items-center gap-1.5 text-[10px] font-semibold text-ink; }
+  .whatsapp-consent small { @apply text-[9px] leading-4 text-muted; }
   .submit-button { @apply mt-6 flex min-h-[52px] w-full cursor-pointer items-center justify-between border-0 bg-copper px-4 text-[10px] font-bold tracking-widest text-white transition-colors; }
   .submit-button:hover:not(:disabled) { @apply bg-olive; }
   .submit-button:disabled { @apply cursor-wait opacity-60; }

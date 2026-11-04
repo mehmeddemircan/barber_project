@@ -16,6 +16,7 @@ type Theme = "light" | "dark";
 type BookingField = "name" | "phone" | "date" | "time";
 type FieldErrorCode = "nameRequired" | "nameTooShort" | "nameTooLong" | "phoneRequired" | "phoneInvalid" | "dateRequired" | "dateInvalid" | "datePast" | "timeRequired" | "timeInvalid" | "timePast" | "timeTaken";
 type FieldErrors = Partial<Record<BookingField, FieldErrorCode>>;
+type AvailabilityState = { date: string; bookedSlots: string[]; failed: boolean };
 
 const campaigns = [
   { icon: BadgePercent, label: { tr: "PAKET FİYATI", en: "BUNDLE PRICE" }, title: { tr: "İkili ritüel", en: "The two-part ritual" }, description: { tr: "Saç ve sakalı ayrı ayrı almak yerine tek randevuda tamamla.", en: "Book hair and beard together in one unhurried appointment." }, price: "₺950", oldPrice: "₺1.100", service: "Saç + Sakal" },
@@ -48,7 +49,7 @@ const content = {
     reviewKicker: "KOLTUKTAN SONRA", reviewTitle: ["SÖZÜ", "SİZDE."], reviewCopy: "Bu alandaki metinler taslak yorum örnekleridir; yayına almadan gerçek müşteri geri bildirimleriyle değiştirin.", reviewSample: "ÖRNEK YORUM", reviewPrevious: "Önceki yorumlar", reviewNext: "Sonraki yorumlar",
     serviceKicker: "KÖK'TEN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
     bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / İstanbul"], trust: "Bilgilerin güvende. Ödeme dükkânda.",
-    yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
+    yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", booked: "DOLU", availabilityLoading: "Saatler kontrol ediliyor...", availabilityUnavailable: "Müsait saatler yüklenemedi. Tekrar deneyin.", availableSlots: "Uygun saat", whatsappOptIn: "WhatsApp randevu onayını al", whatsappOptInNote: "Randevu bilgilerimin WhatsApp üzerinden gönderilmesini kabul ediyorum.", successWhatsApp: "Randevun alındı; onay mesajı WhatsApp'tan gönderildi.", successWhatsAppPending: "Randevun alındı. WhatsApp onayı şu an gönderilemedi.", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
     success: "Randevunuz alındı. Sizi bekliyoruz!", invalid: "Lütfen bilgileri kontrol edip tekrar deneyin.", conflict: "Bu saat az önce doldu. Lütfen başka bir saat seçin.", unavailable: "Şu an randevu oluşturulamıyor. Lütfen daha sonra tekrar deneyin.", network: "Bağlantı kurulamadı. Lütfen tekrar deneyin.", genericError: "Bir hata oluştu.",
     footerLine: ["İYİ KESİM, İYİ MUHABBET.", "KARAKÖY'DE BULUŞALIM."], directions: "YOL TARİFİ", themeLight: "Açık temaya geç", themeDark: "Koyu temaya geç", languageLabel: "Dili seç",
   },
@@ -63,7 +64,7 @@ const content = {
     reviewKicker: "AFTER THE CHAIR", reviewTitle: ["OVER TO", "YOU."], reviewCopy: "These are sample review drafts; replace them with genuine customer feedback before publishing.", reviewSample: "SAMPLE REVIEW", reviewPrevious: "Previous reviews", reviewNext: "Next reviews",
     serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
     bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / Istanbul"], trust: "Your details stay private. Pay in-store.",
-    yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
+    yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", booked: "FULL", availabilityLoading: "Checking available times...", availabilityUnavailable: "Available times couldn't be loaded. Please try again.", availableSlots: "Available times", whatsappOptIn: "Send my booking confirmation on WhatsApp", whatsappOptInNote: "I agree to receive my appointment details on WhatsApp.", successWhatsApp: "Your appointment is booked and the confirmation was sent on WhatsApp.", successWhatsAppPending: "Your appointment is booked. WhatsApp confirmation couldn't be sent right now.", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
     success: "Your appointment is booked. See you soon!", invalid: "Please check your details and try again.", conflict: "That time just filled up. Please choose another.", unavailable: "We can't book right now. Please try again later.", network: "Connection failed. Please try again.", genericError: "Something went wrong.",
     footerLine: ["GOOD CUTS. GOOD CONVERSATION.", "SEE YOU IN KARAKÖY."], directions: "GET DIRECTIONS", themeLight: "Switch to light theme", themeDark: "Switch to dark theme", languageLabel: "Choose language",
   },
@@ -94,6 +95,7 @@ export default function Home() {
   const [status, setStatus] = useState("");
   const [statusIsSuccess, setStatusIsSuccess] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [availability, setAvailability] = useState<AvailabilityState | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -103,6 +105,9 @@ export default function Home() {
   const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
   const whatsappHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t.whatsappMessage)}` : "";
   const minDate = istanbulDateValue(new Date());
+  const currentAvailability = availability?.date === date ? availability : null;
+  const bookedSlots = currentAvailability?.bookedSlots ?? [];
+  const availabilityLoading = Boolean(date && !currentAvailability);
   const fieldErrorText: Record<FieldErrorCode, string> = {
     nameRequired: t.nameRequired,
     nameTooShort: t.nameTooShort,
@@ -133,6 +138,23 @@ export default function Home() {
       window.clearInterval(interval);
     };
   }, []);
+
+  useEffect(() => {
+    if (!date) return;
+
+    const controller = new AbortController();
+    fetch(`/api/appointments?date=${encodeURIComponent(date)}`, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Availability request failed");
+        return response.json() as Promise<{ bookedSlots?: string[] }>;
+      })
+      .then((result) => setAvailability({ date, bookedSlots: result.bookedSlots || [], failed: false }))
+      .catch(() => {
+        if (!controller.signal.aborted) setAvailability({ date, bookedSlots: [], failed: true });
+      });
+
+    return () => controller.abort();
+  }, [date]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
@@ -220,6 +242,7 @@ export default function Home() {
     const formData = new FormData(form);
     const name = String(formData.get("name") || "");
     const phone = String(formData.get("phone") || "");
+    const whatsappOptIn = formData.get("whatsappOptIn") === "on";
     const errors: FieldErrors = {
       name: getFieldError("name", name),
       phone: getFieldError("phone", phone),
@@ -250,11 +273,17 @@ export default function Home() {
           service,
           date,
           time,
+          whatsappOptIn,
+          language,
         }),
       });
+      const result = await response.json() as { whatsappSent?: boolean };
       setStatusIsSuccess(response.ok);
-      setStatus(response.ok ? t.success : response.status === 409 ? t.timeTaken : response.status === 400 ? t.invalid : t.unavailable);
-      if (response.status === 409) setFieldErrors((current) => ({ ...current, time: "timeTaken" }));
+      setStatus(response.ok ? whatsappOptIn ? result.whatsappSent ? t.successWhatsApp : t.successWhatsAppPending : t.success : response.status === 409 ? t.timeTaken : response.status === 400 ? t.invalid : t.unavailable);
+      if (response.status === 409) {
+        setFieldErrors((current) => ({ ...current, time: "timeTaken" }));
+        setAvailability((current) => current?.date === date ? { ...current, bookedSlots: [...new Set([...current.bookedSlots, time])] } : current);
+      }
       if (response.ok) {
         form.reset();
         setDate("");
@@ -450,16 +479,28 @@ export default function Home() {
             <input id="booking-date" type="date" min={minDate} value={date} aria-invalid={Boolean(fieldErrors.date)} aria-describedby={fieldErrors.date ? "booking-date-error" : undefined} required onBlur={(event) => validateField("date", event.currentTarget.value)} onChange={(event) => { const nextDate = event.currentTarget.value; setDate(nextDate); setTime(""); updateFieldError("date", nextDate, nextDate); setFieldErrors((current) => ({ ...current, time: undefined })); }} />
             {fieldErrors.date && <small className="field-error" id="booking-date-error">{fieldErrorText[fieldErrors.date]}</small>}
           </label>
-          <fieldset className={`time-fieldset ${fieldErrors.time ? "has-error" : ""}`} disabled={!date} aria-invalid={Boolean(fieldErrors.time)} aria-describedby={fieldErrors.time ? "booking-time-error" : undefined}>
-            <legend>{t.time} {!date && <span>{t.pickDate}</span>}</legend>
+          <fieldset className={`time-fieldset ${fieldErrors.time ? "has-error" : ""}`} disabled={!date || availabilityLoading || Boolean(currentAvailability?.failed)} aria-invalid={Boolean(fieldErrors.time)} aria-describedby={fieldErrors.time ? "booking-time-error" : undefined}>
+            <legend>{t.time} {!date ? <span>{t.pickDate}</span> : availabilityLoading ? <span>{t.availabilityLoading}</span> : null}</legend>
             <div className="time-grid">
               {timeSlots.map((slot) => {
                 const isPast = date === minDate && currentTime > 0 && new Date(`${date}T${slot}:00+03:00`).getTime() <= currentTime;
-                return <button className={time === slot ? "is-active" : ""} key={slot} type="button" onClick={() => { setTime(slot); updateFieldError("time", slot, date); }} aria-pressed={time === slot} disabled={isPast}>{slot}</button>;
+                const isBooked = bookedSlots.includes(slot);
+                const isUnavailable = isPast || isBooked || availabilityLoading || Boolean(currentAvailability?.failed);
+                return (
+                  <button className={`${time === slot ? "is-active" : ""} ${isBooked ? "is-booked" : ""}`} key={slot} type="button" onClick={() => { setTime(slot); updateFieldError("time", slot, date); }} aria-label={isBooked ? `${slot}, ${t.booked}` : slot} aria-pressed={time === slot} disabled={isUnavailable}>
+                    <span>{slot}</span>{isBooked && <small>{t.booked}</small>}
+                  </button>
+                );
               })}
             </div>
+            {date && !availabilityLoading && currentAvailability?.failed && <small className="availability-message error" role="status">{t.availabilityUnavailable}</small>}
+            {date && currentAvailability && !currentAvailability.failed && <small className="availability-message" aria-live="polite">{t.availableSlots}: {timeSlots.filter((slot) => !bookedSlots.includes(slot) && !(date === minDate && currentTime > 0 && new Date(`${date}T${slot}:00+03:00`).getTime() <= currentTime)).length}</small>}
             {fieldErrors.time && <small className="field-error" id="booking-time-error">{fieldErrorText[fieldErrors.time]}</small>}
           </fieldset>
+          <label className="whatsapp-consent">
+            <input type="checkbox" name="whatsappOptIn" />
+            <span><strong><MessageCircle size={14} />{t.whatsappOptIn}</strong><small>{t.whatsappOptInNote}</small></span>
+          </label>
           <button className="submit-button" type="submit" disabled={isSubmitting}>{isSubmitting ? t.submitting : t.submit}<ArrowRight size={17} /></button>
           {status && <p className={`form-status ${statusIsSuccess ? "success" : "error"}`} role={statusIsSuccess ? "status" : "alert"}>{statusIsSuccess && <Check size={16} />}{status}</p>}
           <p className="form-privacy">{t.privacy}</p>
