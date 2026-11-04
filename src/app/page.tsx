@@ -12,6 +12,9 @@ const services = [
 const timeSlots = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
 type Language = "tr" | "en";
 type Theme = "light" | "dark";
+type BookingField = "name" | "phone" | "date" | "time";
+type FieldErrorCode = "nameRequired" | "nameTooShort" | "nameTooLong" | "phoneRequired" | "phoneInvalid" | "dateRequired" | "dateInvalid" | "datePast" | "timeRequired" | "timeInvalid" | "timePast" | "timeTaken";
+type FieldErrors = Partial<Record<BookingField, FieldErrorCode>>;
 
 const campaigns = [
   { icon: BadgePercent, label: { tr: "PAKET FİYATI", en: "BUNDLE PRICE" }, title: { tr: "İkili ritüel", en: "The two-part ritual" }, description: { tr: "Saç ve sakalı ayrı ayrı almak yerine tek randevuda tamamla.", en: "Book hair and beard together in one unhurried appointment." }, price: "₺950", oldPrice: "₺1.100", service: "Saç + Sakal" },
@@ -43,7 +46,7 @@ const content = {
     reviewKicker: "KOLTUKTAN SONRA", reviewTitle: ["SÖZÜ", "SİZDE."], reviewCopy: "Bu alandaki metinler taslak yorum örnekleridir; yayına almadan gerçek müşteri geri bildirimleriyle değiştirin.", reviewSample: "ÖRNEK YORUM", reviewPrevious: "Önceki yorumlar", reviewNext: "Sonraki yorumlar",
     serviceKicker: "KÖK'TEN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
     bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / İstanbul"], trust: "Bilgilerin güvende. Ödeme dükkânda.",
-    yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.",
+    yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
     success: "Randevunuz alındı. Sizi bekliyoruz!", invalid: "Lütfen bilgileri kontrol edip tekrar deneyin.", conflict: "Bu saat az önce doldu. Lütfen başka bir saat seçin.", unavailable: "Şu an randevu oluşturulamıyor. Lütfen daha sonra tekrar deneyin.", network: "Bağlantı kurulamadı. Lütfen tekrar deneyin.", genericError: "Bir hata oluştu.",
     footerLine: ["İYİ KESİM, İYİ MUHABBET.", "KARAKÖY'DE BULUŞALIM."], directions: "YOL TARİFİ", themeLight: "Açık temaya geç", themeDark: "Koyu temaya geç", languageLabel: "Dili seç",
   },
@@ -57,7 +60,7 @@ const content = {
     reviewKicker: "AFTER THE CHAIR", reviewTitle: ["OVER TO", "YOU."], reviewCopy: "These are sample review drafts; replace them with genuine customer feedback before publishing.", reviewSample: "SAMPLE REVIEW", reviewPrevious: "Previous reviews", reviewNext: "Next reviews",
     serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
     bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / Istanbul"], trust: "Your details stay private. Pay in-store.",
-    yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.",
+    yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
     success: "Your appointment is booked. See you soon!", invalid: "Please check your details and try again.", conflict: "That time just filled up. Please choose another.", unavailable: "We can't book right now. Please try again later.", network: "Connection failed. Please try again.", genericError: "Something went wrong.",
     footerLine: ["GOOD CUTS. GOOD CONVERSATION.", "SEE YOU IN KARAKÖY."], directions: "GET DIRECTIONS", themeLight: "Switch to light theme", themeDark: "Switch to dark theme", languageLabel: "Choose language",
   },
@@ -87,12 +90,28 @@ export default function Home() {
   const [time, setTime] = useState("");
   const [status, setStatus] = useState("");
   const [statusIsSuccess, setStatusIsSuccess] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [theme, setTheme] = useState<Theme>("light");
   const [reviewIndex, setReviewIndex] = useState(0);
   const t = content[language];
+  const minDate = istanbulDateValue(new Date());
+  const fieldErrorText: Record<FieldErrorCode, string> = {
+    nameRequired: t.nameRequired,
+    nameTooShort: t.nameTooShort,
+    nameTooLong: t.nameTooLong,
+    phoneRequired: t.phoneRequired,
+    phoneInvalid: t.phoneInvalid,
+    dateRequired: t.dateRequired,
+    dateInvalid: t.dateInvalid,
+    datePast: t.datePast,
+    timeRequired: t.timeRequired,
+    timeInvalid: t.timeInvalid,
+    timePast: t.timePast,
+    timeTaken: t.timeTaken,
+  };
 
   useEffect(() => {
     const initialUpdate = window.setTimeout(() => setCurrentTime(Date.now()), 0);
@@ -139,12 +158,82 @@ export default function Home() {
     window.localStorage.setItem("kok-theme", theme);
   }, [language, theme]);
 
+  function getFieldError(field: BookingField, value: string, selectedDate = date): FieldErrorCode | undefined {
+    if (field === "name") {
+      const name = value.trim();
+      if (!name) return "nameRequired";
+      if (name.length < 2) return "nameTooShort";
+      if (name.length > 80) return "nameTooLong";
+    }
+
+    if (field === "phone") {
+      const phone = value.trim();
+      if (!phone) return "phoneRequired";
+      if (!/^[+\d\s()\-]{7,20}$/.test(phone)) return "phoneInvalid";
+    }
+
+    if (field === "date") {
+      if (!value) return "dateRequired";
+      const parsedDate = new Date(`${value}T00:00:00.000Z`);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== value) return "dateInvalid";
+      if (value < minDate) return "datePast";
+    }
+
+    if (field === "time") {
+      if (!value) return "timeRequired";
+      if (!timeSlots.includes(value)) return "timeInvalid";
+      if (!selectedDate) return "dateRequired";
+      if (selectedDate === minDate && new Date(`${selectedDate}T${value}:00+03:00`).getTime() <= Date.now()) return "timePast";
+    }
+
+    return undefined;
+  }
+
+  function updateFieldError(field: BookingField, value: string, selectedDate = date) {
+    const error = getFieldError(field, value, selectedDate);
+    setFieldErrors((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      if (error) next[field] = error;
+      else delete next[field];
+      return next;
+    });
+    if (status) {
+      setStatus("");
+      setStatusIsSuccess(false);
+    }
+  }
+
+  function validateField(field: BookingField, value: string, selectedDate = date) {
+    const error = getFieldError(field, value, selectedDate);
+    setFieldErrors((current) => ({ ...current, [field]: error }));
+  }
+
   async function submitAppointment(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus("");
-    setIsSubmitting(true);
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const name = String(formData.get("name") || "");
+    const phone = String(formData.get("phone") || "");
+    const errors: FieldErrors = {
+      name: getFieldError("name", name),
+      phone: getFieldError("phone", phone),
+      date: getFieldError("date", date),
+      time: getFieldError("time", time),
+    };
+    setFieldErrors(errors);
+
+    const firstInvalid = (Object.keys(errors) as BookingField[]).find((field) => errors[field]);
+    if (firstInvalid) {
+      setStatus(t.validationSummary);
+      setStatusIsSuccess(false);
+      if (firstInvalid === "time") form.querySelector<HTMLButtonElement>(".time-grid button:not(:disabled)")?.focus();
+      else form.querySelector<HTMLInputElement>(`[name="${firstInvalid}"]`)?.focus();
+      return;
+    }
+
+    setStatus("");
+    setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/appointments", {
@@ -158,22 +247,22 @@ export default function Home() {
           time,
         }),
       });
-        setStatusIsSuccess(response.ok);
-        setStatus(response.ok ? t.success : response.status === 409 ? t.conflict : response.status === 400 ? t.invalid : t.unavailable);
+      setStatusIsSuccess(response.ok);
+      setStatus(response.ok ? t.success : response.status === 409 ? t.timeTaken : response.status === 400 ? t.invalid : t.unavailable);
+      if (response.status === 409) setFieldErrors((current) => ({ ...current, time: "timeTaken" }));
       if (response.ok) {
         form.reset();
         setDate("");
         setTime("");
+        setFieldErrors({});
       }
     } catch {
-        setStatusIsSuccess(false);
-        setStatus(t.network);
+      setStatusIsSuccess(false);
+      setStatus(t.network);
     } finally {
       setIsSubmitting(false);
     }
   }
-
-  const minDate = istanbulDateValue(new Date());
 
   return (
     <main className="site-shell" data-theme={theme}>
@@ -335,26 +424,39 @@ export default function Home() {
           <div className="booking-address"><MapPin size={17} /><span>{t.address[0]}<br />{t.address[1]}</span></div>
           <div className="booking-trust"><ShieldCheck size={18} /><span>{t.trust}</span></div>
         </div>
-        <form className="booking-form" data-reveal="right" onSubmit={submitAppointment}>
+        <form className="booking-form" data-reveal="right" noValidate onSubmit={submitAppointment}>
           <div className="form-heading"><span>{t.yourDetails}</span><span>{t.required}</span></div>
           <div className="field-grid">
-            <label className="field"><span>{t.fullName}</span><input name="name" type="text" placeholder={t.namePlaceholder} minLength={2} maxLength={80} autoComplete="name" required /></label>
-            <label className="field"><span>{t.phone}</span><input name="phone" type="tel" placeholder={t.phonePlaceholder} autoComplete="tel" required /></label>
+            <label className={`field ${fieldErrors.name ? "has-error" : ""}`} htmlFor="booking-name">
+              <span>{t.fullName}</span>
+              <input id="booking-name" name="name" type="text" placeholder={t.namePlaceholder} minLength={2} maxLength={80} autoComplete="name" aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name ? "booking-name-error" : undefined} required onBlur={(event) => validateField("name", event.currentTarget.value)} onChange={(event) => updateFieldError("name", event.currentTarget.value)} />
+              {fieldErrors.name && <small className="field-error" id="booking-name-error">{fieldErrorText[fieldErrors.name]}</small>}
+            </label>
+            <label className={`field ${fieldErrors.phone ? "has-error" : ""}`} htmlFor="booking-phone">
+              <span>{t.phone}</span>
+              <input id="booking-phone" name="phone" type="tel" inputMode="tel" placeholder={t.phonePlaceholder} autoComplete="tel" minLength={7} maxLength={20} pattern="[+0-9 ()-]{7,20}" aria-invalid={Boolean(fieldErrors.phone)} aria-describedby={fieldErrors.phone ? "booking-phone-error" : undefined} required onBlur={(event) => validateField("phone", event.currentTarget.value)} onChange={(event) => updateFieldError("phone", event.currentTarget.value)} />
+              {fieldErrors.phone && <small className="field-error" id="booking-phone-error">{fieldErrorText[fieldErrors.phone]}</small>}
+            </label>
           </div>
           <label className="field service-select"><span>{t.yourService}</span><select value={service} onChange={(event) => setService(event.target.value)}>{services.map((item) => <option key={item.key} value={item.key}>{item.name[language]}</option>)}</select></label>
           <div className="form-heading date-heading"><span>{t.chooseDate}</span><span>{t.hours}</span></div>
-          <label className="field date-field"><span>{t.date}</span><input type="date" min={minDate} value={date} onChange={(event) => { setDate(event.target.value); setTime(""); }} required /></label>
-          <fieldset className="time-fieldset" disabled={!date}>
+          <label className={`field date-field ${fieldErrors.date ? "has-error" : ""}`} htmlFor="booking-date">
+            <span>{t.date}</span>
+            <input id="booking-date" type="date" min={minDate} value={date} aria-invalid={Boolean(fieldErrors.date)} aria-describedby={fieldErrors.date ? "booking-date-error" : undefined} required onBlur={(event) => validateField("date", event.currentTarget.value)} onChange={(event) => { const nextDate = event.currentTarget.value; setDate(nextDate); setTime(""); updateFieldError("date", nextDate, nextDate); setFieldErrors((current) => ({ ...current, time: undefined })); }} />
+            {fieldErrors.date && <small className="field-error" id="booking-date-error">{fieldErrorText[fieldErrors.date]}</small>}
+          </label>
+          <fieldset className={`time-fieldset ${fieldErrors.time ? "has-error" : ""}`} disabled={!date} aria-invalid={Boolean(fieldErrors.time)} aria-describedby={fieldErrors.time ? "booking-time-error" : undefined}>
             <legend>{t.time} {!date && <span>{t.pickDate}</span>}</legend>
             <div className="time-grid">
               {timeSlots.map((slot) => {
                 const isPast = date === minDate && currentTime > 0 && new Date(`${date}T${slot}:00+03:00`).getTime() <= currentTime;
-                return <button className={time === slot ? "is-active" : ""} key={slot} type="button" onClick={() => setTime(slot)} aria-pressed={time === slot} disabled={isPast}>{slot}</button>;
+                return <button className={time === slot ? "is-active" : ""} key={slot} type="button" onClick={() => { setTime(slot); updateFieldError("time", slot, date); }} aria-pressed={time === slot} disabled={isPast}>{slot}</button>;
               })}
             </div>
+            {fieldErrors.time && <small className="field-error" id="booking-time-error">{fieldErrorText[fieldErrors.time]}</small>}
           </fieldset>
-          <button className="submit-button" type="submit" disabled={isSubmitting || !date || !time}>{isSubmitting ? t.submitting : t.submit}<ArrowRight size={17} /></button>
-          {status && <p className={`form-status ${statusIsSuccess ? "success" : "error"}`} role="status">{statusIsSuccess && <Check size={16} />}{status}</p>}
+          <button className="submit-button" type="submit" disabled={isSubmitting}>{isSubmitting ? t.submitting : t.submit}<ArrowRight size={17} /></button>
+          {status && <p className={`form-status ${statusIsSuccess ? "success" : "error"}`} role={statusIsSuccess ? "status" : "alert"}>{statusIsSuccess && <Check size={16} />}{status}</p>}
           <p className="form-privacy">{t.privacy}</p>
         </form>
       </section>
