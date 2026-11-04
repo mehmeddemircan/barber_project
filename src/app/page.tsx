@@ -264,6 +264,8 @@ export default function Home() {
 
     setStatus("");
     setIsSubmitting(true);
+    const whatsappDraftWindow = whatsappNumber ? window.open("about:blank", "_blank") : null;
+    if (whatsappDraftWindow) whatsappDraftWindow.opener = null;
 
     try {
       const response = await fetch("/api/appointments", {
@@ -280,7 +282,6 @@ export default function Home() {
         }),
       });
       const result = await response.json() as { whatsappSent?: boolean };
-      setStatusIsSuccess(response.ok);
       if (response.ok) {
         const serviceName = services.find((item) => item.key === service)?.name[language] || service;
         const dateLabel = new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
@@ -290,9 +291,18 @@ export default function Home() {
         const message = language === "tr"
           ? `Merhaba, ben ${name}. ${dateLabel} tarihinde saat ${time} için ${serviceName} randevusu aldım.`
           : `Hi, this is ${name}. I booked a ${serviceName} appointment for ${dateLabel} at ${time}.`;
-        if (whatsappNumber) setWhatsappDraftHref(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`);
+        const draftHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}` : "";
+        if (draftHref) {
+          setWhatsappDraftHref(draftHref);
+          if (whatsappDraftWindow && !whatsappDraftWindow.closed) whatsappDraftWindow.location.href = draftHref;
+        } else {
+          whatsappDraftWindow?.close();
+        }
+        setStatusIsSuccess(true);
         setStatus(result.whatsappSent ? t.successWhatsApp : whatsappNumber ? language === "tr" ? "Randevun alındı. Taslağı WhatsApp'tan berbere gönderebilirsin." : "Your booking is saved. Send the WhatsApp draft to the barber." : whatsappOptIn ? t.successWhatsAppPending : t.success);
       } else {
+        whatsappDraftWindow?.close();
+        setStatusIsSuccess(false);
         setStatus(response.status === 409 ? t.timeTaken : response.status === 400 ? t.invalid : t.unavailable);
       }
       if (response.status === 409) {
@@ -306,6 +316,7 @@ export default function Home() {
         setFieldErrors({});
       }
     } catch {
+      whatsappDraftWindow?.close();
       setStatusIsSuccess(false);
       setStatus(t.network);
     } finally {
