@@ -111,6 +111,28 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+
+    const shell = document.querySelector(".site-shell");
+    if (!shell) return;
+
+    const revealTargets = shell.querySelectorAll("[data-reveal]");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -30px 0px" });
+
+    shell.classList.add("motion-ready");
+    revealTargets.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     document.documentElement.lang = language;
     document.title = language === "tr" ? "KÖK. | Berber Kulübü" : "KÖK. | Barber Club";
     window.localStorage.setItem("kok-language", language);
@@ -187,7 +209,7 @@ export default function Home() {
         <div className="hero-index"><span>01</span><i /> 03</div>
       </section>
 
-      <section className="intro section-wrap" id="hikaye">
+      <section className="intro section-wrap" id="hikaye" data-reveal>
         <div className="intro-label"><span className="eyebrow">{t.who}</span><span className="label-rule" /></div>
         <div className="intro-copy">
           <h2>{t.introTitle[0]}<br /><span>{t.introTitle[1]}</span></h2>
@@ -201,13 +223,13 @@ export default function Home() {
 
       <section className="film-section" id="film">
         <div className="film-inner section-wrap">
-          <div className="film-copy">
+          <div className="film-copy" data-reveal="left">
             <p className="eyebrow">{t.filmKicker}</p>
             <h2>{t.filmTitle[0]}<br /><em>{t.filmTitle[1]}</em></h2>
             <p>{t.filmCopy}</p>
             <span className="film-label"><span />{t.filmLabel}</span>
           </div>
-          <div className="film-frame">
+          <div className="film-frame" data-reveal="right">
             <video controls playsInline preload="none" poster="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1200&q=85" aria-label={t.filmLabel}>
               <source src="https://videos.pexels.com/video-files/7697084/7697084-hd_1080_1920_30fps.mp4" type="video/mp4" />
               {t.filmCopy}
@@ -219,12 +241,12 @@ export default function Home() {
 
       <section className="gallery-section section-wrap" aria-labelledby="gallery-title">
         <div className="gallery-heading">
-          <div><p className="eyebrow">{t.galleryKicker}</p><h2 id="gallery-title">{t.galleryTitle[0]}<br /><em>{t.galleryTitle[1]}</em></h2></div>
+          <div data-reveal><p className="eyebrow">{t.galleryKicker}</p><h2 id="gallery-title">{t.galleryTitle[0]}<br /><em>{t.galleryTitle[1]}</em></h2></div>
           <p>{t.galleryCopy}</p>
         </div>
         <div className="gallery-grid">
           {gallery.map((item, index) => (
-            <figure className={`gallery-tile gallery-tile-${index + 1}`} key={item.image}>
+            <figure className={`gallery-tile gallery-tile-${index + 1}`} key={item.image} data-reveal>
               <div className="gallery-photo" role="img" aria-label={t.galleryLabels[index]} style={{ backgroundImage: `url("${item.image}")`, backgroundPosition: item.position }} />
               <figcaption><span>0{index + 1}</span><strong>{t.galleryLabels[index]}</strong><ArrowRight size={16} /></figcaption>
             </figure>
@@ -234,14 +256,14 @@ export default function Home() {
 
       <section className="campaigns-section section-wrap" id="kampanyalar">
         <div className="campaigns-heading">
-          <div><p className="eyebrow">{t.campaignKicker}</p><h2>{t.campaignTitle[0]}<br /><em>{t.campaignTitle[1]}</em></h2></div>
+          <div data-reveal><p className="eyebrow">{t.campaignKicker}</p><h2>{t.campaignTitle[0]}<br /><em>{t.campaignTitle[1]}</em></h2></div>
           <p>{t.campaignCopy}</p>
         </div>
         <div className="campaign-grid">
           {campaigns.map((campaign, index) => {
             const CampaignIcon = campaign.icon;
             return (
-              <article className={`campaign-card campaign-card-${index + 1}`} key={campaign.label.tr}>
+              <article className={`campaign-card campaign-card-${index + 1}`} key={campaign.label.tr} data-reveal>
                 <div className="campaign-card-top"><span>0{index + 1} / 03</span><CampaignIcon size={20} strokeWidth={1.6} /></div>
                 <span className="campaign-label">{campaign.label[language]}</span>
                 <h3>{campaign.title[language]}</h3>
@@ -260,12 +282,12 @@ export default function Home() {
       <section className="services" id="hizmetler">
         <div className="section-wrap services-inner">
           <div className="section-heading">
-            <div><p className="eyebrow">{t.serviceKicker}</p><h2>{t.serviceTitle[0]}<br /><em>{t.serviceTitle[1]}</em></h2></div>
+            <div data-reveal><p className="eyebrow">{t.serviceKicker}</p><h2>{t.serviceTitle[0]}<br /><em>{t.serviceTitle[1]}</em></h2></div>
             <p className="section-aside">{t.serviceAside[0]}<br />{t.serviceAside[1]}</p>
           </div>
           <div className="service-list">
             {services.map((item, index) => (
-              <button className={`service-row ${service === item.key ? "is-selected" : ""}`} key={item.key} type="button" onClick={() => { setService(item.key); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
+              <button className={`service-row ${service === item.key ? "is-selected" : ""}`} key={item.key} type="button" data-reveal onClick={() => { setService(item.key); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
                 <span className="service-number">0{index + 1}</span>
                 <span className="service-info"><strong>{item.name[language]}</strong><small>{item.detail[language]}</small></span>
                 <span className="service-duration"><Clock3 size={14} />{item.duration[language]}</span>
@@ -281,7 +303,7 @@ export default function Home() {
       <section className="reviews-section" id="yorumlar">
         <div className="section-wrap">
           <div className="reviews-heading">
-            <div><p className="eyebrow">{t.reviewKicker}</p><h2>{t.reviewTitle[0]}<br /><em>{t.reviewTitle[1]}</em></h2></div>
+            <div data-reveal><p className="eyebrow">{t.reviewKicker}</p><h2>{t.reviewTitle[0]}<br /><em>{t.reviewTitle[1]}</em></h2></div>
             <div className="review-controls">
               <span>{String(reviewIndex + 1).padStart(2, "0")} / {String(reviews.length).padStart(2, "0")}</span>
               <button type="button" aria-label={t.reviewPrevious} onClick={() => setReviewIndex((index) => (index + reviews.length - 1) % reviews.length)}><ChevronLeft size={18} /></button>
@@ -293,7 +315,7 @@ export default function Home() {
               const review = reviews[(reviewIndex + offset) % reviews.length];
               const serviceName = services.find((item) => item.key === review.service)?.name[language];
               return (
-                <article className="review-bubble" key={`${(reviewIndex + offset) % reviews.length}`}>
+                <article className="review-bubble review-arrive" key={`${(reviewIndex + offset) % reviews.length}`}>
                   <div className="review-bubble-top"><Quote size={21} /><span>{t.reviewSample}</span></div>
                   <blockquote>{review.quote[language]}</blockquote>
                   <div className="review-meta"><span>{serviceName}</span><span>0{(reviewIndex + offset) % reviews.length + 1}</span></div>
@@ -306,14 +328,14 @@ export default function Home() {
       </section>
 
       <section className="booking section-wrap" id="randevu">
-        <div className="booking-intro">
+        <div className="booking-intro" data-reveal="left">
           <p className="eyebrow">{t.bookingKicker}</p>
           <h2>{t.bookingTitle[0]}<br /><em>{t.bookingTitle[1]}</em></h2>
           <p className="booking-description">{t.bookingCopy[0]}<br />{t.bookingCopy[1]}</p>
           <div className="booking-address"><MapPin size={17} /><span>{t.address[0]}<br />{t.address[1]}</span></div>
           <div className="booking-trust"><ShieldCheck size={18} /><span>{t.trust}</span></div>
         </div>
-        <form className="booking-form" onSubmit={submitAppointment}>
+        <form className="booking-form" data-reveal="right" onSubmit={submitAppointment}>
           <div className="form-heading"><span>{t.yourDetails}</span><span>{t.required}</span></div>
           <div className="field-grid">
             <label className="field"><span>{t.fullName}</span><input name="name" type="text" placeholder={t.namePlaceholder} minLength={2} maxLength={80} autoComplete="name" required /></label>
