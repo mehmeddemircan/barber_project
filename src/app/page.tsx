@@ -265,7 +265,7 @@ export default function Home() {
   }
 
   return (
-    <main className="site-shell" data-theme={theme}>
+    <main className="site-shell min-h-screen bg-paper text-ink antialiased" data-theme={theme}>
       <header className="site-header">
         <a className="wordmark" href="#home" aria-label="KÖK. home"><span>KÖK.</span><small>BARBER CLUB</small></a>
         <nav className={`desktop-nav ${isMenuOpen ? "is-open" : ""}`} aria-label="Main navigation">
@@ -310,7 +310,7 @@ export default function Home() {
         <div className="intro-stamp"><Scissors size={19} /><span>{t.stamp[0]}<br />{t.stamp[1]}</span></div>
       </section>
 
-      <section className="film-section" id="film">
+      <section className="film-section bg-olive text-paper" id="film">
         <div className="film-inner section-wrap">
           <div className="film-copy" data-reveal="left">
             <p className="eyebrow">{t.filmKicker}</p>
@@ -348,7 +348,7 @@ export default function Home() {
           <div data-reveal><p className="eyebrow">{t.campaignKicker}</p><h2>{t.campaignTitle[0]}<br /><em>{t.campaignTitle[1]}</em></h2></div>
           <p>{t.campaignCopy}</p>
         </div>
-        <div className="campaign-grid">
+        <div className="campaign-grid grid grid-cols-1 gap-3 md:grid-cols-3">
           {campaigns.map((campaign, index) => {
             const CampaignIcon = campaign.icon;
             return (
@@ -368,7 +368,7 @@ export default function Home() {
         <p className="campaign-terms">{t.campaignTerms}</p>
       </section>
 
-      <section className="services" id="hizmetler">
+      <section className="services bg-ink text-paper" id="hizmetler">
         <div className="section-wrap services-inner">
           <div className="section-heading">
             <div data-reveal><p className="eyebrow">{t.serviceKicker}</p><h2>{t.serviceTitle[0]}<br /><em>{t.serviceTitle[1]}</em></h2></div>
@@ -399,7 +399,7 @@ export default function Home() {
               <button type="button" aria-label={t.reviewNext} onClick={() => setReviewIndex((index) => (index + 1) % reviews.length)}><ChevronRight size={18} /></button>
             </div>
           </div>
-          <div className="review-grid" aria-live="polite">
+          <div className="review-grid grid grid-cols-1 gap-3 md:grid-cols-3" aria-live="polite">
             {[0, 1, 2].map((offset) => {
               const review = reviews[(reviewIndex + offset) % reviews.length];
               const serviceName = services.find((item) => item.key === review.service)?.name[language];
@@ -426,7 +426,7 @@ export default function Home() {
         </div>
         <form className="booking-form" data-reveal="right" noValidate onSubmit={submitAppointment}>
           <div className="form-heading"><span>{t.yourDetails}</span><span>{t.required}</span></div>
-          <div className="field-grid">
+          <div className="field-grid grid gap-3 sm:grid-cols-2">
             <label className={`field ${fieldErrors.name ? "has-error" : ""}`} htmlFor="booking-name">
               <span>{t.fullName}</span>
               <input id="booking-name" name="name" type="text" placeholder={t.namePlaceholder} minLength={2} maxLength={80} autoComplete="name" aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name ? "booking-name-error" : undefined} required onBlur={(event) => validateField("name", event.currentTarget.value)} onChange={(event) => updateFieldError("name", event.currentTarget.value)} />
