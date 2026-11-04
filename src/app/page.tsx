@@ -1,15 +1,50 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowRight, Check, Clock3, MapPin, Menu, Scissors, ShieldCheck } from "lucide-react";
+import { ArrowDown, ArrowRight, Check, Clock3, MapPin, Menu, Moon, Scissors, ShieldCheck, Sun } from "lucide-react";
 
 const services = [
-  { name: "Klasik Kesim", detail: "Yıkama, kesim ve şekillendirme", price: "₺650", duration: "40 dk" },
-  { name: "Saç + Sakal", detail: "Tam bakım, tek koltukta", price: "₺950", duration: "60 dk" },
-  { name: "Sakal Tasarımı", detail: "Sıcak havlu ve ustura dokunuşu", price: "₺450", duration: "25 dk" },
+  { key: "Klasik Kesim", name: { tr: "Klasik Kesim", en: "Classic Cut" }, detail: { tr: "Yıkama, kesim ve şekillendirme", en: "Wash, cut and styling" }, price: "₺650", duration: { tr: "40 dk", en: "40 min" } },
+  { key: "Saç + Sakal", name: { tr: "Saç + Sakal", en: "Hair + Beard" }, detail: { tr: "Tam bakım, tek koltukta", en: "The complete chair experience" }, price: "₺950", duration: { tr: "60 dk", en: "60 min" } },
+  { key: "Sakal Tasarımı", name: { tr: "Sakal Tasarımı", en: "Beard Shape" }, detail: { tr: "Sıcak havlu ve ustura dokunuşu", en: "Hot towel and straight-razor finish" }, price: "₺450", duration: { tr: "25 dk", en: "25 min" } },
 ];
 
 const timeSlots = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
+type Language = "tr" | "en";
+type Theme = "light" | "dark";
+
+const content = {
+  tr: {
+    nav: ["Hikâyemiz", "Hizmetler", "Randevu"], book: "Yerini ayırt", menuOpen: "Menüyü aç", menuClose: "Menüyü kapat",
+    location: "KARAKÖY, İSTANBUL · 2018'DEN BERİ", heroTitle: ["İYİ KESİM.", "İYİ HİS."], heroCopy: "Her şeyin hızlandığı bir şehirde, kendine ayırdığın iyi bir saat.", bookNow: "Randevunu oluştur", scroll: "AŞAĞI İN",
+    who: "BİZ KİMİZ?", introTitle: ["Berberlik bir", "ritüeldir."], introCopy: "İyi bir kesimden fazlası. Kapıdan girdiğin andan son dokunuşa kadar, her şey yerli yerinde. Mahallenin ustaları, eski usul özen ve sana ayrılmış bir koltuk.", learn: "KÖK'Ü TANI", stamp: ["İYİ İŞ", "ZAMAN ALIR"],
+    filmKicker: "KÖK'ÜN İÇİNDEN", filmTitle: ["USTALIK", "YAKINDAN."], filmCopy: "Makasın sesi, sıcak havlu, tanıdık bir koltuk. KÖK'te iyi bir kesim böyle başlar.", filmLabel: "KÖK. KISA FİLM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
+    galleryKicker: "KOLTUKTAN KARELER", galleryTitle: ["İŞİMİZ", "KONUŞSUN."], galleryCopy: "Her kesim başka, özen hep aynı.", galleryLabels: ["USTALIK", "DETAY", "SON DOKUNUŞ"],
+    serviceKicker: "KÖK'TEN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
+    bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / İstanbul"], trust: "Bilgilerin güvende. Ödeme dükkânda.",
+    yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.",
+    success: "Randevunuz alındı. Sizi bekliyoruz!", invalid: "Lütfen bilgileri kontrol edip tekrar deneyin.", conflict: "Bu saat az önce doldu. Lütfen başka bir saat seçin.", unavailable: "Şu an randevu oluşturulamıyor. Lütfen daha sonra tekrar deneyin.", network: "Bağlantı kurulamadı. Lütfen tekrar deneyin.", genericError: "Bir hata oluştu.",
+    footerLine: ["İYİ KESİM, İYİ MUHABBET.", "KARAKÖY'DE BULUŞALIM."], directions: "YOL TARİFİ", themeLight: "Açık temaya geç", themeDark: "Koyu temaya geç", languageLabel: "Dili seç",
+  },
+  en: {
+    nav: ["Our Story", "Services", "Book"], book: "Book a chair", menuOpen: "Open menu", menuClose: "Close menu",
+    location: "KARAKÖY, ISTANBUL · SINCE 2018", heroTitle: ["A GOOD CUT.", "A GOOD FEEL."], heroCopy: "In a city that never slows down, take one good hour for yourself.", bookNow: "Book your appointment", scroll: "SCROLL TO EXPLORE",
+    who: "WHO WE ARE", introTitle: ["A barber visit", "is a ritual."], introCopy: "More than a good cut. From the moment you walk in to the final touch, everything is in its place. Neighbourhood craft, old-school care, and a chair that is yours.", learn: "MEET KÖK", stamp: ["GOOD WORK", "TAKES TIME"],
+    filmKicker: "INSIDE KÖK", filmTitle: ["CRAFT,", "UP CLOSE."], filmCopy: "The sound of shears, a warm towel, a familiar chair. This is where a good cut begins.", filmLabel: "KÖK. SHORT FILM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
+    galleryKicker: "FRAMES FROM THE CHAIR", galleryTitle: ["LET THE", "CRAFT SPEAK."], galleryCopy: "Every cut is different. The care is always the same.", galleryLabels: ["THE CRAFT", "THE DETAIL", "THE FINISH"],
+    serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
+    bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / Istanbul"], trust: "Your details stay private. Pay in-store.",
+    yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.",
+    success: "Your appointment is booked. See you soon!", invalid: "Please check your details and try again.", conflict: "That time just filled up. Please choose another.", unavailable: "We can't book right now. Please try again later.", network: "Connection failed. Please try again.", genericError: "Something went wrong.",
+    footerLine: ["GOOD CUTS. GOOD CONVERSATION.", "SEE YOU IN KARAKÖY."], directions: "GET DIRECTIONS", themeLight: "Switch to light theme", themeDark: "Switch to dark theme", languageLabel: "Choose language",
+  },
+} as const;
+
+const gallery = [
+  { image: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1100&q=85", position: "center 42%" },
+  { image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=900&q=85", position: "center 40%" },
+  { image: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=900&q=85", position: "center 45%" },
+];
 
 function istanbulDateValue(date: Date) {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -23,22 +58,40 @@ function istanbulDateValue(date: Date) {
 }
 
 export default function Home() {
-  const [service, setService] = useState(services[0].name);
+  const [language, setLanguage] = useState<Language>("tr");
+  const [service, setService] = useState(services[0].key);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [status, setStatus] = useState("");
+  const [statusIsSuccess, setStatusIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [theme, setTheme] = useState<Theme>("light");
+  const t = content[language];
 
   useEffect(() => {
     const initialUpdate = window.setTimeout(() => setCurrentTime(Date.now()), 0);
     const interval = window.setInterval(() => setCurrentTime(Date.now()), 60_000);
+    const preferenceUpdate = window.setTimeout(() => {
+      const storedLanguage = window.localStorage.getItem("kok-language");
+      const storedTheme = window.localStorage.getItem("kok-theme");
+      if (storedLanguage === "tr" || storedLanguage === "en") setLanguage(storedLanguage);
+      if (storedTheme === "light" || storedTheme === "dark") setTheme(storedTheme);
+    }, 0);
     return () => {
       window.clearTimeout(initialUpdate);
+      window.clearTimeout(preferenceUpdate);
       window.clearInterval(interval);
     };
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.title = language === "tr" ? "KÖK. | Berber Kulübü" : "KÖK. | Barber Club";
+    window.localStorage.setItem("kok-language", language);
+    window.localStorage.setItem("kok-theme", theme);
+  }, [language, theme]);
 
   async function submitAppointment(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,15 +112,16 @@ export default function Home() {
           time,
         }),
       });
-      const result = await response.json();
-      setStatus(result.message || "Bir hata oluştu.");
+        setStatusIsSuccess(response.ok);
+        setStatus(response.ok ? t.success : response.status === 409 ? t.conflict : response.status === 400 ? t.invalid : t.unavailable);
       if (response.ok) {
         form.reset();
         setDate("");
         setTime("");
       }
     } catch {
-      setStatus("Bağlantı kurulamadı. Lütfen tekrar deneyin.");
+        setStatusIsSuccess(false);
+        setStatus(t.network);
     } finally {
       setIsSubmitting(false);
     }
@@ -76,84 +130,124 @@ export default function Home() {
   const minDate = istanbulDateValue(new Date());
 
   return (
-    <main>
+    <main className="site-shell" data-theme={theme}>
       <header className="site-header">
-        <a className="wordmark" href="#home" aria-label="KÖK ana sayfa"><span>KÖK.</span><small>BERBER KULÜBÜ</small></a>
-        <nav className={`desktop-nav ${isMenuOpen ? "is-open" : ""}`} aria-label="Ana menü">
-          <a href="#hikaye" onClick={() => setIsMenuOpen(false)}>Hikâyemiz</a>
-          <a href="#hizmetler" onClick={() => setIsMenuOpen(false)}>Hizmetler</a>
-          <a href="#randevu" onClick={() => setIsMenuOpen(false)}>Randevu</a>
+        <a className="wordmark" href="#home" aria-label="KÖK. home"><span>KÖK.</span><small>BARBER CLUB</small></a>
+        <nav className={`desktop-nav ${isMenuOpen ? "is-open" : ""}`} aria-label="Main navigation">
+          {t.nav.map((label, index) => <a href={["#hikaye", "#hizmetler", "#randevu"][index]} key={label} onClick={() => setIsMenuOpen(false)}>{label}</a>)}
         </nav>
-        <a className="header-cta" href="#randevu">Yerini ayırt <ArrowRight size={15} /></a>
-        <button className="mobile-menu" type="button" aria-label={isMenuOpen ? "Menüyü kapat" : "Menüyü aç"} aria-expanded={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)}><Menu size={22} /></button>
+        <div className="header-tools">
+          <div className="language-switch" role="group" aria-label={t.languageLabel}>
+            <button type="button" aria-pressed={language === "tr"} onClick={() => setLanguage("tr")}>TR</button>
+            <button type="button" aria-pressed={language === "en"} onClick={() => setLanguage("en")}>EN</button>
+          </div>
+          <button className="theme-toggle" type="button" title={theme === "dark" ? t.themeLight : t.themeDark} aria-label={theme === "dark" ? t.themeLight : t.themeDark} aria-pressed={theme === "dark"} onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+          <a className="header-cta" href="#randevu">{t.book} <ArrowRight size={15} /></a>
+          <button className="mobile-menu" type="button" aria-label={isMenuOpen ? t.menuClose : t.menuOpen} aria-expanded={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)}><Menu size={22} /></button>
+        </div>
       </header>
 
       <section className="hero" id="home">
-        <div className="hero-image" role="img" aria-label="Geleneksel berber koltuğunda saç kesimi" />
+        <div className="hero-image" role="img" aria-label={t.galleryLabels[0]} />
         <div className="hero-shade" />
         <div className="hero-content">
-          <p className="eyebrow hero-eyebrow"><span /> KARAKÖY, İSTANBUL · 2018&apos;DEN BERİ</p>
-          <h1>İYİ KESİM.<br /><em>İYİ HİS.</em></h1>
-          <p className="hero-copy">Her şeyin hızlandığı bir şehirde,<br />kendine ayırdığın iyi bir saat.</p>
-          <a className="hero-button" href="#randevu">Randevunu oluştur <ArrowRight size={17} /></a>
+          <p className="eyebrow hero-eyebrow"><span /> {t.location}</p>
+          <h1>{t.heroTitle[0]}<br /><em>{t.heroTitle[1]}</em></h1>
+          <p className="hero-copy">{t.heroCopy}</p>
+          <a className="hero-button" href="#randevu">{t.bookNow} <ArrowRight size={17} /></a>
         </div>
-        <div className="hero-side-note">USTALIK · KARAKÖY · İSTANBUL</div>
-        <a className="scroll-cue" href="#hikaye" aria-label="Hikâyemize göz at"><ArrowDown size={16} /><span>AŞAĞI İN</span></a>
+        <div className="hero-side-note">CRAFT · KARAKÖY · ISTANBUL</div>
+        <a className="scroll-cue" href="#hikaye" aria-label={t.nav[0]}><ArrowDown size={16} /><span>{t.scroll}</span></a>
         <div className="hero-index"><span>01</span><i /> 03</div>
       </section>
 
       <section className="intro section-wrap" id="hikaye">
-        <div className="intro-label"><span className="eyebrow">BİZ KİMİZ?</span><span className="label-rule" /></div>
+        <div className="intro-label"><span className="eyebrow">{t.who}</span><span className="label-rule" /></div>
         <div className="intro-copy">
-          <h2>Berberlik bir<br /><span>ritüeldir.</span></h2>
+          <h2>{t.introTitle[0]}<br /><span>{t.introTitle[1]}</span></h2>
           <div className="intro-bottom">
-            <p>İyi bir kesimden fazlası. Kapıdan girdiğin andan son dokunuşa kadar, her şey yerli yerinde. Mahallenin ustaları, eski usul özen ve sana ayrılmış bir koltuk.</p>
-            <a className="text-link" href="#hizmetler">KÖK&apos;Ü TANI <ArrowRight size={15} /></a>
+            <p>{t.introCopy}</p>
+            <a className="text-link" href="#film">{t.learn} <ArrowRight size={15} /></a>
           </div>
         </div>
-        <div className="intro-stamp"><Scissors size={19} /><span>İYİ İŞ<br />ZAMAN ALIR</span></div>
+        <div className="intro-stamp"><Scissors size={19} /><span>{t.stamp[0]}<br />{t.stamp[1]}</span></div>
+      </section>
+
+      <section className="film-section" id="film">
+        <div className="film-inner section-wrap">
+          <div className="film-copy">
+            <p className="eyebrow">{t.filmKicker}</p>
+            <h2>{t.filmTitle[0]}<br /><em>{t.filmTitle[1]}</em></h2>
+            <p>{t.filmCopy}</p>
+            <span className="film-label"><span />{t.filmLabel}</span>
+          </div>
+          <div className="film-frame">
+            <video controls playsInline preload="none" poster="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1200&q=85" aria-label={t.filmLabel}>
+              <source src="https://videos.pexels.com/video-files/7697084/7697084-hd_1080_1920_30fps.mp4" type="video/mp4" />
+              {t.filmCopy}
+            </video>
+            <span className="film-credit"><a href="https://www.pexels.com/video/haircut-at-barber-shop-7697084/" target="_blank" rel="noreferrer">{t.filmCredit}</a></span>
+          </div>
+        </div>
+      </section>
+
+      <section className="gallery-section section-wrap" aria-labelledby="gallery-title">
+        <div className="gallery-heading">
+          <div><p className="eyebrow">{t.galleryKicker}</p><h2 id="gallery-title">{t.galleryTitle[0]}<br /><em>{t.galleryTitle[1]}</em></h2></div>
+          <p>{t.galleryCopy}</p>
+        </div>
+        <div className="gallery-grid">
+          {gallery.map((item, index) => (
+            <figure className={`gallery-tile gallery-tile-${index + 1}`} key={item.image}>
+              <div className="gallery-photo" role="img" aria-label={t.galleryLabels[index]} style={{ backgroundImage: `url("${item.image}")`, backgroundPosition: item.position }} />
+              <figcaption><span>0{index + 1}</span><strong>{t.galleryLabels[index]}</strong><ArrowRight size={16} /></figcaption>
+            </figure>
+          ))}
+        </div>
       </section>
 
       <section className="services" id="hizmetler">
         <div className="section-wrap services-inner">
           <div className="section-heading">
-            <div><p className="eyebrow">KÖK&apos;TEN UCA</p><h2>USTANIN<br /><em>ELİNDEN.</em></h2></div>
-            <p className="section-aside">Ne lazımsa, özenle.<br />Gerisi koltuğunda.</p>
+            <div><p className="eyebrow">{t.serviceKicker}</p><h2>{t.serviceTitle[0]}<br /><em>{t.serviceTitle[1]}</em></h2></div>
+            <p className="section-aside">{t.serviceAside[0]}<br />{t.serviceAside[1]}</p>
           </div>
           <div className="service-list">
             {services.map((item, index) => (
-              <button className={`service-row ${service === item.name ? "is-selected" : ""}`} key={item.name} type="button" onClick={() => { setService(item.name); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
+              <button className={`service-row ${service === item.key ? "is-selected" : ""}`} key={item.key} type="button" onClick={() => { setService(item.key); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
                 <span className="service-number">0{index + 1}</span>
-                <span className="service-info"><strong>{item.name}</strong><small>{item.detail}</small></span>
-                <span className="service-duration"><Clock3 size={14} />{item.duration}</span>
+                <span className="service-info"><strong>{item.name[language]}</strong><small>{item.detail[language]}</small></span>
+                <span className="service-duration"><Clock3 size={14} />{item.duration[language]}</span>
                 <span className="service-price">{item.price}</span>
                 <ArrowRight className="service-arrow" size={18} />
               </button>
             ))}
           </div>
-          <p className="service-footnote">* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.</p>
+          <p className="service-footnote">{t.serviceNote}</p>
         </div>
       </section>
 
       <section className="booking section-wrap" id="randevu">
         <div className="booking-intro">
-          <p className="eyebrow">KOLTUĞUN HAZIR</p>
-          <h2>TAKVİMİNDE<br /><em>YER AÇ.</em></h2>
-          <p className="booking-description">İyi bir saat kendiliğinden gelmez.<br />Senin için ayıralım.</p>
-          <div className="booking-address"><MapPin size={17} /><span>Bereketzade Mah. Büyük Hendek Cd.<br />No: 14, Beyoğlu / İstanbul</span></div>
-          <div className="booking-trust"><ShieldCheck size={18} /><span>Bilgilerin güvende. Ödeme dükkânda.</span></div>
+          <p className="eyebrow">{t.bookingKicker}</p>
+          <h2>{t.bookingTitle[0]}<br /><em>{t.bookingTitle[1]}</em></h2>
+          <p className="booking-description">{t.bookingCopy[0]}<br />{t.bookingCopy[1]}</p>
+          <div className="booking-address"><MapPin size={17} /><span>{t.address[0]}<br />{t.address[1]}</span></div>
+          <div className="booking-trust"><ShieldCheck size={18} /><span>{t.trust}</span></div>
         </div>
         <form className="booking-form" onSubmit={submitAppointment}>
-          <div className="form-heading"><span>01 — BİLGİLERİN</span><span>* Zorunlu alanlar</span></div>
+          <div className="form-heading"><span>{t.yourDetails}</span><span>{t.required}</span></div>
           <div className="field-grid">
-            <label className="field"><span>AD SOYAD *</span><input name="name" type="text" placeholder="Adın soyadın" minLength={2} maxLength={80} autoComplete="name" required /></label>
-            <label className="field"><span>TELEFON *</span><input name="phone" type="tel" placeholder="05__ ___ __ __" autoComplete="tel" required /></label>
+            <label className="field"><span>{t.fullName}</span><input name="name" type="text" placeholder={t.namePlaceholder} minLength={2} maxLength={80} autoComplete="name" required /></label>
+            <label className="field"><span>{t.phone}</span><input name="phone" type="tel" placeholder={t.phonePlaceholder} autoComplete="tel" required /></label>
           </div>
-          <label className="field service-select"><span>HİZMETİN</span><select value={service} onChange={(event) => setService(event.target.value)}>{services.map((item) => <option key={item.name}>{item.name}</option>)}</select></label>
-          <div className="form-heading date-heading"><span>02 — GÜNÜNÜ SEÇ</span><span>09:30 — 19:00</span></div>
-          <label className="field date-field"><span>TARİH</span><input type="date" min={minDate} value={date} onChange={(event) => { setDate(event.target.value); setTime(""); }} required /></label>
+          <label className="field service-select"><span>{t.yourService}</span><select value={service} onChange={(event) => setService(event.target.value)}>{services.map((item) => <option key={item.key} value={item.key}>{item.name[language]}</option>)}</select></label>
+          <div className="form-heading date-heading"><span>{t.chooseDate}</span><span>{t.hours}</span></div>
+          <label className="field date-field"><span>{t.date}</span><input type="date" min={minDate} value={date} onChange={(event) => { setDate(event.target.value); setTime(""); }} required /></label>
           <fieldset className="time-fieldset" disabled={!date}>
-            <legend>SAAT {!date && <span>— önce tarih seç</span>}</legend>
+            <legend>{t.time} {!date && <span>{t.pickDate}</span>}</legend>
             <div className="time-grid">
               {timeSlots.map((slot) => {
                 const isPast = date === minDate && currentTime > 0 && new Date(`${date}T${slot}:00+03:00`).getTime() <= currentTime;
@@ -161,17 +255,17 @@ export default function Home() {
               })}
             </div>
           </fieldset>
-          <button className="submit-button" type="submit" disabled={isSubmitting || !date || !time}>{isSubmitting ? "RANDEVUN OLUŞTURULUYOR..." : "RANDEVUMU OLUŞTUR"}<ArrowRight size={17} /></button>
-          {status && <p className={`form-status ${status.includes("alındı") ? "success" : "error"}`} role="status">{status.includes("alındı") && <Check size={16} />}{status}</p>}
-          <p className="form-privacy">Randevu talebin onaylandığında seni telefonla arayacağız.</p>
+          <button className="submit-button" type="submit" disabled={isSubmitting || !date || !time}>{isSubmitting ? t.submitting : t.submit}<ArrowRight size={17} /></button>
+          {status && <p className={`form-status ${statusIsSuccess ? "success" : "error"}`} role="status">{statusIsSuccess && <Check size={16} />}{status}</p>}
+          <p className="form-privacy">{t.privacy}</p>
         </form>
       </section>
 
       <footer className="site-footer">
-        <a className="wordmark footer-mark" href="#home"><span>KÖK.</span><small>BERBER KULÜBÜ</small></a>
-        <p>İYİ KESİM, İYİ MUHABBET.<br />KARAKÖY&apos;DE BULUŞALIM.</p>
-        <a href="https://maps.google.com/?q=Bereketzade+Mahallesi+B%C3%BCy%C3%BCk+Hendek+Caddesi+Istanbul" target="_blank" rel="noreferrer">YOL TARİFİ <ArrowRight size={14} /></a>
-        <span className="footer-copy">© 2026 KÖK. BERBER KULÜBÜ</span>
+        <a className="wordmark footer-mark" href="#home"><span>KÖK.</span><small>BARBER CLUB</small></a>
+        <p>{t.footerLine[0]}<br />{t.footerLine[1]}</p>
+        <a href="https://maps.google.com/?q=Bereketzade+Mahallesi+B%C3%BCy%C3%BCk+Hendek+Caddesi+Istanbul" target="_blank" rel="noreferrer">{t.directions} <ArrowRight size={14} /></a>
+        <span className="footer-copy">© 2026 KÖK. BARBER CLUB</span>
       </footer>
     </main>
   );
