@@ -238,7 +238,8 @@
   .submit-button { @apply mt-6 flex min-h-[52px] w-full cursor-pointer items-center justify-between border-0 bg-copper px-4 text-[10px] font-bold tracking-widest text-white transition-colors; }
   .submit-button:hover:not(:disabled) { @apply bg-olive; }
   .submit-button:disabled { @apply cursor-wait opacity-60; }
-  .form-status { @apply mt-4 flex items-center gap-2 border-l-2 px-3 py-3 text-[11px] leading-5; }
+  .form-status { @apply mt-4 flex flex-wrap items-center gap-2 border-l-2 px-3 py-3 text-[11px] leading-5; }
+  .whatsapp-draft-link { @apply ml-auto inline-flex shrink-0 items-center gap-1.5 text-[9px] font-bold underline underline-offset-2; }
   .form-status.success { @apply border-success text-success; background: rgba(49,93,59,.1); }
   .form-status.error { @apply border-danger text-danger; background: rgba(166,61,53,.1); }
   .site-shell[data-theme="dark"] .form-status.success { background: rgba(165,208,162,.1); }

@@ -94,6 +94,7 @@ export default function Home() {
   const [time, setTime] = useState("");
   const [status, setStatus] = useState("");
   const [statusIsSuccess, setStatusIsSuccess] = useState(false);
+  const [whatsappDraftHref, setWhatsappDraftHref] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [availability, setAvailability] = useState<AvailabilityState | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -238,6 +239,7 @@ export default function Home() {
 
   async function submitAppointment(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setWhatsappDraftHref("");
     const form = event.currentTarget;
     const formData = new FormData(form);
     const name = String(formData.get("name") || "");
@@ -279,7 +281,20 @@ export default function Home() {
       });
       const result = await response.json() as { whatsappSent?: boolean };
       setStatusIsSuccess(response.ok);
-      setStatus(response.ok ? whatsappOptIn ? result.whatsappSent ? t.successWhatsApp : t.successWhatsAppPending : t.success : response.status === 409 ? t.timeTaken : response.status === 400 ? t.invalid : t.unavailable);
+      if (response.ok) {
+        const serviceName = services.find((item) => item.key === service)?.name[language] || service;
+        const dateLabel = new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
+          dateStyle: "long",
+          timeZone: "Europe/Istanbul",
+        }).format(new Date(`${date}T12:00:00+03:00`));
+        const message = language === "tr"
+          ? `Merhaba, ben ${name}. ${dateLabel} tarihinde saat ${time} için ${serviceName} randevusu aldım.`
+          : `Hi, this is ${name}. I booked a ${serviceName} appointment for ${dateLabel} at ${time}.`;
+        if (whatsappNumber) setWhatsappDraftHref(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`);
+        setStatus(result.whatsappSent ? t.successWhatsApp : whatsappNumber ? language === "tr" ? "Randevun alındı. Taslağı WhatsApp'tan berbere gönderebilirsin." : "Your booking is saved. Send the WhatsApp draft to the barber." : whatsappOptIn ? t.successWhatsAppPending : t.success);
+      } else {
+        setStatus(response.status === 409 ? t.timeTaken : response.status === 400 ? t.invalid : t.unavailable);
+      }
       if (response.status === 409) {
         setFieldErrors((current) => ({ ...current, time: "timeTaken" }));
         setAvailability((current) => current?.date === date ? { ...current, bookedSlots: [...new Set([...current.bookedSlots, time])] } : current);
@@ -502,7 +517,7 @@ export default function Home() {
             <span><strong><MessageCircle size={14} />{t.whatsappOptIn}</strong><small>{t.whatsappOptInNote}</small></span>
           </label>
           <button className="submit-button" type="submit" disabled={isSubmitting}>{isSubmitting ? t.submitting : t.submit}<ArrowRight size={17} /></button>
-          {status && <p className={`form-status ${statusIsSuccess ? "success" : "error"}`} role={statusIsSuccess ? "status" : "alert"}>{statusIsSuccess && <Check size={16} />}{status}</p>}
+          {status && <div className={`form-status ${statusIsSuccess ? "success" : "error"}`} role={statusIsSuccess ? "status" : "alert"}>{statusIsSuccess && <Check size={16} />}<span>{status}</span>{statusIsSuccess && whatsappDraftHref && <a className="whatsapp-draft-link" href={whatsappDraftHref} target="_blank" rel="noreferrer">{language === "tr" ? "WhatsApp taslağını aç" : "Open WhatsApp draft"}<ArrowRight size={13} /></a>}</div>}
           <p className="form-privacy">{t.privacy}</p>
         </form>
       </section>
