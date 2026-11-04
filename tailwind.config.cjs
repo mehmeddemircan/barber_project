@@ -13,6 +13,8 @@ module.exports = {
         copper: "var(--red)",
         danger: "var(--danger)",
         success: "var(--success)",
+        surface: "var(--surface)",
+        "surface-raised": "var(--surface-raised)",
       },
       fontFamily: {
         display: "var(--display)",

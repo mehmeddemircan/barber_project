@@ -6,15 +6,17 @@
 
 @layer base {
   :root {
-    --paper: #f5f2ea;
-    --ink: #1f2923;
-    --muted: #6d766d;
-    --line: #d9d3c6;
-    --olive: #28523f;
-    --lime: #d6b574;
-    --red: #a96142;
-    --danger: #a63d35;
-    --success: #315d3b;
+    --paper: #f7f9f6;
+    --ink: #172420;
+    --muted: #65746d;
+    --line: #d7e0db;
+    --olive: #176b5b;
+    --lime: #c7ef4b;
+    --red: #e5684b;
+    --danger: #b13e3e;
+    --success: #2f7246;
+    --surface: #edf3ef;
+    --surface-raised: #e5eee8;
     --display: 'Oswald', Impact, sans-serif;
     --body: 'DM Sans', sans-serif;
     color-scheme: light;
@@ -30,17 +32,19 @@
 }
 
 @layer components {
-  .site-shell { @apply min-h-screen bg-paper text-ink; transition: background-color .3s ease, color .3s ease; }
+  .site-shell { @apply min-h-screen bg-paper text-ink; overflow-x: clip; transition: background-color .3s ease, color .3s ease; }
   .site-shell[data-theme="dark"] {
-    --paper: #142019;
-    --ink: #f2eee3;
-    --muted: #a8b4a9;
-    --line: #36463b;
-    --olive: #4a7959;
-    --lime: #dfbf7d;
-    --red: #d18a60;
-    --danger: #f09a87;
-    --success: #a5d0a2;
+    --paper: #101a18;
+    --ink: #f0f5f0;
+    --muted: #a2b0aa;
+    --line: #2d403a;
+    --olive: #21806a;
+    --lime: #c7ef4b;
+    --red: #ff8265;
+    --danger: #ff9b86;
+    --success: #a9dca5;
+    --surface: #182622;
+    --surface-raised: #20322d;
     color-scheme: dark;
   }
 
@@ -66,7 +70,7 @@
 
   .hero { @apply relative isolate flex min-h-[610px] h-[min(82vh,780px)] items-center overflow-hidden bg-ink text-white; }
   .hero-image { @apply absolute inset-0 scale-[1.02] bg-cover; background-image: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=2200&q=88'); background-position: center 43%; animation: hero-settle 1.2s ease-out both; }
-  .hero-shade { @apply absolute inset-0; background: linear-gradient(90deg, rgba(14,22,17,.88) 0%, rgba(14,22,17,.61) 46%, rgba(14,22,17,.12) 100%), linear-gradient(0deg, rgba(14,22,17,.36), transparent 38%); }
+  .hero-shade { @apply absolute inset-0; background: linear-gradient(90deg, rgba(10,21,18,.9) 0%, rgba(10,21,18,.63) 46%, rgba(10,21,18,.1) 100%), linear-gradient(0deg, rgba(10,21,18,.38), transparent 38%); }
   .hero-content { @apply relative z-10 ml-[7vw] max-w-3xl px-5 sm:px-8 lg:ml-[10vw] lg:px-0; animation: rise-in .8s .12s both; }
   .hero-eyebrow { @apply mb-6 flex items-center gap-3 text-white; opacity: .8; }
   .hero-eyebrow > span { @apply h-2 w-2 rounded-full bg-brass; }
@@ -74,7 +78,7 @@
   .hero h1 em { @apply not-italic text-brass; }
   .hero-copy { @apply mt-7 max-w-md text-sm leading-7 text-white; opacity: .82; }
   .hero-button { @apply mt-7 inline-flex h-12 items-center gap-8 bg-brass px-5 text-[11px] font-bold text-ink transition-all; }
-  .hero-button:hover { @apply gap-10; background: #e2c98e; }
+  .hero-button:hover { @apply gap-10; background: #d8fb71; }
   .hero-side-note { @apply absolute right-6 top-1/2 z-10 hidden -translate-y-1/2 text-[8px] font-semibold uppercase tracking-[.2em] text-white lg:block; opacity: .8; writing-mode: vertical-rl; }
   .scroll-cue { @apply absolute bottom-7 left-6 z-10 flex items-center gap-3 text-[8px] font-bold tracking-[.18em] text-white sm:left-8 lg:left-14; opacity: .8; }
   .hero-index { @apply absolute bottom-7 right-6 z-10 flex items-center gap-3 text-[9px] tracking-widest text-white sm:right-8 lg:right-14; opacity: .75; }
@@ -122,8 +126,8 @@
   .gallery-tile figcaption strong { @apply font-display text-sm font-medium tracking-wide sm:text-base; }
   .gallery-tile figcaption svg { @apply text-brass; }
 
-  .campaigns-section { @apply py-20 sm:py-24 lg:py-28; background: #ece8dd; }
-  .site-shell[data-theme="dark"] .campaigns-section { background: #19261e; }
+  .campaigns-section { @apply py-20 sm:py-24 lg:py-28; background: var(--surface); }
+  .site-shell[data-theme="dark"] .campaigns-section { background: var(--surface); }
   .campaigns-heading, .reviews-heading { @apply mb-7 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end sm:gap-8; }
   .campaigns-heading .eyebrow, .reviews-heading .eyebrow { @apply mb-3 block text-copper; }
   .campaigns-heading h2, .reviews-heading h2 { @apply m-0 font-display text-5xl font-semibold uppercase leading-[.92] sm:text-6xl; }
@@ -135,7 +139,7 @@
   .campaign-card-top { @apply flex items-center justify-between text-olive; }
   .campaign-card-2 .campaign-card-top { @apply text-brass; }
   .campaign-card-top > span { @apply text-[8px] font-bold tracking-widest; }
-  .campaign-label { @apply mt-7 self-start px-2 py-1.5 text-[8px] font-bold tracking-widest text-olive; background: #e8eee8; }
+  .campaign-label { @apply mt-7 self-start px-2 py-1.5 text-[8px] font-bold tracking-widest text-olive; background: var(--surface-raised); }
   .campaign-card-2 .campaign-label { @apply text-brass; background: rgba(255,255,255,.1); }
   .campaign-card h3 { @apply mb-2 mt-4 font-display text-2xl font-medium leading-tight; }
   .campaign-card > p { @apply mb-5 text-[11px] leading-6 text-muted; }
@@ -177,7 +181,7 @@
   .review-bubble { @apply relative flex min-h-[220px] flex-col border border-line p-5 text-ink sm:p-6; background: rgba(255,255,255,.4); }
   .site-shell[data-theme="dark"] .review-bubble { background: rgba(255,255,255,.03); }
   .review-bubble::after { @apply absolute -bottom-1.5 left-7 h-3 w-3 rotate-45 border-b border-r border-line bg-paper; content: ""; }
-  .site-shell[data-theme="dark"] .review-bubble::after { background: #142019; }
+  .site-shell[data-theme="dark"] .review-bubble::after { background: var(--paper); }
   .review-bubble-top { @apply flex items-center justify-between text-olive; }
   .review-bubble-top > span { @apply text-[8px] font-bold tracking-widest text-muted; }
   .review-bubble blockquote { @apply mb-auto mt-7 font-display text-lg leading-snug sm:text-xl; }
@@ -194,7 +198,7 @@
   .booking-trust { @apply mt-4 items-center; }
   .booking-trust svg { @apply shrink-0 text-olive; }
   .booking-form { @apply border border-line p-4 shadow-xl sm:p-7 lg:p-8; background: rgba(255,255,255,.5); }
-  .site-shell[data-theme="dark"] .booking-form { background: #1a2920; }
+  .site-shell[data-theme="dark"] .booking-form { background: var(--surface); }
   .form-heading { @apply mb-5 flex items-center justify-between gap-3 border-b border-line pb-3; }
   .form-heading span:first-child { @apply text-[9px] font-bold tracking-widest; }
   .form-heading span:last-child { @apply text-[9px] text-muted; }
