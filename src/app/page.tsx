@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowRight, Check, Clock3, MapPin, Menu, Moon, Scissors, ShieldCheck, Sun } from "lucide-react";
+import { ArrowDown, ArrowRight, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Gift, GraduationCap, MapPin, Menu, Moon, Quote, Scissors, ShieldCheck, Sun } from "lucide-react";
 
 const services = [
   { key: "Klasik Kesim", name: { tr: "Klasik Kesim", en: "Classic Cut" }, detail: { tr: "Yıkama, kesim ve şekillendirme", en: "Wash, cut and styling" }, price: "₺650", duration: { tr: "40 dk", en: "40 min" } },
@@ -13,13 +13,34 @@ const timeSlots = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"
 type Language = "tr" | "en";
 type Theme = "light" | "dark";
 
+const campaigns = [
+  { icon: BadgePercent, label: { tr: "PAKET FİYATI", en: "BUNDLE PRICE" }, title: { tr: "İkili ritüel", en: "The two-part ritual" }, description: { tr: "Saç ve sakalı ayrı ayrı almak yerine tek randevuda tamamla.", en: "Book hair and beard together in one unhurried appointment." }, price: "₺950", oldPrice: "₺1.100", service: "Saç + Sakal" },
+  { icon: Gift, label: { tr: "İLK RANDEVU", en: "FIRST VISIT" }, title: { tr: "Tanışma, bizden.", en: "A proper introduction." }, description: { tr: "İlk gelişinde kesim öncesi 10 dakikalık stil danışmanlığı ücretsiz.", en: "Enjoy a complimentary 10-minute style consultation before your first cut." }, service: "Klasik Kesim" },
+  { icon: GraduationCap, label: { tr: "ÖĞRENCİ AVANTAJI", en: "STUDENT OFFER" }, title: { tr: "%10 öğrenci indirimi", en: "10% off for students" }, description: { tr: "Geçerli öğrenci kartını dükkânda göster; indirim ödemede uygulansın.", en: "Show a valid student ID in-store to receive your discount at checkout." }, service: "Klasik Kesim" },
+];
+
+const reviews = [
+  { service: "Klasik Kesim", quote: { tr: "Koltuğa oturunca acele yok. Kesim tam istediğim gibi oldu.", en: "No rush once you sit down. The cut was exactly what I wanted." } },
+  { service: "Sakal Tasarımı", quote: { tr: "Sıcak havlu ve ustura, sakal bakımı küçük bir ritüele dönüştü.", en: "The hot towel and straight razor made a beard trim feel like a ritual." } },
+  { service: "Klasik Kesim", quote: { tr: "Ne istediğimi dinleyip yüzüme uygun bir kesim önerdiler.", en: "They listened and suggested a cut that works with my face shape." } },
+  { service: "Saç + Sakal", quote: { tr: "Saç ve sakalı aynı koltukta halletmek büyük rahatlık.", en: "Getting my hair and beard done in one chair is a real treat." } },
+  { service: "Klasik Kesim", quote: { tr: "Detaylara gösterdikleri özen her gelişimde fark yaratıyor.", en: "The attention to detail makes every visit feel considered." } },
+  { service: "Sakal Tasarımı", quote: { tr: "Randevu saatinde alındım, sonuç da tertemizdi.", en: "I was seen on time, and the finish was spot on." } },
+  { service: "Saç + Sakal", quote: { tr: "İyi müzik, güzel sohbet, daha da iyi bir kesim.", en: "Good music, easy conversation, and an even better cut." } },
+  { service: "Klasik Kesim", quote: { tr: "Mekân ferah, ekip samimi; insan tekrar gelmek istiyor.", en: "A calm space and a welcoming team. You want to come back." } },
+  { service: "Sakal Tasarımı", quote: { tr: "Karaköy'de kendime ayırdığım en iyi saatlerden biri.", en: "One of the best hours I set aside for myself in Karaköy." } },
+  { service: "Saç + Sakal", quote: { tr: "Her gelişimde aynı özen, aynı iyi his.", en: "The same care and the same good feeling every time." } },
+];
+
 const content = {
   tr: {
-    nav: ["Hikâyemiz", "Hizmetler", "Randevu"], book: "Yerini ayırt", menuOpen: "Menüyü aç", menuClose: "Menüyü kapat",
+    nav: ["Hikâyemiz", "Kampanyalar", "Hizmetler", "Yorumlar", "Randevu"], book: "Yerini ayırt", menuOpen: "Menüyü aç", menuClose: "Menüyü kapat",
     location: "KARAKÖY, İSTANBUL · 2018'DEN BERİ", heroTitle: ["İYİ KESİM.", "İYİ HİS."], heroCopy: "Her şeyin hızlandığı bir şehirde, kendine ayırdığın iyi bir saat.", bookNow: "Randevunu oluştur", scroll: "AŞAĞI İN",
     who: "BİZ KİMİZ?", introTitle: ["Berberlik bir", "ritüeldir."], introCopy: "İyi bir kesimden fazlası. Kapıdan girdiğin andan son dokunuşa kadar, her şey yerli yerinde. Mahallenin ustaları, eski usul özen ve sana ayrılmış bir koltuk.", learn: "KÖK'Ü TANI", stamp: ["İYİ İŞ", "ZAMAN ALIR"],
     filmKicker: "KÖK'ÜN İÇİNDEN", filmTitle: ["USTALIK", "YAKINDAN."], filmCopy: "Makasın sesi, sıcak havlu, tanıdık bir koltuk. KÖK'te iyi bir kesim böyle başlar.", filmLabel: "KÖK. KISA FİLM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
     galleryKicker: "KOLTUKTAN KARELER", galleryTitle: ["İŞİMİZ", "KONUŞSUN."], galleryCopy: "Her kesim başka, özen hep aynı.", galleryLabels: ["USTALIK", "DETAY", "SON DOKUNUŞ"],
+    campaignKicker: "KÖK'TE BU ARA", campaignTitle: ["KÜÇÜK BİR", "İYİLİK."], campaignCopy: "Koltukta sana iyi gelecek birkaç neden.", campaignAction: "KAMPANYAYI SEÇ", campaignTerms: "Kampanya koşulları randevu sırasında dükkânda teyit edilir.",
+    reviewKicker: "KOLTUKTAN SONRA", reviewTitle: ["SÖZÜ", "SİZDE."], reviewCopy: "Bu alandaki metinler taslak yorum örnekleridir; yayına almadan gerçek müşteri geri bildirimleriyle değiştirin.", reviewSample: "ÖRNEK YORUM", reviewPrevious: "Önceki yorumlar", reviewNext: "Sonraki yorumlar",
     serviceKicker: "KÖK'TEN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
     bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / İstanbul"], trust: "Bilgilerin güvende. Ödeme dükkânda.",
     yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.",
@@ -27,11 +48,13 @@ const content = {
     footerLine: ["İYİ KESİM, İYİ MUHABBET.", "KARAKÖY'DE BULUŞALIM."], directions: "YOL TARİFİ", themeLight: "Açık temaya geç", themeDark: "Koyu temaya geç", languageLabel: "Dili seç",
   },
   en: {
-    nav: ["Our Story", "Services", "Book"], book: "Book a chair", menuOpen: "Open menu", menuClose: "Close menu",
+    nav: ["Our Story", "Offers", "Services", "Reviews", "Book"], book: "Book a chair", menuOpen: "Open menu", menuClose: "Close menu",
     location: "KARAKÖY, ISTANBUL · SINCE 2018", heroTitle: ["A GOOD CUT.", "A GOOD FEEL."], heroCopy: "In a city that never slows down, take one good hour for yourself.", bookNow: "Book your appointment", scroll: "SCROLL TO EXPLORE",
     who: "WHO WE ARE", introTitle: ["A barber visit", "is a ritual."], introCopy: "More than a good cut. From the moment you walk in to the final touch, everything is in its place. Neighbourhood craft, old-school care, and a chair that is yours.", learn: "MEET KÖK", stamp: ["GOOD WORK", "TAKES TIME"],
     filmKicker: "INSIDE KÖK", filmTitle: ["CRAFT,", "UP CLOSE."], filmCopy: "The sound of shears, a warm towel, a familiar chair. This is where a good cut begins.", filmLabel: "KÖK. SHORT FILM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
     galleryKicker: "FRAMES FROM THE CHAIR", galleryTitle: ["LET THE", "CRAFT SPEAK."], galleryCopy: "Every cut is different. The care is always the same.", galleryLabels: ["THE CRAFT", "THE DETAIL", "THE FINISH"],
+    campaignKicker: "CURRENT OFFERS", campaignTitle: ["A LITTLE", "EXTRA CARE."], campaignCopy: "A few more reasons to take your place in the chair.", campaignAction: "CHOOSE THIS OFFER", campaignTerms: "Offer details are confirmed in-store when you book.",
+    reviewKicker: "AFTER THE CHAIR", reviewTitle: ["OVER TO", "YOU."], reviewCopy: "These are sample review drafts; replace them with genuine customer feedback before publishing.", reviewSample: "SAMPLE REVIEW", reviewPrevious: "Previous reviews", reviewNext: "Next reviews",
     serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
     bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / Istanbul"], trust: "Your details stay private. Pay in-store.",
     yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.",
@@ -68,6 +91,7 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [theme, setTheme] = useState<Theme>("light");
+  const [reviewIndex, setReviewIndex] = useState(0);
   const t = content[language];
 
   useEffect(() => {
@@ -134,7 +158,7 @@ export default function Home() {
       <header className="site-header">
         <a className="wordmark" href="#home" aria-label="KÖK. home"><span>KÖK.</span><small>BARBER CLUB</small></a>
         <nav className={`desktop-nav ${isMenuOpen ? "is-open" : ""}`} aria-label="Main navigation">
-          {t.nav.map((label, index) => <a href={["#hikaye", "#hizmetler", "#randevu"][index]} key={label} onClick={() => setIsMenuOpen(false)}>{label}</a>)}
+          {t.nav.map((label, index) => <a href={["#hikaye", "#kampanyalar", "#hizmetler", "#yorumlar", "#randevu"][index]} key={label} onClick={() => setIsMenuOpen(false)}>{label}</a>)}
         </nav>
         <div className="header-tools">
           <div className="language-switch" role="group" aria-label={t.languageLabel}>
@@ -208,6 +232,31 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="campaigns-section section-wrap" id="kampanyalar">
+        <div className="campaigns-heading">
+          <div><p className="eyebrow">{t.campaignKicker}</p><h2>{t.campaignTitle[0]}<br /><em>{t.campaignTitle[1]}</em></h2></div>
+          <p>{t.campaignCopy}</p>
+        </div>
+        <div className="campaign-grid">
+          {campaigns.map((campaign, index) => {
+            const CampaignIcon = campaign.icon;
+            return (
+              <article className={`campaign-card campaign-card-${index + 1}`} key={campaign.label.tr}>
+                <div className="campaign-card-top"><span>0{index + 1} / 03</span><CampaignIcon size={20} strokeWidth={1.6} /></div>
+                <span className="campaign-label">{campaign.label[language]}</span>
+                <h3>{campaign.title[language]}</h3>
+                <p>{campaign.description[language]}</p>
+                {campaign.price && <div className="campaign-price"><del>{campaign.oldPrice}</del><strong>{campaign.price}</strong></div>}
+                <button className="campaign-action" type="button" onClick={() => { setService(campaign.service); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
+                  {t.campaignAction}<ArrowRight size={15} />
+                </button>
+              </article>
+            );
+          })}
+        </div>
+        <p className="campaign-terms">{t.campaignTerms}</p>
+      </section>
+
       <section className="services" id="hizmetler">
         <div className="section-wrap services-inner">
           <div className="section-heading">
@@ -226,6 +275,33 @@ export default function Home() {
             ))}
           </div>
           <p className="service-footnote">{t.serviceNote}</p>
+        </div>
+      </section>
+
+      <section className="reviews-section" id="yorumlar">
+        <div className="section-wrap">
+          <div className="reviews-heading">
+            <div><p className="eyebrow">{t.reviewKicker}</p><h2>{t.reviewTitle[0]}<br /><em>{t.reviewTitle[1]}</em></h2></div>
+            <div className="review-controls">
+              <span>{String(reviewIndex + 1).padStart(2, "0")} / {String(reviews.length).padStart(2, "0")}</span>
+              <button type="button" aria-label={t.reviewPrevious} onClick={() => setReviewIndex((index) => (index + reviews.length - 1) % reviews.length)}><ChevronLeft size={18} /></button>
+              <button type="button" aria-label={t.reviewNext} onClick={() => setReviewIndex((index) => (index + 1) % reviews.length)}><ChevronRight size={18} /></button>
+            </div>
+          </div>
+          <div className="review-grid" aria-live="polite">
+            {[0, 1, 2].map((offset) => {
+              const review = reviews[(reviewIndex + offset) % reviews.length];
+              const serviceName = services.find((item) => item.key === review.service)?.name[language];
+              return (
+                <article className="review-bubble" key={`${(reviewIndex + offset) % reviews.length}`}>
+                  <div className="review-bubble-top"><Quote size={21} /><span>{t.reviewSample}</span></div>
+                  <blockquote>{review.quote[language]}</blockquote>
+                  <div className="review-meta"><span>{serviceName}</span><span>0{(reviewIndex + offset) % reviews.length + 1}</span></div>
+                </article>
+              );
+            })}
+          </div>
+          <p className="review-note">{t.reviewCopy}</p>
         </div>
       </section>
 
