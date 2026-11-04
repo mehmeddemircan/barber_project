@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowRight, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Gift, GraduationCap, MapPin, Menu, Moon, Quote, Scissors, ShieldCheck, Sun } from "lucide-react";
+import { ArrowDown, ArrowRight, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Gift, GraduationCap, MapPin, Menu, MessageCircle, Moon, Quote, Scissors, ShieldCheck, Sun } from "lucide-react";
 
 const services = [
   { key: "Klasik Kesim", name: { tr: "Klasik Kesim", en: "Classic Cut" }, detail: { tr: "Yıkama, kesim ve şekillendirme", en: "Wash, cut and styling" }, price: "₺650", duration: { tr: "40 dk", en: "40 min" } },
@@ -37,7 +37,8 @@ const reviews = [
 
 const content = {
   tr: {
-    nav: ["Hikâyemiz", "Kampanyalar", "Hizmetler", "Yorumlar", "Randevu"], book: "Yerini ayırt", menuOpen: "Menüyü aç", menuClose: "Menüyü kapat",
+    nav: ["Hikâyemiz", "Kampanyalar", "Hizmetler", "Yorumlar", "Randevu"], book: "Yerini ayırt", menuOpen: "Menüyü aç", menuClose: "Menüyü kapat", whatsappContact: "WhatsApp'tan yaz", whatsappSetup: "WhatsApp numarası yapılandırılmalı",
+    whatsappMessage: "Merhaba, randevu ve hizmetler hakkında bilgi almak istiyorum.",
     location: "KARAKÖY, İSTANBUL · 2018'DEN BERİ", heroTitle: ["İYİ KESİM.", "İYİ HİS."], heroCopy: "Her şeyin hızlandığı bir şehirde, kendine ayırdığın iyi bir saat.", bookNow: "Randevunu oluştur", scroll: "AŞAĞI İN",
     who: "BİZ KİMİZ?", introTitle: ["Berberlik bir", "ritüeldir."], introCopy: "İyi bir kesimden fazlası. Kapıdan girdiğin andan son dokunuşa kadar, her şey yerli yerinde. Mahallenin ustaları, eski usul özen ve sana ayrılmış bir koltuk.", learn: "KÖK'Ü TANI", stamp: ["İYİ İŞ", "ZAMAN ALIR"],
     filmKicker: "KÖK'ÜN İÇİNDEN", filmTitle: ["USTALIK", "YAKINDAN."], filmCopy: "Makasın sesi, sıcak havlu, tanıdık bir koltuk. KÖK'te iyi bir kesim böyle başlar.", filmLabel: "KÖK. KISA FİLM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
@@ -51,7 +52,8 @@ const content = {
     footerLine: ["İYİ KESİM, İYİ MUHABBET.", "KARAKÖY'DE BULUŞALIM."], directions: "YOL TARİFİ", themeLight: "Açık temaya geç", themeDark: "Koyu temaya geç", languageLabel: "Dili seç",
   },
   en: {
-    nav: ["Our Story", "Offers", "Services", "Reviews", "Book"], book: "Book a chair", menuOpen: "Open menu", menuClose: "Close menu",
+    nav: ["Our Story", "Offers", "Services", "Reviews", "Book"], book: "Book a chair", menuOpen: "Open menu", menuClose: "Close menu", whatsappContact: "Chat on WhatsApp", whatsappSetup: "Set the WhatsApp number first",
+    whatsappMessage: "Hi, I'd like to ask about appointments and services.",
     location: "KARAKÖY, ISTANBUL · SINCE 2018", heroTitle: ["A GOOD CUT.", "A GOOD FEEL."], heroCopy: "In a city that never slows down, take one good hour for yourself.", bookNow: "Book your appointment", scroll: "SCROLL TO EXPLORE",
     who: "WHO WE ARE", introTitle: ["A barber visit", "is a ritual."], introCopy: "More than a good cut. From the moment you walk in to the final touch, everything is in its place. Neighbourhood craft, old-school care, and a chair that is yours.", learn: "MEET KÖK", stamp: ["GOOD WORK", "TAKES TIME"],
     filmKicker: "INSIDE KÖK", filmTitle: ["CRAFT,", "UP CLOSE."], filmCopy: "The sound of shears, a warm towel, a familiar chair. This is where a good cut begins.", filmLabel: "KÖK. SHORT FILM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
@@ -97,6 +99,8 @@ export default function Home() {
   const [theme, setTheme] = useState<Theme>("light");
   const [reviewIndex, setReviewIndex] = useState(0);
   const t = content[language];
+  const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
+  const whatsappHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t.whatsappMessage)}` : "";
   const minDate = istanbulDateValue(new Date());
   const fieldErrorText: Record<FieldErrorCode, string> = {
     nameRequired: t.nameRequired,
@@ -467,6 +471,18 @@ export default function Home() {
         <a href="https://maps.google.com/?q=Bereketzade+Mahallesi+B%C3%BCy%C3%BCk+Hendek+Caddesi+Istanbul" target="_blank" rel="noreferrer">{t.directions} <ArrowRight size={14} /></a>
         <span className="footer-copy">© 2026 KÖK. BARBER CLUB</span>
       </footer>
+
+      {whatsappHref ? (
+        <a className="fixed bottom-5 right-5 z-[60] inline-flex h-14 items-center gap-3 rounded-full bg-[#25D366] px-5 text-sm font-bold text-[#10251A] shadow-xl shadow-black/20 transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-olive max-sm:bottom-4 max-sm:right-4 max-sm:h-12 max-sm:px-4" href={whatsappHref} target="_blank" rel="noreferrer" aria-label={t.whatsappContact}>
+          <MessageCircle size={20} aria-hidden="true" />
+          <span>{t.whatsappContact}</span>
+        </a>
+      ) : (
+        <button className="fixed bottom-5 right-5 z-[60] inline-flex h-14 cursor-not-allowed items-center gap-3 rounded-full bg-[#25D366] px-5 text-sm font-bold text-[#10251A] opacity-60 shadow-xl shadow-black/20 max-sm:bottom-4 max-sm:right-4 max-sm:h-12 max-sm:px-4" type="button" title={t.whatsappSetup} disabled>
+          <MessageCircle size={20} aria-hidden="true" />
+          <span>{t.whatsappContact}</span>
+        </button>
+      )}
     </main>
   );
 }
