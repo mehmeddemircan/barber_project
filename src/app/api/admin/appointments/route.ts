@@ -23,16 +23,17 @@ export async function GET(request: Request) {
 
   try {
     const client = await connectToDatabase();
-    const appointments = await client
+    const records = await client
       .db(process.env.MONGODB_DB || "kok_barber")
       .collection("appointments")
       .find(
         { date: { $gte: today } },
-        { projection: { _id: 0, name: 1, phone: 1, service: 1, date: 1, time: 1 } },
+        { projection: { name: 1, phone: 1, service: 1, date: 1, time: 1 } },
       )
       .sort({ date: 1, time: 1 })
       .limit(250)
       .toArray();
+    const appointments = records.map(({ _id, ...appointment }) => ({ ...appointment, id: _id.toString() }));
 
     return NextResponse.json(
       { appointments },

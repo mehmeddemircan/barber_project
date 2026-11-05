@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-Site `http://localhost:3000` adresinde açılır. Randevu formu ve API pazar gününü kapalı kabul eder.
+Site `http://localhost:3000` adresinde açılır. Randevu formu ve API pazar gününü kapalı kabul eder. Berber girişiyle yaklaşan randevular listelenebilir, bilgiler düzenlenebilir veya iptal edilebilir; iptal edilen randevu kayıttan kaldırılır.
 
 ## Vercel'e dağıtım
 

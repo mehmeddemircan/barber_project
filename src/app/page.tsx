@@ -19,7 +19,9 @@ type BookingField = "name" | "phone" | "date" | "time";
 type FieldErrorCode = "nameRequired" | "nameTooShort" | "nameTooLong" | "phoneRequired" | "phoneInvalid" | "dateRequired" | "dateInvalid" | "datePast" | "dateClosed" | "timeRequired" | "timeInvalid" | "timePast" | "timeTaken";
 type FieldErrors = Partial<Record<BookingField, FieldErrorCode>>;
 type AvailabilityState = { date: string; bookedSlots: string[]; failed: boolean };
-type AdminAppointment = { name: string; phone: string; service: string; date: string; time: string };
+type AdminAppointment = { id: string; name: string; phone: string; service: string; date: string; time: string };
+type AppointmentEdit = Pick<AdminAppointment, "name" | "phone" | "service" | "date" | "time">;
+type AdminActionError = "invalid" | "closed" | "conflict" | "notFound" | "unavailable";
 
 async function requestAdminAppointments(): Promise<AdminAppointment[] | null> {
   const response = await fetch("/api/admin/appointments", { cache: "no-store" });
@@ -50,6 +52,17 @@ const adminContent = {
     phone: "TELEFON",
     service: "HİZMET",
     count: "yaklaşan randevu",
+    actions: "İŞLEM",
+    edit: "DÜZENLE",
+    cancel: "İPTAL ET",
+    save: "KAYDET",
+    discard: "VAZGEÇ",
+    cancelConfirm: "Bu randevuyu iptal etmek istediğinizden emin misiniz?",
+    invalid: "Bilgileri kontrol edin. Tarih geçmişte olamaz.",
+    closed: "Berber pazar günleri kapalıdır.",
+    conflict: "Seçilen saat başka bir randevuya ayrılmış.",
+    notFound: "Randevu bulunamadı; listeyi yenileyin.",
+    unavailable: "İşlem tamamlanamadı. Lütfen tekrar deneyin.",
   },
   en: {
     entry: "Barber login",
@@ -70,6 +83,17 @@ const adminContent = {
     phone: "PHONE",
     service: "SERVICE",
     count: "upcoming appointments",
+    actions: "ACTIONS",
+    edit: "EDIT",
+    cancel: "CANCEL",
+    save: "SAVE",
+    discard: "DISCARD",
+    cancelConfirm: "Are you sure you want to cancel this appointment?",
+    invalid: "Check the details. The date cannot be in the past.",
+    closed: "The barber is closed on Sundays.",
+    conflict: "That time is already booked.",
+    notFound: "Appointment not found; refresh the list.",
+    unavailable: "The action failed. Please try again.",
   },
 } as const;
 
@@ -167,6 +191,10 @@ export default function Home() {
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminSubmitting, setAdminSubmitting] = useState(false);
   const [adminRefreshKey, setAdminRefreshKey] = useState(0);
+  const [editingAppointmentId, setEditingAppointmentId] = useState("");
+  const [appointmentEdit, setAppointmentEdit] = useState<AppointmentEdit | null>(null);
+  const [adminActionError, setAdminActionError] = useState<AdminActionError | "">("");
+  const [adminBusyId, setAdminBusyId] = useState("");
   const t = content[language];
   const adminText = adminContent[language];
   const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
@@ -468,6 +496,79 @@ export default function Home() {
     }
   }
 
+  function beginAppointmentEdit(appointment: AdminAppointment) {
+    setEditingAppointmentId(appointment.id);
+    setAppointmentEdit({
+      name: appointment.name,
+      phone: appointment.phone,
+      service: appointment.service,
+      date: appointment.date,
+      time: appointment.time,
+    });
+    setAdminActionError("");
+  }
+
+  function discardAppointmentEdit() {
+    setEditingAppointmentId("");
+    setAppointmentEdit(null);
+    setAdminActionError("");
+  }
+
+  async function saveAppointmentEdit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editingAppointmentId || !appointmentEdit) return;
+
+    setAdminBusyId(editingAppointmentId);
+    setAdminActionError("");
+    try {
+      const response = await fetch(`/api/admin/appointments/${encodeURIComponent(editingAppointmentId)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(appointmentEdit),
+      });
+      if (!response.ok) {
+        const result = await response.json() as { code?: AdminActionError };
+        if (result.code === "closed" || result.code === "conflict" || result.code === "invalid" || result.code === "notFound") {
+          setAdminActionError(result.code);
+        } else {
+          setAdminActionError("unavailable");
+        }
+        return;
+      }
+
+      setAdminAppointments((appointments) => appointments.map((appointment) =>
+        appointment.id === editingAppointmentId ? { ...appointment, ...appointmentEdit } : appointment,
+      ).sort((first, second) => first.date.localeCompare(second.date) || first.time.localeCompare(second.time)));
+      discardAppointmentEdit();
+    } catch {
+      setAdminActionError("unavailable");
+    } finally {
+      setAdminBusyId("");
+    }
+  }
+
+  async function cancelAppointment(appointment: AdminAppointment) {
+    if (!window.confirm(adminText.cancelConfirm)) return;
+
+    setAdminBusyId(appointment.id);
+    setAdminActionError("");
+    try {
+      const response = await fetch(`/api/admin/appointments/${encodeURIComponent(appointment.id)}`, { method: "DELETE" });
+      if (!response.ok) {
+        const result = await response.json() as { code?: AdminActionError };
+        if (result.code === "notFound") setAdminActionError("notFound");
+        else setAdminActionError("unavailable");
+        return;
+      }
+      setAdminAppointments((appointments) => appointments.filter((item) => item.id !== appointment.id));
+      if (editingAppointmentId === appointment.id) discardAppointmentEdit();
+    } catch {
+      setAdminActionError("unavailable");
+    } finally {
+      setAdminBusyId("");
+    }
+  }
+
   function toggleAdminPanel() {
     if (!isAdminOpen) {
       setAdminLoading(true);
@@ -710,6 +811,7 @@ export default function Home() {
               )}
             </div>
             {adminError && <p className="admin-error" role="alert">{adminText[adminError]}</p>}
+            {adminActionError && <p className="admin-error" role="alert">{adminText[adminActionError]}</p>}
             {adminLoading ? (
               <p className="admin-message" role="status">{adminText.loading}</p>
             ) : adminAuthenticated ? (
@@ -717,18 +819,38 @@ export default function Home() {
                 <div className="admin-table-wrap">
                   <table className="admin-table">
                     <thead>
-                      <tr><th>{adminText.date}</th><th>{adminText.time}</th><th>{adminText.name}</th><th>{adminText.phone}</th><th>{adminText.service}</th></tr>
+                      <tr><th>{adminText.date}</th><th>{adminText.time}</th><th>{adminText.name}</th><th>{adminText.phone}</th><th>{adminText.service}</th><th>{adminText.actions}</th></tr>
                     </thead>
                     <tbody>
-                      {adminAppointments.map((appointment, index) => {
+                      {adminAppointments.map((appointment) => {
+                        const isEditing = editingAppointmentId === appointment.id && appointmentEdit !== null;
                         const serviceName = services.find((item) => item.key === appointment.service)?.name[language] || appointment.service;
                         const dateLabel = new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
                           dateStyle: "medium",
                           timeZone: "Europe/Istanbul",
                         }).format(new Date(`${appointment.date}T12:00:00+03:00`));
                         return (
-                          <tr key={`${appointment.date}-${appointment.time}-${index}`}>
-                            <td>{dateLabel}</td><td>{appointment.time}</td><td>{appointment.name}</td><td>{appointment.phone}</td><td>{serviceName}</td>
+                          <tr key={appointment.id}>
+                            {isEditing && appointmentEdit ? (
+                              <td colSpan={6}>
+                                <form className="admin-edit-form" onSubmit={saveAppointmentEdit}>
+                                  <label className="field"><span>{adminText.date}</span><input type="date" min={minDate} value={appointmentEdit.date} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, date: event.currentTarget.value })} required /></label>
+                                  <label className="field"><span>{adminText.time}</span><select value={appointmentEdit.time} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, time: event.currentTarget.value })}>{timeSlots.map((slot) => <option key={slot} value={slot}>{slot}</option>)}</select></label>
+                                  <label className="field"><span>{adminText.name}</span><input value={appointmentEdit.name} minLength={2} maxLength={80} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, name: event.currentTarget.value })} required /></label>
+                                  <label className="field"><span>{adminText.phone}</span><input type="tel" value={appointmentEdit.phone} minLength={7} maxLength={20} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, phone: event.currentTarget.value })} required /></label>
+                                  <label className="field"><span>{adminText.service}</span><select value={appointmentEdit.service} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, service: event.currentTarget.value })}>{services.map((item) => <option key={item.key} value={item.key}>{item.name[language]}</option>)}</select></label>
+                                  <div className="admin-row-actions">
+                                    <button type="submit" disabled={adminBusyId === appointment.id}>{adminText.save}</button>
+                                    <button type="button" onClick={discardAppointmentEdit} disabled={adminBusyId === appointment.id}>{adminText.discard}</button>
+                                  </div>
+                                </form>
+                              </td>
+                            ) : (
+                              <>
+                                <td>{dateLabel}</td><td>{appointment.time}</td><td>{appointment.name}</td><td>{appointment.phone}</td><td>{serviceName}</td>
+                                <td><div className="admin-row-actions"><button type="button" onClick={() => beginAppointmentEdit(appointment)} disabled={Boolean(adminBusyId)}>{adminText.edit}</button><button type="button" onClick={() => cancelAppointment(appointment)} disabled={Boolean(adminBusyId)}>{adminText.cancel}</button></div></td>
+                              </>
+                            )}
                           </tr>
                         );
                       })}
