@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ArrowDown, ArrowRight, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Gift, GraduationCap, MapPin, Menu, MessageCircle, Moon, Quote, Scissors, ShieldCheck, Sun } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowDown, ArrowRight, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Gift, GraduationCap, MapPin, Menu, MessageCircle, Moon, Quote, Scissors, ShieldCheck, Sun, X } from "lucide-react";
 import { isSundayDate } from "@/lib/appointment-dates";
 
 const services = [
@@ -112,7 +112,7 @@ const reviews = [
   { service: "Sakal Tasarımı", quote: { tr: "Randevu saatinde alındım, sonuç da tertemizdi.", en: "I was seen on time, and the finish was spot on." } },
   { service: "Saç + Sakal", quote: { tr: "İyi müzik, güzel sohbet, daha da iyi bir kesim.", en: "Good music, easy conversation, and an even better cut." } },
   { service: "Klasik Kesim", quote: { tr: "Mekân ferah, ekip samimi; insan tekrar gelmek istiyor.", en: "A calm space and a welcoming team. You want to come back." } },
-  { service: "Sakal Tasarımı", quote: { tr: "Karaköy'de kendime ayırdığım en iyi saatlerden biri.", en: "One of the best hours I set aside for myself in Karaköy." } },
+  { service: "Sakal Tasarımı", quote: { tr: "Talas'ta kendime ayırdığım en iyi saatlerden biri.", en: "One of the best hours I set aside for myself in Talas." } },
   { service: "Saç + Sakal", quote: { tr: "Her gelişimde aynı özen, aynı iyi his.", en: "The same care and the same good feeling every time." } },
 ];
 
@@ -120,34 +120,34 @@ const content = {
   tr: {
     nav: ["Hikâyemiz", "Kampanyalar", "Hizmetler", "Yorumlar", "Randevu"], book: "Yerini ayırt", menuOpen: "Menüyü aç", menuClose: "Menüyü kapat", whatsappContact: "WhatsApp'tan yaz", whatsappSetup: "WhatsApp numarası yapılandırılmalı",
     whatsappMessage: "Merhaba, randevu ve hizmetler hakkında bilgi almak istiyorum.",
-    location: "KARAKÖY, İSTANBUL · 2018'DEN BERİ", heroTitle: ["İYİ KESİM.", "İYİ HİS."], heroCopy: "Her şeyin hızlandığı bir şehirde, kendine ayırdığın iyi bir saat.", bookNow: "Randevunu oluştur", scroll: "AŞAĞI İN",
+    location: "TALAS, KAYSERİ", heroTitle: ["İYİ KESİM.", "İYİ HİS."], heroCopy: "Her şeyin hızlandığı bir şehirde, kendine ayırdığın iyi bir saat.", bookNow: "Randevunu oluştur", scroll: "AŞAĞI İN",
     who: "BİZ KİMİZ?", introTitle: ["Berberlik bir", "ritüeldir."], introCopy: "İyi bir kesimden fazlası. Kapıdan girdiğin andan son dokunuşa kadar, her şey yerli yerinde. Mahallenin ustaları, eski usul özen ve sana ayrılmış bir koltuk.", learn: "KÖK'Ü TANI", stamp: ["İYİ İŞ", "ZAMAN ALIR"],
     filmKicker: "KÖK'ÜN İÇİNDEN", filmTitle: ["USTALIK", "YAKINDAN."], filmCopy: "Makasın sesi, sıcak havlu, tanıdık bir koltuk. KÖK'te iyi bir kesim böyle başlar.", filmLabel: "KÖK. KISA FİLM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
-    galleryKicker: "KOLTUKTAN KARELER", galleryTitle: ["İŞİMİZ", "KONUŞSUN."], galleryCopy: "Her kesim başka, özen hep aynı.", galleryLabels: ["USTALIK", "DETAY", "SON DOKUNUŞ"],
+    galleryKicker: "KOLTUKTAN KARELER", galleryTitle: ["İŞİMİZ", "KONUŞSUN."], galleryCopy: "Her kesim başka, özen hep aynı.", galleryLabels: ["USTALIK", "DETAY", "SON DOKUNUŞ"], galleryOpen: "Fotoğrafı büyüt", galleryClose: "Galeriyi kapat", galleryPrevious: "Önceki fotoğraf", galleryNext: "Sonraki fotoğraf",
     campaignKicker: "KÖK'TE BU ARA", campaignTitle: ["KÜÇÜK BİR", "İYİLİK."], campaignCopy: "Koltukta sana iyi gelecek birkaç neden.", campaignAction: "KAMPANYAYI SEÇ", campaignTerms: "Kampanya koşulları randevu sırasında dükkânda teyit edilir.",
     reviewKicker: "KOLTUKTAN SONRA", reviewTitle: ["SÖZÜ", "SİZDE."], reviewCopy: "Bu alandaki metinler taslak yorum örnekleridir; yayına almadan gerçek müşteri geri bildirimleriyle değiştirin.", reviewSample: "ÖRNEK YORUM", reviewPrevious: "Önceki yorumlar", reviewNext: "Sonraki yorumlar",
     serviceKicker: "KÖK'TEN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
-    bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / İstanbul"], trust: "Bilgilerin güvende. Ödeme dükkânda.",
-    yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", booked: "DOLU", availabilityLoading: "Saatler kontrol ediliyor...", availabilityUnavailable: "Müsait saatler yüklenemedi. Tekrar deneyin.", availableSlots: "Uygun saat", whatsappOptIn: "WhatsApp randevu onayını al", whatsappOptInNote: "Randevu bilgilerimin WhatsApp üzerinden gönderilmesini kabul ediyorum.", successWhatsApp: "Randevun alındı; onay mesajı WhatsApp'tan gönderildi.", successWhatsAppPending: "Randevun alındı. WhatsApp onayı şu an gönderilemedi.", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
+    bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Bilgilerin güvende. Ödeme dükkânda.",
+    yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", quickDates: "YAKIN TARİHLER", bookingSummary: "RANDEVU ÖZETİ", summaryChooseDate: "Tarih ve saatini seç", booked: "DOLU", availabilityLoading: "Saatler kontrol ediliyor...", availabilityUnavailable: "Müsait saatler yüklenemedi. Tekrar deneyin.", availableSlots: "Uygun saat", whatsappOptIn: "WhatsApp randevu onayını al", whatsappOptInNote: "Randevu bilgilerimin WhatsApp üzerinden gönderilmesini kabul ediyorum.", successWhatsApp: "Randevun alındı; onay mesajı WhatsApp'tan gönderildi.", successWhatsAppPending: "Randevun alındı. WhatsApp onayı şu an gönderilemedi.", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
     dateClosed: "Berber pazar günleri kapalıdır. Lütfen başka bir gün seçin.",
     success: "Randevunuz alındı. Sizi bekliyoruz!", invalid: "Lütfen bilgileri kontrol edip tekrar deneyin.", conflict: "Bu saat az önce doldu. Lütfen başka bir saat seçin.", unavailable: "Şu an randevu oluşturulamıyor. Lütfen daha sonra tekrar deneyin.", network: "Bağlantı kurulamadı. Lütfen tekrar deneyin.", genericError: "Bir hata oluştu.",
-    footerLine: ["İYİ KESİM, İYİ MUHABBET.", "KARAKÖY'DE BULUŞALIM."], directions: "YOL TARİFİ", themeLight: "Açık temaya geç", themeDark: "Koyu temaya geç", languageLabel: "Dili seç",
+    footerLine: ["İYİ KESİM, İYİ MUHABBET.", "TALAS'TA BULUŞALIM."], directions: "YOL TARİFİ", themeLight: "Açık temaya geç", themeDark: "Koyu temaya geç", languageLabel: "Dili seç",
   },
   en: {
     nav: ["Our Story", "Offers", "Services", "Reviews", "Book"], book: "Book a chair", menuOpen: "Open menu", menuClose: "Close menu", whatsappContact: "Chat on WhatsApp", whatsappSetup: "Set the WhatsApp number first",
     whatsappMessage: "Hi, I'd like to ask about appointments and services.",
-    location: "KARAKÖY, ISTANBUL · SINCE 2018", heroTitle: ["A GOOD CUT.", "A GOOD FEEL."], heroCopy: "In a city that never slows down, take one good hour for yourself.", bookNow: "Book your appointment", scroll: "SCROLL TO EXPLORE",
+    location: "TALAS, KAYSERİ", heroTitle: ["A GOOD CUT.", "A GOOD FEEL."], heroCopy: "In a city that never slows down, take one good hour for yourself.", bookNow: "Book your appointment", scroll: "SCROLL TO EXPLORE",
     who: "WHO WE ARE", introTitle: ["A barber visit", "is a ritual."], introCopy: "More than a good cut. From the moment you walk in to the final touch, everything is in its place. Neighbourhood craft, old-school care, and a chair that is yours.", learn: "MEET KÖK", stamp: ["GOOD WORK", "TAKES TIME"],
     filmKicker: "INSIDE KÖK", filmTitle: ["CRAFT,", "UP CLOSE."], filmCopy: "The sound of shears, a warm towel, a familiar chair. This is where a good cut begins.", filmLabel: "KÖK. SHORT FILM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
-    galleryKicker: "FRAMES FROM THE CHAIR", galleryTitle: ["LET THE", "CRAFT SPEAK."], galleryCopy: "Every cut is different. The care is always the same.", galleryLabels: ["THE CRAFT", "THE DETAIL", "THE FINISH"],
+    galleryKicker: "FRAMES FROM THE CHAIR", galleryTitle: ["LET THE", "CRAFT SPEAK."], galleryCopy: "Every cut is different. The care is always the same.", galleryLabels: ["THE CRAFT", "THE DETAIL", "THE FINISH"], galleryOpen: "Enlarge photo", galleryClose: "Close gallery", galleryPrevious: "Previous photo", galleryNext: "Next photo",
     campaignKicker: "CURRENT OFFERS", campaignTitle: ["A LITTLE", "EXTRA CARE."], campaignCopy: "A few more reasons to take your place in the chair.", campaignAction: "CHOOSE THIS OFFER", campaignTerms: "Offer details are confirmed in-store when you book.",
     reviewKicker: "AFTER THE CHAIR", reviewTitle: ["OVER TO", "YOU."], reviewCopy: "These are sample review drafts; replace them with genuine customer feedback before publishing.", reviewSample: "SAMPLE REVIEW", reviewPrevious: "Previous reviews", reviewNext: "Next reviews",
     serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
-    bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / Istanbul"], trust: "Your details stay private. Pay in-store.",
-    yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", booked: "FULL", availabilityLoading: "Checking available times...", availabilityUnavailable: "Available times couldn't be loaded. Please try again.", availableSlots: "Available times", whatsappOptIn: "Send my booking confirmation on WhatsApp", whatsappOptInNote: "I agree to receive my appointment details on WhatsApp.", successWhatsApp: "Your appointment is booked and the confirmation was sent on WhatsApp.", successWhatsAppPending: "Your appointment is booked. WhatsApp confirmation couldn't be sent right now.", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
+    bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Your details stay private. Pay in-store.",
+    yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", quickDates: "UPCOMING DAYS", bookingSummary: "APPOINTMENT SUMMARY", summaryChooseDate: "Choose a date and time", booked: "FULL", availabilityLoading: "Checking available times...", availabilityUnavailable: "Available times couldn't be loaded. Please try again.", availableSlots: "Available times", whatsappOptIn: "Send my booking confirmation on WhatsApp", whatsappOptInNote: "I agree to receive my appointment details on WhatsApp.", successWhatsApp: "Your appointment is booked and the confirmation was sent on WhatsApp.", successWhatsAppPending: "Your appointment is booked. WhatsApp confirmation couldn't be sent right now.", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
     dateClosed: "The barber is closed on Sundays. Please choose another day.",
     success: "Your appointment is booked. See you soon!", invalid: "Please check your details and try again.", conflict: "That time just filled up. Please choose another.", unavailable: "We can't book right now. Please try again later.", network: "Connection failed. Please try again.", genericError: "Something went wrong.",
-    footerLine: ["GOOD CUTS. GOOD CONVERSATION.", "SEE YOU IN KARAKÖY."], directions: "GET DIRECTIONS", themeLight: "Switch to light theme", themeDark: "Switch to dark theme", languageLabel: "Choose language",
+    footerLine: ["GOOD CUTS. GOOD CONVERSATION.", "SEE YOU IN TALAS."], directions: "GET DIRECTIONS", themeLight: "Switch to light theme", themeDark: "Switch to dark theme", languageLabel: "Choose language",
   },
 } as const;
 
@@ -166,6 +166,19 @@ function istanbulDateValue(date: Date) {
   }).formatToParts(date);
   const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((item) => item.type === type)?.value;
   return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+function getSuggestedDates(startDate: string) {
+  const date = new Date(`${startDate}T00:00:00.000Z`);
+  const suggestedDates: string[] = [];
+
+  while (suggestedDates.length < 3) {
+    date.setUTCDate(date.getUTCDate() + 1);
+    const value = date.toISOString().slice(0, 10);
+    if (!isSundayDate(value)) suggestedDates.push(value);
+  }
+
+  return suggestedDates;
 }
 
 export default function Home() {
@@ -195,11 +208,17 @@ export default function Home() {
   const [appointmentEdit, setAppointmentEdit] = useState<AppointmentEdit | null>(null);
   const [adminActionError, setAdminActionError] = useState<AdminActionError | "">("");
   const [adminBusyId, setAdminBusyId] = useState("");
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState<number | null>(null);
+  const galleryTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const galleryDialogRef = useRef<HTMLDivElement | null>(null);
+  const galleryCloseRef = useRef<HTMLButtonElement | null>(null);
   const t = content[language];
   const adminText = adminContent[language];
   const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
   const whatsappHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t.whatsappMessage)}` : "";
   const minDate = istanbulDateValue(new Date());
+  const suggestedDates = getSuggestedDates(minDate);
+  const selectedService = services.find((item) => item.key === service) || services[0];
   const currentAvailability = availability?.date === date ? availability : null;
   const bookedSlots = currentAvailability?.bookedSlots ?? [];
   const availabilityLoading = Boolean(date && !isSundayDate(date) && !currentAvailability);
@@ -302,6 +321,42 @@ export default function Home() {
     window.localStorage.setItem("kok-theme", theme);
   }, [language, theme]);
 
+  useEffect(() => {
+    if (activeGalleryIndex === null) {
+      galleryTriggerRef.current?.focus();
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    galleryCloseRef.current?.focus();
+
+    function handleGalleryKeys(event: KeyboardEvent) {
+      if (event.key === "Escape") setActiveGalleryIndex(null);
+      if (event.key === "ArrowRight") setActiveGalleryIndex((index) => index === null ? null : (index + 1) % gallery.length);
+      if (event.key === "ArrowLeft") setActiveGalleryIndex((index) => index === null ? null : (index + gallery.length - 1) % gallery.length);
+      if (event.key === "Tab") {
+        const focusable = galleryDialogRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled)");
+        if (!focusable?.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleGalleryKeys);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleGalleryKeys);
+    };
+  }, [activeGalleryIndex]);
+
   function getFieldError(field: BookingField, value: string, selectedDate = date): FieldErrorCode | undefined {
     if (field === "name") {
       const name = value.trim();
@@ -352,6 +407,13 @@ export default function Home() {
   function validateField(field: BookingField, value: string, selectedDate = date) {
     const error = getFieldError(field, value, selectedDate);
     setFieldErrors((current) => ({ ...current, [field]: error }));
+  }
+
+  function selectBookingDate(nextDate: string) {
+    setDate(nextDate);
+    setTime("");
+    updateFieldError("date", nextDate, nextDate);
+    setFieldErrors((current) => ({ ...current, time: undefined }));
   }
 
   async function submitAppointment(event: React.FormEvent<HTMLFormElement>) {
@@ -612,7 +674,7 @@ export default function Home() {
           <p className="hero-copy">{t.heroCopy}</p>
           <a className="hero-button" href="#randevu">{t.bookNow} <ArrowRight size={17} /></a>
         </div>
-        <div className="hero-side-note">CRAFT · KARAKÖY · ISTANBUL</div>
+        <div className="hero-side-note">CRAFT · TALAS · KAYSERİ</div>
         <a className="scroll-cue" href="#hikaye" aria-label={t.nav[0]}><ArrowDown size={16} /><span>{t.scroll}</span></a>
         <div className="hero-index"><span>01</span><i /> 03</div>
       </section>
@@ -655,12 +717,39 @@ export default function Home() {
         <div className="gallery-grid">
           {gallery.map((item, index) => (
             <figure className={`gallery-tile gallery-tile-${index + 1}`} key={item.image} data-reveal>
-              <div className="gallery-photo" role="img" aria-label={t.galleryLabels[index]} style={{ backgroundImage: `url("${item.image}")`, backgroundPosition: item.position }} />
+              <button
+                className="gallery-open"
+                type="button"
+                aria-label={`${t.galleryOpen}: ${t.galleryLabels[index]}`}
+                onClick={(event) => {
+                  galleryTriggerRef.current = event.currentTarget;
+                  setActiveGalleryIndex(index);
+                }}
+              >
+                <span className="gallery-photo" role="img" aria-label={t.galleryLabels[index]} style={{ backgroundImage: `url("${item.image}")`, backgroundPosition: item.position }} />
+              </button>
               <figcaption><span>0{index + 1}</span><strong>{t.galleryLabels[index]}</strong><ArrowRight size={16} /></figcaption>
             </figure>
           ))}
         </div>
       </section>
+
+      {activeGalleryIndex !== null && (
+        <div className="gallery-lightbox" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveGalleryIndex(null); }}>
+          <div className="gallery-lightbox-panel" ref={galleryDialogRef} role="dialog" aria-modal="true" aria-label={t.galleryLabels[activeGalleryIndex]}>
+            <button className="gallery-lightbox-close" type="button" ref={galleryCloseRef} aria-label={t.galleryClose} onClick={() => setActiveGalleryIndex(null)}><X size={21} /></button>
+            <div className="gallery-lightbox-image" role="img" aria-label={t.galleryLabels[activeGalleryIndex]} style={{ backgroundImage: `url("${gallery[activeGalleryIndex].image}")`, backgroundPosition: gallery[activeGalleryIndex].position }} />
+            <div className="gallery-lightbox-caption">
+              <span>0{activeGalleryIndex + 1} / 0{gallery.length}</span>
+              <strong>{t.galleryLabels[activeGalleryIndex]}</strong>
+              <div>
+                  <button type="button" aria-label={t.galleryPrevious} onClick={() => setActiveGalleryIndex((activeGalleryIndex + gallery.length - 1) % gallery.length)}><ChevronLeft size={20} /></button>
+                  <button type="button" aria-label={t.galleryNext} onClick={() => setActiveGalleryIndex((activeGalleryIndex + 1) % gallery.length)}><ChevronRight size={20} /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="campaigns-section section-wrap" id="kampanyalar">
         <div className="campaigns-heading">
@@ -761,9 +850,23 @@ export default function Home() {
           <div className="form-heading date-heading"><span>{t.chooseDate}</span><span>{t.hours}</span></div>
           <label className={`field date-field ${fieldErrors.date ? "has-error" : ""}`} htmlFor="booking-date">
             <span>{t.date}</span>
-            <input id="booking-date" type="date" min={minDate} value={date} aria-invalid={Boolean(fieldErrors.date)} aria-describedby={fieldErrors.date ? "booking-date-error" : undefined} required onBlur={(event) => validateField("date", event.currentTarget.value)} onChange={(event) => { const nextDate = event.currentTarget.value; setDate(nextDate); setTime(""); updateFieldError("date", nextDate, nextDate); setFieldErrors((current) => ({ ...current, time: undefined })); }} />
+            <input id="booking-date" type="date" min={minDate} value={date} aria-invalid={Boolean(fieldErrors.date)} aria-describedby={fieldErrors.date ? "booking-date-error" : undefined} required onBlur={(event) => validateField("date", event.currentTarget.value)} onChange={(event) => selectBookingDate(event.currentTarget.value)} />
             {fieldErrors.date && <small className="field-error" id="booking-date-error">{fieldErrorText[fieldErrors.date]}</small>}
           </label>
+          <div className="quick-dates" aria-label={t.quickDates}>
+            <span>{t.quickDates}</span>
+            <div>
+              {suggestedDates.map((suggestedDate) => {
+                const label = new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                  timeZone: "Europe/Istanbul",
+                }).format(new Date(`${suggestedDate}T12:00:00+03:00`));
+                return <button className={date === suggestedDate ? "is-selected" : ""} type="button" key={suggestedDate} aria-pressed={date === suggestedDate} onClick={() => selectBookingDate(suggestedDate)}>{label}</button>;
+              })}
+            </div>
+          </div>
           <fieldset className={`time-fieldset ${fieldErrors.time ? "has-error" : ""}`} disabled={!date || isSundayDate(date) || availabilityLoading || Boolean(currentAvailability?.failed)} aria-invalid={Boolean(fieldErrors.time)} aria-describedby={fieldErrors.time ? "booking-time-error" : undefined}>
             <legend>{t.time} {!date ? <span>{t.pickDate}</span> : availabilityLoading ? <span>{t.availabilityLoading}</span> : null}</legend>
             <div className="time-grid">
@@ -783,6 +886,17 @@ export default function Home() {
             {date && !isSundayDate(date) && currentAvailability && !currentAvailability.failed && <small className="availability-message" aria-live="polite">{t.availableSlots}: {timeSlots.filter((slot) => !bookedSlots.includes(slot) && !(date === minDate && currentTime > 0 && new Date(`${date}T${slot}:00+03:00`).getTime() <= currentTime)).length}</small>}
             {fieldErrors.time && <small className="field-error" id="booking-time-error">{fieldErrorText[fieldErrors.time]}</small>}
           </fieldset>
+          <div className="booking-summary" aria-live="polite">
+            <div>
+              <span>{t.bookingSummary}</span>
+              <strong>{selectedService.name[language]}</strong>
+            </div>
+            <div className="booking-summary-selection">
+              <span>{date ? new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", { dateStyle: "medium", timeZone: "Europe/Istanbul" }).format(new Date(`${date}T12:00:00+03:00`)) : t.summaryChooseDate}{time ? ` · ${time}` : ""}</span>
+              <strong>{selectedService.price}</strong>
+            </div>
+            <small><Clock3 size={13} />{selectedService.duration[language]}</small>
+          </div>
           <label className="whatsapp-consent">
             <input type="checkbox" name="whatsappOptIn" />
             <span><strong><MessageCircle size={14} />{t.whatsappOptIn}</strong><small>{t.whatsappOptInNote}</small></span>
@@ -874,7 +988,7 @@ export default function Home() {
       <footer className="site-footer">
         <a className="wordmark footer-mark" href="#home"><span>KÖK.</span><small>BARBER CLUB</small></a>
         <p>{t.footerLine[0]}<br />{t.footerLine[1]}</p>
-        <a href="https://maps.google.com/?q=Bereketzade+Mahallesi+B%C3%BCy%C3%BCk+Hendek+Caddesi+Istanbul" target="_blank" rel="noreferrer">{t.directions} <ArrowRight size={14} /></a>
+        <a href="https://www.google.com/maps/place//data=!4m2!3m1!1s0x152b6d1a9cf072ff:0x6db250a86e7c64bd?sa=X&ved=1t:8290&ictx=111" target="_blank" rel="noreferrer">{t.directions} <ArrowRight size={14} /></a>
         <button className="admin-entry" type="button" onClick={toggleAdminPanel} aria-expanded={isAdminOpen}>{adminText.entry}</button>
         <span className="footer-copy">© 2026 KÖK. BARBER CLUB</span>
       </footer>
