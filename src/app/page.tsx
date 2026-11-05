@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowDown, ArrowRight, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Gift, GraduationCap, MapPin, Menu, MessageCircle, Moon, Quote, Scissors, ShieldCheck, Sun } from "lucide-react";
+import { isSundayDate } from "@/lib/appointment-dates";
 
 const services = [
   { key: "Klasik Kesim", name: { tr: "Klasik Kesim", en: "Classic Cut" }, detail: { tr: "Yıkama, kesim ve şekillendirme", en: "Wash, cut and styling" }, price: "₺650", duration: { tr: "40 dk", en: "40 min" } },
@@ -14,9 +15,62 @@ const timeSlots = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"
 type Language = "tr" | "en";
 type Theme = "light" | "dark";
 type BookingField = "name" | "phone" | "date" | "time";
-type FieldErrorCode = "nameRequired" | "nameTooShort" | "nameTooLong" | "phoneRequired" | "phoneInvalid" | "dateRequired" | "dateInvalid" | "datePast" | "timeRequired" | "timeInvalid" | "timePast" | "timeTaken";
+type FieldErrorCode = "nameRequired" | "nameTooShort" | "nameTooLong" | "phoneRequired" | "phoneInvalid" | "dateRequired" | "dateInvalid" | "datePast" | "dateClosed" | "timeRequired" | "timeInvalid" | "timePast" | "timeTaken";
 type FieldErrors = Partial<Record<BookingField, FieldErrorCode>>;
 type AvailabilityState = { date: string; bookedSlots: string[]; failed: boolean };
+type AdminAppointment = { name: string; phone: string; service: string; date: string; time: string };
+
+async function requestAdminAppointments(): Promise<AdminAppointment[] | null> {
+  const response = await fetch("/api/admin/appointments", { cache: "no-store" });
+  if (response.status === 401) return null;
+  if (response.status === 503) throw new Error("notConfigured");
+  if (!response.ok) throw new Error("loadError");
+  const result = await response.json() as { appointments?: AdminAppointment[] };
+  return result.appointments || [];
+}
+
+const adminContent = {
+  tr: {
+    entry: "Berber girişi",
+    title: "Randevu yönetimi",
+    description: "Yaklaşan randevular yalnızca yetkili berber tarafından görüntülenebilir.",
+    password: "Yönetici parolası",
+    login: "Giriş yap",
+    loggingIn: "Kontrol ediliyor...",
+    logout: "Çıkış yap",
+    loading: "Randevular yükleniyor...",
+    incorrect: "Parola hatalı.",
+    notConfigured: "Yönetici girişi yapılandırılmamış. ADMIN_PASSWORD ve ADMIN_SESSION_SECRET ayarlarını ekleyin.",
+    loadError: "Randevular yüklenemedi. Lütfen tekrar deneyin.",
+    empty: "Yaklaşan randevu bulunmuyor.",
+    date: "TARİH",
+    time: "SAAT",
+    name: "MÜŞTERİ",
+    phone: "TELEFON",
+    service: "HİZMET",
+    count: "yaklaşan randevu",
+  },
+  en: {
+    entry: "Barber login",
+    title: "Appointment management",
+    description: "Upcoming appointments are visible to the authorized barber only.",
+    password: "Admin password",
+    login: "Log in",
+    loggingIn: "Checking...",
+    logout: "Log out",
+    loading: "Loading appointments...",
+    incorrect: "Incorrect password.",
+    notConfigured: "Admin access is not configured. Add ADMIN_PASSWORD and ADMIN_SESSION_SECRET.",
+    loadError: "Appointments could not be loaded. Please try again.",
+    empty: "There are no upcoming appointments.",
+    date: "DATE",
+    time: "TIME",
+    name: "CUSTOMER",
+    phone: "PHONE",
+    service: "SERVICE",
+    count: "upcoming appointments",
+  },
+} as const;
 
 const campaigns = [
   { icon: BadgePercent, label: { tr: "PAKET FİYATI", en: "BUNDLE PRICE" }, title: { tr: "İkili ritüel", en: "The two-part ritual" }, description: { tr: "Saç ve sakalı ayrı ayrı almak yerine tek randevuda tamamla.", en: "Book hair and beard together in one unhurried appointment." }, price: "₺950", oldPrice: "₺1.100", service: "Saç + Sakal" },
@@ -50,6 +104,7 @@ const content = {
     serviceKicker: "KÖK'TEN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
     bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / İstanbul"], trust: "Bilgilerin güvende. Ödeme dükkânda.",
     yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", booked: "DOLU", availabilityLoading: "Saatler kontrol ediliyor...", availabilityUnavailable: "Müsait saatler yüklenemedi. Tekrar deneyin.", availableSlots: "Uygun saat", whatsappOptIn: "WhatsApp randevu onayını al", whatsappOptInNote: "Randevu bilgilerimin WhatsApp üzerinden gönderilmesini kabul ediyorum.", successWhatsApp: "Randevun alındı; onay mesajı WhatsApp'tan gönderildi.", successWhatsAppPending: "Randevun alındı. WhatsApp onayı şu an gönderilemedi.", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
+    dateClosed: "Berber pazar günleri kapalıdır. Lütfen başka bir gün seçin.",
     success: "Randevunuz alındı. Sizi bekliyoruz!", invalid: "Lütfen bilgileri kontrol edip tekrar deneyin.", conflict: "Bu saat az önce doldu. Lütfen başka bir saat seçin.", unavailable: "Şu an randevu oluşturulamıyor. Lütfen daha sonra tekrar deneyin.", network: "Bağlantı kurulamadı. Lütfen tekrar deneyin.", genericError: "Bir hata oluştu.",
     footerLine: ["İYİ KESİM, İYİ MUHABBET.", "KARAKÖY'DE BULUŞALIM."], directions: "YOL TARİFİ", themeLight: "Açık temaya geç", themeDark: "Koyu temaya geç", languageLabel: "Dili seç",
   },
@@ -65,6 +120,7 @@ const content = {
     serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
     bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Bereketzade Mah. Büyük Hendek Cd.", "No: 14, Beyoğlu / Istanbul"], trust: "Your details stay private. Pay in-store.",
     yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", booked: "FULL", availabilityLoading: "Checking available times...", availabilityUnavailable: "Available times couldn't be loaded. Please try again.", availableSlots: "Available times", whatsappOptIn: "Send my booking confirmation on WhatsApp", whatsappOptInNote: "I agree to receive my appointment details on WhatsApp.", successWhatsApp: "Your appointment is booked and the confirmation was sent on WhatsApp.", successWhatsAppPending: "Your appointment is booked. WhatsApp confirmation couldn't be sent right now.", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
+    dateClosed: "The barber is closed on Sundays. Please choose another day.",
     success: "Your appointment is booked. See you soon!", invalid: "Please check your details and try again.", conflict: "That time just filled up. Please choose another.", unavailable: "We can't book right now. Please try again later.", network: "Connection failed. Please try again.", genericError: "Something went wrong.",
     footerLine: ["GOOD CUTS. GOOD CONVERSATION.", "SEE YOU IN KARAKÖY."], directions: "GET DIRECTIONS", themeLight: "Switch to light theme", themeDark: "Switch to dark theme", languageLabel: "Choose language",
   },
@@ -102,13 +158,22 @@ export default function Home() {
   const [currentTime, setCurrentTime] = useState(0);
   const [theme, setTheme] = useState<Theme>("light");
   const [reviewIndex, setReviewIndex] = useState(0);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
+  const [adminAppointments, setAdminAppointments] = useState<AdminAppointment[]>([]);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminError, setAdminError] = useState<"incorrect" | "notConfigured" | "loadError" | "">("");
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [adminSubmitting, setAdminSubmitting] = useState(false);
+  const [adminRefreshKey, setAdminRefreshKey] = useState(0);
   const t = content[language];
+  const adminText = adminContent[language];
   const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
   const whatsappHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t.whatsappMessage)}` : "";
   const minDate = istanbulDateValue(new Date());
   const currentAvailability = availability?.date === date ? availability : null;
   const bookedSlots = currentAvailability?.bookedSlots ?? [];
-  const availabilityLoading = Boolean(date && !currentAvailability);
+  const availabilityLoading = Boolean(date && !isSundayDate(date) && !currentAvailability);
   const fieldErrorText: Record<FieldErrorCode, string> = {
     nameRequired: t.nameRequired,
     nameTooShort: t.nameTooShort,
@@ -118,6 +183,7 @@ export default function Home() {
     dateRequired: t.dateRequired,
     dateInvalid: t.dateInvalid,
     datePast: t.datePast,
+    dateClosed: t.dateClosed,
     timeRequired: t.timeRequired,
     timeInvalid: t.timeInvalid,
     timePast: t.timePast,
@@ -141,7 +207,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!date) return;
+    if (!date || isSundayDate(date)) return;
 
     const controller = new AbortController();
     fetch(`/api/appointments?date=${encodeURIComponent(date)}`, { signal: controller.signal })
@@ -156,6 +222,27 @@ export default function Home() {
 
     return () => controller.abort();
   }, [date]);
+
+  useEffect(() => {
+    if (!isAdminOpen) return;
+
+    let active = true;
+    requestAdminAppointments()
+      .then((appointments) => {
+        if (!active) return;
+        setAdminAuthenticated(appointments !== null);
+        setAdminAppointments(appointments || []);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        setAdminError(error instanceof Error && error.message === "notConfigured" ? "notConfigured" : "loadError");
+      })
+      .finally(() => {
+        if (active) setAdminLoading(false);
+      });
+
+    return () => { active = false; };
+  }, [isAdminOpen, adminRefreshKey]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
@@ -205,6 +292,7 @@ export default function Home() {
       const parsedDate = new Date(`${value}T00:00:00.000Z`);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== value) return "dateInvalid";
       if (value < minDate) return "datePast";
+      if (isSundayDate(value)) return "dateClosed";
     }
 
     if (field === "time") {
@@ -322,6 +410,75 @@ export default function Home() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  async function submitAdminLogin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setAdminSubmitting(true);
+    setAdminError("");
+    try {
+      const response = await fetch("/api/admin/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: adminPassword }),
+      });
+      if (response.status === 401) {
+        setAdminError("incorrect");
+        return;
+      }
+      if (response.status === 503) {
+        setAdminError("notConfigured");
+        return;
+      }
+      if (!response.ok) throw new Error("Admin login failed");
+
+      setAdminPassword("");
+      setAdminError("");
+      setAdminAuthenticated(true);
+      setAdminLoading(true);
+      try {
+        const appointments = await requestAdminAppointments();
+        if (appointments === null) {
+          setAdminAuthenticated(false);
+          setAdminError("loadError");
+          return;
+        }
+        setAdminAppointments(appointments);
+      } finally {
+        setAdminLoading(false);
+      }
+    } catch {
+      setAdminError("loadError");
+    } finally {
+      setAdminSubmitting(false);
+    }
+  }
+
+  async function logoutAdmin() {
+    setAdminError("");
+    try {
+      const response = await fetch("/api/admin/session", { method: "DELETE" });
+      if (!response.ok) throw new Error("Admin logout failed");
+      setAdminAuthenticated(false);
+      setAdminAppointments([]);
+      setAdminPassword("");
+    } catch {
+      setAdminError("loadError");
+    }
+  }
+
+  function toggleAdminPanel() {
+    if (!isAdminOpen) {
+      setAdminLoading(true);
+      setAdminError("");
+    }
+    setIsAdminOpen(!isAdminOpen);
+  }
+
+  function refreshAdminAppointments() {
+    setAdminLoading(true);
+    setAdminError("");
+    setAdminRefreshKey((key) => key + 1);
   }
 
   return (
@@ -505,13 +662,13 @@ export default function Home() {
             <input id="booking-date" type="date" min={minDate} value={date} aria-invalid={Boolean(fieldErrors.date)} aria-describedby={fieldErrors.date ? "booking-date-error" : undefined} required onBlur={(event) => validateField("date", event.currentTarget.value)} onChange={(event) => { const nextDate = event.currentTarget.value; setDate(nextDate); setTime(""); updateFieldError("date", nextDate, nextDate); setFieldErrors((current) => ({ ...current, time: undefined })); }} />
             {fieldErrors.date && <small className="field-error" id="booking-date-error">{fieldErrorText[fieldErrors.date]}</small>}
           </label>
-          <fieldset className={`time-fieldset ${fieldErrors.time ? "has-error" : ""}`} disabled={!date || availabilityLoading || Boolean(currentAvailability?.failed)} aria-invalid={Boolean(fieldErrors.time)} aria-describedby={fieldErrors.time ? "booking-time-error" : undefined}>
+          <fieldset className={`time-fieldset ${fieldErrors.time ? "has-error" : ""}`} disabled={!date || isSundayDate(date) || availabilityLoading || Boolean(currentAvailability?.failed)} aria-invalid={Boolean(fieldErrors.time)} aria-describedby={fieldErrors.time ? "booking-time-error" : undefined}>
             <legend>{t.time} {!date ? <span>{t.pickDate}</span> : availabilityLoading ? <span>{t.availabilityLoading}</span> : null}</legend>
             <div className="time-grid">
               {timeSlots.map((slot) => {
                 const isPast = date === minDate && currentTime > 0 && new Date(`${date}T${slot}:00+03:00`).getTime() <= currentTime;
                 const isBooked = bookedSlots.includes(slot);
-                const isUnavailable = isPast || isBooked || availabilityLoading || Boolean(currentAvailability?.failed);
+                const isUnavailable = isSundayDate(date) || isPast || isBooked || availabilityLoading || Boolean(currentAvailability?.failed);
                 return (
                   <button className={`${time === slot ? "is-active" : ""} ${isBooked ? "is-booked" : ""}`} key={slot} type="button" onClick={() => { setTime(slot); updateFieldError("time", slot, date); }} aria-label={isBooked ? `${slot}, ${t.booked}` : slot} aria-pressed={time === slot} disabled={isUnavailable}>
                     <span>{slot}</span>{isBooked && <small>{t.booked}</small>}
@@ -519,8 +676,9 @@ export default function Home() {
                 );
               })}
             </div>
+            {date && isSundayDate(date) && <small className="availability-message error" role="status">{t.dateClosed}</small>}
             {date && !availabilityLoading && currentAvailability?.failed && <small className="availability-message error" role="status">{t.availabilityUnavailable}</small>}
-            {date && currentAvailability && !currentAvailability.failed && <small className="availability-message" aria-live="polite">{t.availableSlots}: {timeSlots.filter((slot) => !bookedSlots.includes(slot) && !(date === minDate && currentTime > 0 && new Date(`${date}T${slot}:00+03:00`).getTime() <= currentTime)).length}</small>}
+            {date && !isSundayDate(date) && currentAvailability && !currentAvailability.failed && <small className="availability-message" aria-live="polite">{t.availableSlots}: {timeSlots.filter((slot) => !bookedSlots.includes(slot) && !(date === minDate && currentTime > 0 && new Date(`${date}T${slot}:00+03:00`).getTime() <= currentTime)).length}</small>}
             {fieldErrors.time && <small className="field-error" id="booking-time-error">{fieldErrorText[fieldErrors.time]}</small>}
           </fieldset>
           <label className="whatsapp-consent">
@@ -533,10 +691,68 @@ export default function Home() {
         </form>
       </section>
 
+      {isAdminOpen && (
+        <section className="admin-section section-wrap" id="yonetim">
+          <div className="admin-panel">
+            <div className="admin-heading">
+              <div>
+                <p className="eyebrow">{adminText.entry}</p>
+                <h2>{adminText.title}</h2>
+                <p>{adminText.description}</p>
+              </div>
+              {adminAuthenticated && (
+                <div className="admin-actions">
+                  <span>{adminAppointments.length} {adminText.count}</span>
+                  <button type="button" onClick={refreshAdminAppointments}>{language === "tr" ? "YENİLE" : "REFRESH"}</button>
+                  <button type="button" onClick={logoutAdmin}>{adminText.logout}</button>
+                </div>
+              )}
+            </div>
+            {adminError && <p className="admin-error" role="alert">{adminText[adminError]}</p>}
+            {adminLoading ? (
+              <p className="admin-message" role="status">{adminText.loading}</p>
+            ) : adminAuthenticated ? (
+              adminAppointments.length ? (
+                <div className="admin-table-wrap">
+                  <table className="admin-table">
+                    <thead>
+                      <tr><th>{adminText.date}</th><th>{adminText.time}</th><th>{adminText.name}</th><th>{adminText.phone}</th><th>{adminText.service}</th></tr>
+                    </thead>
+                    <tbody>
+                      {adminAppointments.map((appointment, index) => {
+                        const serviceName = services.find((item) => item.key === appointment.service)?.name[language] || appointment.service;
+                        const dateLabel = new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
+                          dateStyle: "medium",
+                          timeZone: "Europe/Istanbul",
+                        }).format(new Date(`${appointment.date}T12:00:00+03:00`));
+                        return (
+                          <tr key={`${appointment.date}-${appointment.time}-${index}`}>
+                            <td>{dateLabel}</td><td>{appointment.time}</td><td>{appointment.name}</td><td>{appointment.phone}</td><td>{serviceName}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : <p className="admin-message">{adminText.empty}</p>
+            ) : (
+              <form className="admin-login" onSubmit={submitAdminLogin}>
+                <label className="field" htmlFor="admin-password">
+                  <span>{adminText.password}</span>
+                  <input id="admin-password" type="password" autoComplete="current-password" minLength={12} value={adminPassword} onChange={(event) => setAdminPassword(event.currentTarget.value)} required />
+                </label>
+                <button className="submit-button" type="submit" disabled={adminSubmitting}>{adminSubmitting ? adminText.loggingIn : adminText.login}<ArrowRight size={17} /></button>
+              </form>
+            )}
+          </div>
+        </section>
+      )}
+
       <footer className="site-footer">
         <a className="wordmark footer-mark" href="#home"><span>KÖK.</span><small>BARBER CLUB</small></a>
         <p>{t.footerLine[0]}<br />{t.footerLine[1]}</p>
         <a href="https://maps.google.com/?q=Bereketzade+Mahallesi+B%C3%BCy%C3%BCk+Hendek+Caddesi+Istanbul" target="_blank" rel="noreferrer">{t.directions} <ArrowRight size={14} /></a>
+        <button className="admin-entry" type="button" onClick={toggleAdminPanel} aria-expanded={isAdminOpen}>{adminText.entry}</button>
         <span className="footer-copy">© 2026 KÖK. BARBER CLUB</span>
       </footer>
 

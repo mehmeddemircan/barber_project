@@ -6,18 +6,19 @@ Next.js randevu sitesi. Randevular MongoDB Atlas'taki `appointments` koleksiyonu
 
 1. MongoDB Atlas'ta bir cluster ve veritabanı kullanıcısı oluşturun. Database Access ve Network Access ayarlarında uygulama sunucusunun bağlanmasına izin verin.
 2. `.env.example` dosyasını `.env.local` adıyla kopyalayıp `MONGODB_URI`, `MONGODB_DB` ve `NEXT_PUBLIC_WHATSAPP_NUMBER` değerlerini doldurun. WhatsApp numarasını ülke koduyla, yalnızca rakam kullanarak yazın (ör. `905xxxxxxxxx`).
-3. Bağımlılıkları kurup geliştirme sunucusunu başlatın:
+3. Berberin randevu tablosuna erişmesi için `ADMIN_PASSWORD` değerini en az 12 karakterli güçlü bir parola, `ADMIN_SESSION_SECRET` değerini en az 32 karakterli rastgele bir sır olarak ayarlayın. Yönetim tablosu sayfanın altındaki **Berber girişi** bağlantısından açılır; oturum 12 saat sonra sona erer. Bu iki değeri herkese açık ortamlarda paylaşmayın.
+4. Bağımlılıkları kurup geliştirme sunucusunu başlatın:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Site `http://localhost:3000` adresinde açılır.
+Site `http://localhost:3000` adresinde açılır. Randevu formu ve API pazar gününü kapalı kabul eder.
 
 ## Vercel'e dağıtım
 
-Projeyi Git sağlayıcınıza gönderip Vercel'de içe aktarın. Vercel projesinin **Settings → Environment Variables** bölümüne `MONGODB_URI`, `MONGODB_DB` ve `NEXT_PUBLIC_WHATSAPP_NUMBER` değişkenlerini ekleyin, sonra yeniden dağıtın. WhatsApp numarasını ülke koduyla ve `+`/boşluk olmadan girin. Atlas Network Access'te Vercel'den gelen bağlantılara izin verin; dinamik çıkış IP'leri için Atlas/Vercel planınıza uygun ağ erişimi yapılandırması gerekir.
+Projeyi Git sağlayıcınıza gönderip Vercel'de içe aktarın. Vercel projesinin **Settings → Environment Variables** bölümüne `MONGODB_URI`, `MONGODB_DB`, `NEXT_PUBLIC_WHATSAPP_NUMBER`, `ADMIN_PASSWORD` ve `ADMIN_SESSION_SECRET` değişkenlerini ekleyin, sonra yeniden dağıtın. WhatsApp numarasını ülke koduyla ve `+`/boşluk olmadan girin. Atlas Network Access'te Vercel'den gelen bağlantılara izin verin; dinamik çıkış IP'leri için Atlas/Vercel planınıza uygun ağ erişimi yapılandırması gerekir.
 
 Randevu API'si `POST /api/appointments` yolundadır. API tarih, saat, telefon ve hizmet alanlarını doğrular; aynı saat için eşzamanlı talepleri MongoDB unique index'i engeller. Atlas değişkenleri tanımlı değilse arayüz açılır, randevu kaydı 503 yanıtı verir.
 

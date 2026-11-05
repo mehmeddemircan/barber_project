@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isCalendarDate, isSundayDate } from "@/lib/appointment-dates";
 import { connectToDatabase } from "@/lib/mongodb";
 
 export const runtime = "nodejs";
@@ -20,11 +21,6 @@ function istanbulDateValue(date: Date) {
   }).formatToParts(date);
   const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((item) => item.type === type)?.value;
   return `${part("year")}-${part("month")}-${part("day")}`;
-}
-
-function isCalendarDate(value: string) {
-  const parsed = new Date(`${value}T00:00:00.000Z`);
-  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
 type Appointment = {
@@ -103,6 +99,9 @@ export async function GET(request: Request) {
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !isCalendarDate(date) || date < today) {
     return NextResponse.json({ message: "Geçerli bir tarih seçin." }, { status: 400 });
   }
+  if (isSundayDate(date)) {
+    return NextResponse.json({ message: "Pazar günleri randevu alınamıyor." }, { status: 400 });
+  }
 
   try {
     const client = await connectToDatabase();
@@ -138,6 +137,10 @@ export async function POST(request: Request) {
   const today = new Date();
   const todayIstanbul = istanbulDateValue(today);
   const requestedTime = date && time ? new Date(`${date}T${time}:00+03:00`) : null;
+
+  if (date && isSundayDate(date)) {
+    return NextResponse.json({ message: "Pazar günleri randevu alınamıyor." }, { status: 400 });
+  }
 
   if (
     !name || name.length < 2 || name.length > 80 ||
