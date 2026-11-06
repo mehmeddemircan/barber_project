@@ -271,11 +271,6 @@ button { color: inherit; }
 .booking-summary-selection > span { color: var(--muted); font-size: 10px; }
 .booking-summary-selection > strong { color: var(--olive); font-size: 19px; font-weight: 600; }
 .booking-summary > small { display: flex; grid-column: span 2; align-items: center; gap: 6px; padding-top: 9px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
-.whatsapp-consent { display: flex; align-items: flex-start; gap: 10px; margin-top: 15px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
-.whatsapp-consent input { width: 16px; height: 16px; flex-shrink: 0; margin: 2px 0 0; accent-color: #0071e3; }
-.whatsapp-consent > span { display: grid; gap: 4px; }
-.whatsapp-consent strong { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; }
-.whatsapp-consent small { color: var(--muted); font-size: 9px; line-height: 1.5; }
 .submit-button { display: flex; width: 100%; min-height: 48px; align-items: center; justify-content: space-between; margin-top: 19px; padding: 0 17px; border: 0; border-radius: 24px; background: #e3c77d; color: #1d1d1f; cursor: pointer; font-size: 10px; font-weight: 650; letter-spacing: .06em; transition: background .2s ease; }
 .submit-button:hover:not(:disabled) { background: #d6b866; }
 .submit-button:disabled { cursor: wait; opacity: .6; }
