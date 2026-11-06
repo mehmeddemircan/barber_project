@@ -1,3 +1,4 @@
+import { createHash, randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { isCalendarDate, isSundayDate } from "@/lib/appointment-dates";
 import { connectToDatabase } from "@/lib/mongodb";
@@ -31,6 +32,7 @@ type Appointment = {
   time: string;
   whatsappOptIn: boolean;
   createdAt: Date;
+  cancellationTokenHash: string;
 };
 
 type AppointmentPayload = Partial<Appointment> & { language?: "tr" | "en" };
@@ -157,11 +159,25 @@ export async function POST(request: Request) {
     const client = await connectToDatabase();
     const collection = client.db(process.env.MONGODB_DB || "kok_barber").collection<Appointment>("appointments");
     await collection.createIndex({ date: 1, time: 1 }, { unique: true });
-    const appointment: Appointment = { name, phone, service: service as Appointment["service"], date, time, whatsappOptIn, createdAt: new Date() };
+    await collection.createIndex({ cancellationTokenHash: 1 }, { unique: true, sparse: true });
+    const cancellationToken = randomBytes(32).toString("base64url");
+    const appointment: Appointment = {
+      name,
+      phone,
+      service: service as Appointment["service"],
+      date,
+      time,
+      whatsappOptIn,
+      createdAt: new Date(),
+      cancellationTokenHash: createHash("sha256").update(cancellationToken).digest("hex"),
+    };
     await collection.insertOne(appointment);
     const whatsappSent = whatsappOptIn ? await sendWhatsAppConfirmation(appointment, language) : false;
 
-    return NextResponse.json({ message: "Randevunuz alındı. Sizi bekliyoruz!", whatsappSent }, { status: 201 });
+    return NextResponse.json(
+      { message: "Randevunuz alındı. Sizi bekliyoruz!", whatsappSent, cancellationToken },
+      { status: 201, headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === 11000) {
       return NextResponse.json({ message: "Bu saat az önce doldu. Lütfen başka bir saat seçin." }, { status: 409 });

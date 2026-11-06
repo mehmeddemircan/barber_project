@@ -281,6 +281,7 @@ button { color: inherit; }
 .submit-button:disabled { cursor: wait; opacity: .6; }
 .form-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 13px; padding: 12px; border-radius: 9px; font-size: 11px; line-height: 1.5; }
 .whatsapp-draft-link { display: inline-flex; flex-shrink: 0; align-items: center; gap: 5px; margin-left: auto; font-size: 9px; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.booking-cancel-link { display: inline-flex; flex-basis: 100%; align-items: center; gap: 5px; color: var(--ink); font-size: 10px; font-weight: 650; text-decoration: underline; text-underline-offset: 2px; }
 .form-status.success { background: color-mix(in srgb, var(--success) 10%, var(--paper)); color: var(--success); }
 .form-status.error { background: color-mix(in srgb, var(--danger) 10%, var(--paper)); color: var(--danger); }
 .form-privacy { margin: 11px 0 0; color: var(--muted); font-size: 9px; line-height: 1.5; text-align: center; }
@@ -345,6 +346,32 @@ button { color: inherit; }
 .admin-edit-form .field > span { font-size: 8px; }
 .admin-edit-form .field input, .admin-edit-form .field select { height: 38px; font-size: 10px; }
 .admin-edit-form .admin-row-actions { align-items: end; }
+
+.cancellation-page { display: grid; min-height: 100svh; place-items: center; padding: 24px; background: var(--paper); color: var(--ink); }
+.cancellation-card { position: relative; width: min(100%, 520px); padding: clamp(24px, 6vw, 48px); border: 1px solid var(--line); border-radius: 22px; background: var(--surface); box-shadow: 0 16px 55px rgba(0,0,0,.07); }
+.cancellation-brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 42px; color: var(--ink); font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+.cancellation-brand > svg { color: #9c7a2c; }
+.cancellation-brand small { display: block; margin-top: 4px; color: var(--muted); font-size: 8px; letter-spacing: .12em; }
+.cancellation-card > .eyebrow { margin: 0 0 10px; color: var(--olive); font-size: 9px; }
+.cancellation-card h1 { margin: 0; font-size: clamp(30px, 7vw, 42px); font-weight: 600; letter-spacing: -.06em; line-height: 1.05; }
+.cancellation-message { margin: 14px 0 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.cancellation-error { color: var(--danger); }
+.cancellation-details { display: grid; gap: 0; margin: 24px 0; border: 1px solid var(--line); border-radius: 12px; }
+.cancellation-details > div { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 13px 15px; }
+.cancellation-details > div + div { border-top: 1px solid var(--line); }
+.cancellation-details dt { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+.cancellation-details dd { margin: 0; font-size: 12px; font-weight: 550; }
+.cancellation-button { display: flex; width: 100%; min-height: 48px; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; padding: 0 17px; border: 0; border-radius: 24px; background: #e3c77d; color: #1d1d1f; cursor: pointer; font-size: 11px; font-weight: 650; text-align: left; }
+.cancellation-button:hover { background: #d6b866; }
+.cancellation-button:disabled { cursor: wait; opacity: .6; }
+.cancellation-success { display: grid; justify-items: start; gap: 10px; margin-top: 25px; color: var(--success); }
+.cancellation-success > p { margin: 0; font-size: 14px; font-weight: 600; }
+.cancellation-success > small { color: var(--muted); font-size: 10px; line-height: 1.6; }
+.cancellation-success .cancellation-button { margin-top: 8px; }
+.cancellation-back { display: inline-flex; align-items: center; gap: 6px; margin-top: 28px; color: var(--muted); font-size: 10px; }
+.cancellation-back:hover { color: var(--ink); }
+.cancellation-language { position: absolute; top: 24px; right: 24px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 16px; background: transparent; color: var(--muted); cursor: pointer; font-size: 9px; }
+.cancellation-language:hover { color: var(--ink); }
 
 .site-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding: 24px max(24px, calc((100vw - 1180px) / 2)); border-top: 1px solid var(--line); }
 .footer-mark { margin-right: auto; }
@@ -467,6 +494,11 @@ button { color: inherit; }
   .admin-table td[colspan]::before { content: none; }
   .admin-date-cell { flex-wrap: wrap; justify-content: flex-end; }
   .admin-edit-form { grid-template-columns: 1fr; }
+  .cancellation-page { padding: 16px; }
+  .cancellation-card { border-radius: 16px; }
+  .cancellation-brand { margin-bottom: 34px; }
+  .cancellation-language { top: 18px; right: 18px; }
+  .cancellation-details > div { grid-template-columns: 100px 1fr; }
   .admin-pagination { justify-content: center; }
   .admin-pagination > span { flex-basis: 100%; text-align: center; }
   .admin-pagination > label { justify-content: center; }

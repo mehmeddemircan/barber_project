@@ -153,7 +153,7 @@ const reviews = [
 const content = {
   tr: {
     nav: ["Hikâyemiz", "Kampanyalar", "Hizmetler", "Yorumlar", "Randevu"], book: "Yerini ayırt", menuOpen: "Menüyü aç", menuClose: "Menüyü kapat", whatsappContact: "WhatsApp'tan yaz", whatsappSetup: "WhatsApp numarası yapılandırılmalı",
-    whatsappMessage: "Merhaba, randevu ve hizmetler hakkında bilgi almak istiyorum.",
+    whatsappMessage: "Merhaba, randevu ve hizmetler hakkında bilgi almak istiyorum.", cancellationLink: "Randevu iptal bağlantını sakla", cancellationLinkMessage: "Randevunu iptal etmen gerekirse kullanabileceğin bağlantı:",
     location: "TALAS, KAYSERİ", heroTitle: ["İYİ KESİM.", "İYİ HİS."], heroCopy: "Her şeyin hızlandığı bir şehirde, kendine ayırdığın iyi bir saat.", bookNow: "Randevunu oluştur", scroll: "AŞAĞI İN",
     who: "BİZ KİMİZ?", introTitle: ["Berberlik bir", "ritüeldir."], introCopy: "İyi bir kesimden fazlası. Kapıdan girdiğin andan son dokunuşa kadar, her şey yerli yerinde. Mahallenin ustaları, eski usul özen ve sana ayrılmış bir koltuk.", learn: "BERBERİMİZİ TANI", stamp: ["İYİ İŞ", "ZAMAN ALIR"],
     filmKicker: "DÜKKÂNIMIZDAN", filmTitle: ["USTALIK", "YAKINDAN."], filmCopy: "Makasın sesi, sıcak havlu, tanıdık bir koltuk. İyi bir kesim burada böyle başlar.", filmLabel: "BERBER SHOP · KISA FİLM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
@@ -169,7 +169,7 @@ const content = {
   },
   en: {
     nav: ["Our Story", "Offers", "Services", "Reviews", "Book"], book: "Book a chair", menuOpen: "Open menu", menuClose: "Close menu", whatsappContact: "Chat on WhatsApp", whatsappSetup: "Set the WhatsApp number first",
-    whatsappMessage: "Hi, I'd like to ask about appointments and services.",
+    whatsappMessage: "Hi, I'd like to ask about appointments and services.", cancellationLink: "Save your cancellation link", cancellationLinkMessage: "Use this link if you need to cancel your appointment:",
     location: "TALAS, KAYSERİ", heroTitle: ["A GOOD CUT.", "A GOOD FEEL."], heroCopy: "In a city that never slows down, take one good hour for yourself.", bookNow: "Book your appointment", scroll: "SCROLL TO EXPLORE",
     who: "WHO WE ARE", introTitle: ["A barber visit", "is a ritual."], introCopy: "More than a good cut. From the moment you walk in to the final touch, everything is in its place. Neighbourhood craft, old-school care, and a chair that is yours.", learn: "MEET YOUR BARBER", stamp: ["GOOD WORK", "TAKES TIME"],
     filmKicker: "INSIDE THE SHOP", filmTitle: ["CRAFT,", "UP CLOSE."], filmCopy: "The sound of shears, a warm towel, a familiar chair. This is where a good cut begins.", filmLabel: "BARBER SHOP · SHORT FILM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
@@ -244,6 +244,7 @@ export default function Home() {
   const [status, setStatus] = useState("");
   const [statusIsSuccess, setStatusIsSuccess] = useState(false);
   const [whatsappDraftHref, setWhatsappDraftHref] = useState("");
+  const [bookingCancellationHref, setBookingCancellationHref] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [availability, setAvailability] = useState<AvailabilityState | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -504,6 +505,7 @@ export default function Home() {
   async function submitAppointment(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setWhatsappDraftHref("");
+    setBookingCancellationHref("");
     const form = event.currentTarget;
     const formData = new FormData(form);
     const name = String(formData.get("name") || "");
@@ -545,16 +547,22 @@ export default function Home() {
           language,
         }),
       });
-      const result = await response.json() as { whatsappSent?: boolean };
+      const result = await response.json() as { whatsappSent?: boolean; cancellationToken?: string };
       if (response.ok) {
+        if (!result.cancellationToken) throw new Error("Cancellation token was not returned");
+        const cancellationUrl = new URL("/randevu/iptal", window.location.origin);
+        cancellationUrl.searchParams.set("token", result.cancellationToken);
+        cancellationUrl.searchParams.set("lang", language);
+        const cancellationHref = cancellationUrl.toString();
+        setBookingCancellationHref(cancellationHref);
         const serviceName = services.find((item) => item.key === service)?.name[language] || service;
         const dateLabel = new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
           dateStyle: "long",
           timeZone: "Europe/Istanbul",
         }).format(new Date(`${date}T12:00:00+03:00`));
         const message = language === "tr"
-          ? `Merhaba, ben ${name}. ${dateLabel} tarihinde saat ${time} için ${serviceName} randevusu aldım.`
-          : `Hi, this is ${name}. I booked a ${serviceName} appointment for ${dateLabel} at ${time}.`;
+          ? `Merhaba, ben ${name}. ${dateLabel} tarihinde saat ${time} için ${serviceName} randevusu aldım.\n\n${t.cancellationLinkMessage}\n${cancellationHref}`
+          : `Hi, this is ${name}. I booked a ${serviceName} appointment for ${dateLabel} at ${time}.\n\n${t.cancellationLinkMessage}\n${cancellationHref}`;
         const draftHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}` : "";
         if (draftHref) {
           setWhatsappDraftHref(draftHref);
@@ -1020,7 +1028,7 @@ export default function Home() {
             <span><strong><MessageCircle size={14} />{t.whatsappOptIn}</strong><small>{t.whatsappOptInNote}</small></span>
           </label>
           <button className="submit-button" type="submit" disabled={isSubmitting}>{isSubmitting ? t.submitting : t.submit}<ArrowRight size={17} /></button>
-          {status && <div className={`form-status ${statusIsSuccess ? "success" : "error"}`} role={statusIsSuccess ? "status" : "alert"}>{statusIsSuccess && <Check size={16} />}<span>{status}</span>{statusIsSuccess && whatsappDraftHref && <a className="whatsapp-draft-link" href={whatsappDraftHref} target="_blank" rel="noreferrer">{language === "tr" ? "WhatsApp taslağını aç" : "Open WhatsApp draft"}<ArrowRight size={13} /></a>}</div>}
+          {status && <div className={`form-status ${statusIsSuccess ? "success" : "error"}`} role={statusIsSuccess ? "status" : "alert"}>{statusIsSuccess && <Check size={16} />}<span>{status}</span>{statusIsSuccess && whatsappDraftHref && <a className="whatsapp-draft-link" href={whatsappDraftHref} target="_blank" rel="noreferrer">{language === "tr" ? "WhatsApp taslağını aç" : "Open WhatsApp draft"}<ArrowRight size={13} /></a>}{statusIsSuccess && bookingCancellationHref && <a className="booking-cancel-link" href={bookingCancellationHref} target="_blank" rel="noreferrer">{t.cancellationLink}<ArrowRight size={13} /></a>}</div>}
           <p className="form-privacy">{t.privacy}</p>
         </form>
       </section>
