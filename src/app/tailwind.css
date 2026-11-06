@@ -92,8 +92,8 @@ button { color: inherit; }
 .language-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .theme-toggle, .mobile-menu { display: grid; width: 34px; height: 34px; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
 .theme-toggle:hover, .mobile-menu:hover { background: var(--surface-raised); }
-.header-cta { display: inline-flex; height: 34px; align-items: center; gap: 8px; padding: 0 15px; border-radius: 20px; background: #000; color: #fff; font-size: 11px; font-weight: 600; transition: background .2s ease; }
-.header-cta:hover { background: #2d2d2f; }
+.header-cta { display: inline-flex; height: 34px; align-items: center; gap: 8px; padding: 0 15px; border-radius: 20px; background: #e3c77d; color: #1d1d1f; font-size: 11px; font-weight: 600; transition: background .2s ease; }
+.header-cta:hover { background: #d6b866; }
 .mobile-menu { display: none; }
 
 .hero { position: relative; display: flex; min-height: 600px; height: min(78svh, 790px); align-items: center; overflow: hidden; background: #161a17; color: #fff; }
