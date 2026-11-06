@@ -92,8 +92,8 @@ button { color: inherit; }
 .language-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .theme-toggle, .mobile-menu { display: grid; width: 34px; height: 34px; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
 .theme-toggle:hover, .mobile-menu:hover { background: var(--surface-raised); }
-.header-cta { display: inline-flex; height: 34px; align-items: center; gap: 8px; padding: 0 15px; border-radius: 20px; background: #0071e3; color: #fff; font-size: 11px; font-weight: 600; transition: background .2s ease; }
-.header-cta:hover { background: #0077ed; }
+.header-cta { display: inline-flex; height: 34px; align-items: center; gap: 8px; padding: 0 15px; border-radius: 20px; background: #000; color: #fff; font-size: 11px; font-weight: 600; transition: background .2s ease; }
+.header-cta:hover { background: #2d2d2f; }
 .mobile-menu { display: none; }
 
 .hero { position: relative; display: flex; min-height: 600px; height: min(78svh, 790px); align-items: center; overflow: hidden; background: #161a17; color: #fff; }
@@ -105,8 +105,8 @@ button { color: inherit; }
 .hero h1 { margin: 0; font-size: clamp(4.3rem, 9.5vw, 8.5rem); font-weight: 650; letter-spacing: -.075em; line-height: .88; }
 .hero h1 em { color: #e3c77d; font-style: normal; }
 .hero-copy { max-width: 390px; margin: 25px 0 0; color: rgba(255,255,255,.79); font-size: 16px; line-height: 1.65; }
-.hero-button { display: inline-flex; min-height: 46px; align-items: center; gap: 24px; margin-top: 26px; padding: 0 19px; border-radius: 24px; background: #0071e3; color: #fff; font-size: 12px; font-weight: 600; transition: background .2s ease, transform .2s ease; }
-.hero-button:hover { transform: translateY(-1px); background: #0077ed; }
+.hero-button { display: inline-flex; min-height: 46px; align-items: center; gap: 24px; margin-top: 26px; padding: 0 19px; border-radius: 24px; background: #000; color: #fff; font-size: 12px; font-weight: 600; transition: background .2s ease, transform .2s ease; }
+.hero-button:hover { transform: translateY(-1px); background: #2d2d2f; }
 .hero-side-note { position: absolute; z-index: 2; top: 50%; right: 30px; color: rgba(255,255,255,.62); font-size: 9px; letter-spacing: .16em; writing-mode: vertical-rl; }
 .scroll-cue { position: absolute; z-index: 2; bottom: 28px; left: max(24px, calc((100vw - 1180px) / 2)); display: flex; align-items: center; gap: 9px; color: rgba(255,255,255,.75); font-size: 9px; letter-spacing: .12em; }
 .hero-index { position: absolute; z-index: 2; right: max(24px, calc((100vw - 1180px) / 2)); bottom: 28px; display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,.65); font-size: 10px; }
@@ -248,6 +248,7 @@ button { color: inherit; }
 .quick-dates > div { display: flex; flex-wrap: wrap; gap: 7px; }
 .quick-dates button { min-height: 34px; padding: 0 12px; border: 1px solid var(--line); border-radius: 18px; background: transparent; color: var(--muted); cursor: pointer; font-size: 10px; font-weight: 550; transition: all .2s ease; }
 .quick-dates button:hover, .quick-dates button.is-selected { border-color: #0071e3; background: #0071e3; color: #fff; }
+.quick-dates button:disabled { cursor: not-allowed; opacity: .45; }
 .time-fieldset { margin: 23px 0 0; padding: 0; border: 0; }
 .time-fieldset legend { margin-bottom: 11px; padding: 0; }
 .time-fieldset legend span { margin-left: 4px; color: var(--muted); font-weight: 400; letter-spacing: 0; }
@@ -275,8 +276,8 @@ button { color: inherit; }
 .whatsapp-consent > span { display: grid; gap: 4px; }
 .whatsapp-consent strong { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; }
 .whatsapp-consent small { color: var(--muted); font-size: 9px; line-height: 1.5; }
-.submit-button { display: flex; width: 100%; min-height: 48px; align-items: center; justify-content: space-between; margin-top: 19px; padding: 0 17px; border: 0; border-radius: 24px; background: #0071e3; color: #fff; cursor: pointer; font-size: 10px; font-weight: 650; letter-spacing: .06em; transition: background .2s ease; }
-.submit-button:hover:not(:disabled) { background: #0077ed; }
+.submit-button { display: flex; width: 100%; min-height: 48px; align-items: center; justify-content: space-between; margin-top: 19px; padding: 0 17px; border: 0; border-radius: 24px; background: #000; color: #fff; cursor: pointer; font-size: 10px; font-weight: 650; letter-spacing: .06em; transition: background .2s ease; }
+.submit-button:hover:not(:disabled) { background: #2d2d2f; }
 .submit-button:disabled { cursor: wait; opacity: .6; }
 .form-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 13px; padding: 12px; border-radius: 9px; font-size: 11px; line-height: 1.5; }
 .whatsapp-draft-link { display: inline-flex; flex-shrink: 0; align-items: center; gap: 5px; margin-left: auto; font-size: 9px; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }

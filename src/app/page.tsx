@@ -207,7 +207,7 @@ function istanbulDateValue(date: Date) {
 
 function getSuggestedDates(startDate: string) {
   const date = new Date(`${startDate}T00:00:00.000Z`);
-  const suggestedDates: string[] = [];
+  const suggestedDates = [startDate];
 
   while (suggestedDates.length < 3) {
     date.setUTCDate(date.getUTCDate() + 1);
@@ -974,13 +974,14 @@ export default function Home() {
             <span>{t.quickDates}</span>
             <div>
               {suggestedDates.map((suggestedDate) => {
+                const isToday = suggestedDate === minDate;
                 const label = new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
                   weekday: "short",
                   day: "numeric",
                   month: "short",
                   timeZone: "Europe/Istanbul",
                 }).format(new Date(`${suggestedDate}T12:00:00+03:00`));
-                return <button className={date === suggestedDate ? "is-selected" : ""} type="button" key={suggestedDate} aria-pressed={date === suggestedDate} onClick={() => selectBookingDate(suggestedDate)}>{label}</button>;
+                return <button className={date === suggestedDate ? "is-selected" : ""} type="button" key={suggestedDate} aria-pressed={date === suggestedDate} disabled={isSundayDate(suggestedDate)} onClick={() => selectBookingDate(suggestedDate)}>{isToday ? language === "tr" ? "Bugün" : "Today" : label}</button>;
               })}
             </div>
           </div>
