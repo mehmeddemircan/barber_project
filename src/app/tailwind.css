@@ -216,7 +216,6 @@ button { color: inherit; }
 .review-bubble-top > span { color: var(--muted); font-size: 9px; font-weight: 650; letter-spacing: .08em; }
 .review-bubble blockquote { margin: 25px 0 auto; font-size: 17px; font-weight: 500; letter-spacing: -.025em; line-height: 1.45; }
 .review-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
-.review-note { max-width: 660px; margin: 20px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
 
 .booking { display: grid; grid-template-columns: .8fr 1.2fr; align-items: start; gap: 76px; padding-block: 100px; }
 .location-section { padding-block: 76px; background: var(--surface-raised); }
