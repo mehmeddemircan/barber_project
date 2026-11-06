@@ -138,17 +138,21 @@ const campaigns = [
 ];
 
 const reviews = [
-  { service: "Klasik Kesim", quote: { tr: "Koltuğa oturunca acele yok. Kesim tam istediğim gibi oldu.", en: "No rush once you sit down. The cut was exactly what I wanted." } },
-  { service: "Sakal Tasarımı", quote: { tr: "Sıcak havlu ve ustura, sakal bakımı küçük bir ritüele dönüştü.", en: "The hot towel and straight razor made a beard trim feel like a ritual." } },
-  { service: "Klasik Kesim", quote: { tr: "Ne istediğimi dinleyip yüzüme uygun bir kesim önerdiler.", en: "They listened and suggested a cut that works with my face shape." } },
-  { service: "Saç + Sakal", quote: { tr: "Saç ve sakalı aynı koltukta halletmek büyük rahatlık.", en: "Getting my hair and beard done in one chair is a real treat." } },
-  { service: "Klasik Kesim", quote: { tr: "Detaylara gösterdikleri özen her gelişimde fark yaratıyor.", en: "The attention to detail makes every visit feel considered." } },
-  { service: "Sakal Tasarımı", quote: { tr: "Randevu saatinde alındım, sonuç da tertemizdi.", en: "I was seen on time, and the finish was spot on." } },
-  { service: "Saç + Sakal", quote: { tr: "İyi müzik, güzel sohbet, daha da iyi bir kesim.", en: "Good music, easy conversation, and an even better cut." } },
-  { service: "Klasik Kesim", quote: { tr: "Mekân ferah, ekip samimi; insan tekrar gelmek istiyor.", en: "A calm space and a welcoming team. You want to come back." } },
-  { service: "Sakal Tasarımı", quote: { tr: "Talas'ta kendime ayırdığım en iyi saatlerden biri.", en: "One of the best hours I set aside for myself in Talas." } },
-  { service: "Saç + Sakal", quote: { tr: "Her gelişimde aynı özen, aynı iyi his.", en: "The same care and the same good feeling every time." } },
+  { author: "Ali Yılmaz", service: "Klasik Kesim", quote: { tr: "Koltuğa oturunca acele yok. Kesim tam istediğim gibi oldu.", en: "No rush once you sit down. The cut was exactly what I wanted." } },
+  { author: "Mert Kaya", service: "Sakal Tasarımı", quote: { tr: "Sıcak havlu ve ustura, sakal bakımı küçük bir ritüele dönüştü.", en: "The hot towel and straight razor made a beard trim feel like a ritual." } },
+  { author: "Can Demir", service: "Klasik Kesim", quote: { tr: "Ne istediğimi dinleyip yüzüme uygun bir kesim önerdiler.", en: "They listened and suggested a cut that works with my face shape." } },
+  { author: "Eren Çelik", service: "Saç + Sakal", quote: { tr: "Saç ve sakalı aynı koltukta halletmek büyük rahatlık.", en: "Getting my hair and beard done in one chair is a real treat." } },
+  { author: "Burak Şahin", service: "Klasik Kesim", quote: { tr: "Detaylara gösterdikleri özen her gelişimde fark yaratıyor.", en: "The attention to detail makes every visit feel considered." } },
+  { author: "Kaan Aydın", service: "Sakal Tasarımı", quote: { tr: "Randevu saatinde alındım, sonuç da tertemizdi.", en: "I was seen on time, and the finish was spot on." } },
+  { author: "Emre Yıldız", service: "Saç + Sakal", quote: { tr: "İyi müzik, güzel sohbet, daha da iyi bir kesim.", en: "Good music, easy conversation, and an even better cut." } },
+  { author: "Oğuz Arslan", service: "Klasik Kesim", quote: { tr: "Mekân ferah, ekip samimi; insan tekrar gelmek istiyor.", en: "A calm space and a welcoming team. You want to come back." } },
+  { author: "Berk Koç", service: "Sakal Tasarımı", quote: { tr: "Talas'ta kendime ayırdığım en iyi saatlerden biri.", en: "One of the best hours I set aside for myself in Talas." } },
+  { author: "Onur Özkan", service: "Saç + Sakal", quote: { tr: "Her gelişimde aynı özen, aynı iyi his.", en: "The same care and the same good feeling every time." } },
 ];
+
+function maskReviewName(name: string) {
+  return name.split(" ").map((part) => `${part.slice(0, 2)}${"*".repeat(Math.max(0, part.length - 2))}`).join(" ");
+}
 
 const content = {
   tr: {
@@ -159,7 +163,7 @@ const content = {
     filmKicker: "DÜKKÂNIMIZDAN", filmTitle: ["USTALIK", "YAKINDAN."], filmCopy: "Makasın sesi, sıcak havlu, tanıdık bir koltuk. İyi bir kesim burada böyle başlar.", filmLabel: "BERBER SHOP · KISA FİLM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
     galleryKicker: "KOLTUKTAN KARELER", galleryTitle: ["İŞİMİZ", "KONUŞSUN."], galleryCopy: "Her kesim başka, özen hep aynı.", galleryLabels: ["USTALIK", "DETAY", "SON DOKUNUŞ", "MAKASIN İZİ", "KOLTUKTA RİTÜEL", "TAMAMLANAN İŞ"], galleryOpen: "Fotoğrafı büyüt", galleryClose: "Galeriyi kapat", galleryPrevious: "Önceki fotoğraf", galleryNext: "Sonraki fotoğraf",
     campaignKicker: "BU ARA", campaignTitle: ["KÜÇÜK BİR", "İYİLİK."], campaignCopy: "Koltukta sana iyi gelecek birkaç neden.", campaignAction: "KAMPANYAYI SEÇ", campaignTerms: "Kampanya koşulları randevu sırasında dükkânda teyit edilir.",
-    reviewKicker: "KOLTUKTAN SONRA", reviewTitle: ["SÖZÜ", "SİZDE."], reviewCopy: "Bu alandaki metinler taslak yorum örnekleridir; yayına almadan gerçek müşteri geri bildirimleriyle değiştirin.", reviewSample: "ÖRNEK YORUM", reviewPrevious: "Önceki yorumlar", reviewNext: "Sonraki yorumlar",
+    reviewKicker: "KOLTUKTAN SONRA", reviewTitle: ["SÖZÜ", "SİZDE."], reviewCopy: "Bu alandaki metinler taslak yorum örnekleridir; yayına almadan gerçek müşteri geri bildirimleriyle değiştirin.", reviewPrevious: "Önceki yorumlar", reviewNext: "Sonraki yorumlar",
     serviceKicker: "USTADAN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
     bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Bilgilerin güvende. Ödeme dükkânda.", locationTitle: "DÜKKÂNDA BULUŞALIM.",
     yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", quickDates: "YAKIN TARİHLER", bookingSummary: "RANDEVU ÖZETİ", summaryChooseDate: "Tarih ve saatini seç", booked: "DOLU", availabilityLoading: "Saatler kontrol ediliyor...", availabilityUnavailable: "Müsait saatler yüklenemedi. Tekrar deneyin.", availableSlots: "Uygun saat", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
@@ -175,7 +179,7 @@ const content = {
     filmKicker: "INSIDE THE SHOP", filmTitle: ["CRAFT,", "UP CLOSE."], filmCopy: "The sound of shears, a warm towel, a familiar chair. This is where a good cut begins.", filmLabel: "BARBER SHOP · SHORT FILM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
     galleryKicker: "FRAMES FROM THE CHAIR", galleryTitle: ["LET THE", "CRAFT SPEAK."], galleryCopy: "Every cut is different. The care is always the same.", galleryLabels: ["THE CRAFT", "THE DETAIL", "THE FINISH", "THE ART OF THE CUT", "THE CHAIR RITUAL", "A FINISHED LOOK"], galleryOpen: "Enlarge photo", galleryClose: "Close gallery", galleryPrevious: "Previous photo", galleryNext: "Next photo",
     campaignKicker: "CURRENT OFFERS", campaignTitle: ["A LITTLE", "EXTRA CARE."], campaignCopy: "A few more reasons to take your place in the chair.", campaignAction: "CHOOSE THIS OFFER", campaignTerms: "Offer details are confirmed in-store when you book.",
-    reviewKicker: "AFTER THE CHAIR", reviewTitle: ["OVER TO", "YOU."], reviewCopy: "These are sample review drafts; replace them with genuine customer feedback before publishing.", reviewSample: "SAMPLE REVIEW", reviewPrevious: "Previous reviews", reviewNext: "Next reviews",
+    reviewKicker: "AFTER THE CHAIR", reviewTitle: ["OVER TO", "YOU."], reviewCopy: "These are sample review drafts; replace them with genuine customer feedback before publishing.", reviewPrevious: "Previous reviews", reviewNext: "Next reviews",
     serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
     bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Your details stay private. Pay in-store.", locationTitle: "MEET US IN TALAS.",
     yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", quickDates: "UPCOMING DAYS", bookingSummary: "APPOINTMENT SUMMARY", summaryChooseDate: "Choose a date and time", booked: "FULL", availabilityLoading: "Checking available times...", availabilityUnavailable: "Available times couldn't be loaded. Please try again.", availableSlots: "Available times", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
@@ -935,9 +939,9 @@ export default function Home() {
               const serviceName = services.find((item) => item.key === review.service)?.name[language];
               return (
                 <article className="review-bubble review-arrive" key={`${(reviewIndex + offset) % reviews.length}`}>
-                  <div className="review-bubble-top"><Quote size={21} /><span>{t.reviewSample}</span></div>
+                  <div className="review-bubble-top"><Quote size={21} /></div>
                   <blockquote>{review.quote[language]}</blockquote>
-                  <div className="review-meta"><span>{serviceName}</span><span>0{(reviewIndex + offset) % reviews.length + 1}</span></div>
+                  <div className="review-meta"><span>{maskReviewName(review.author)}</span><span>{serviceName}</span></div>
                 </article>
               );
             })}
