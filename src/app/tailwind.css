@@ -166,7 +166,7 @@ button { color: inherit; }
 .gallery-lightbox-caption > div { display: flex; justify-self: end; gap: 8px; }
 .gallery-lightbox-caption button { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; background: transparent; color: #fff; cursor: pointer; }
 
-.campaigns-section { padding-block: 100px; background: var(--surface-raised); }
+.campaigns-section { padding-block: 68px; background: var(--surface-raised); }
 .campaign-card { display: flex; min-height: 290px; flex-direction: column; padding: 27px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--ink); transition: transform .25s ease, box-shadow .25s ease; }
 .campaign-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,.08); }
 .campaign-card-2 { border-color: #1d1d1f; background: #1d1d1f; color: #f5f5f7; }
@@ -436,6 +436,7 @@ button { color: inherit; }
   .intro-stamp svg { width: 15px; height: 15px; }
   .intro-stamp span { font-size: 6px; }
   .film-section, .gallery-section, .campaigns-section, .services, .reviews-section { padding-block: 70px; }
+  .campaigns-section { padding-block: 52px; }
   .film-inner { grid-template-columns: 1fr; gap: 28px; }
   .film-copy > p:not(.eyebrow) { font-size: 12px; }
   .film-frame { width: min(100%, 300px); }
