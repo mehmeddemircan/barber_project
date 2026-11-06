@@ -877,29 +877,31 @@ export default function Home() {
         </div>
       )}
 
-      <section className="campaigns-section section-wrap" id="kampanyalar">
-        <div className="campaigns-heading">
-          <div data-reveal><p className="eyebrow">{t.campaignKicker}</p><h2>{t.campaignTitle[0]}<br /><em>{t.campaignTitle[1]}</em></h2></div>
-          <p>{t.campaignCopy}</p>
+      <section className="campaigns-section" id="kampanyalar">
+        <div className="section-wrap">
+          <div className="campaigns-heading">
+            <div data-reveal><p className="eyebrow">{t.campaignKicker}</p><h2>{t.campaignTitle[0]}<br /><em>{t.campaignTitle[1]}</em></h2></div>
+            <p>{t.campaignCopy}</p>
+          </div>
+          <div className="campaign-grid grid grid-cols-1 gap-3 md:grid-cols-3">
+            {campaigns.map((campaign, index) => {
+              const CampaignIcon = campaign.icon;
+              return (
+                <article className={`campaign-card campaign-card-${index + 1}`} key={campaign.label.tr} data-reveal>
+                  <div className="campaign-card-top"><span>0{index + 1} / 03</span><CampaignIcon size={20} strokeWidth={1.6} /></div>
+                  <span className="campaign-label">{campaign.label[language]}</span>
+                  <h3>{campaign.title[language]}</h3>
+                  <p>{campaign.description[language]}</p>
+                  {campaign.price && <div className="campaign-price"><del>{campaign.oldPrice}</del><strong>{campaign.price}</strong></div>}
+                  <button className="campaign-action" type="button" onClick={() => { setService(campaign.service); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
+                    {t.campaignAction}<ArrowRight size={15} />
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+          <p className="campaign-terms">{t.campaignTerms}</p>
         </div>
-        <div className="campaign-grid grid grid-cols-1 gap-3 md:grid-cols-3">
-          {campaigns.map((campaign, index) => {
-            const CampaignIcon = campaign.icon;
-            return (
-              <article className={`campaign-card campaign-card-${index + 1}`} key={campaign.label.tr} data-reveal>
-                <div className="campaign-card-top"><span>0{index + 1} / 03</span><CampaignIcon size={20} strokeWidth={1.6} /></div>
-                <span className="campaign-label">{campaign.label[language]}</span>
-                <h3>{campaign.title[language]}</h3>
-                <p>{campaign.description[language]}</p>
-                {campaign.price && <div className="campaign-price"><del>{campaign.oldPrice}</del><strong>{campaign.price}</strong></div>}
-                <button className="campaign-action" type="button" onClick={() => { setService(campaign.service); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
-                  {t.campaignAction}<ArrowRight size={15} />
-                </button>
-              </article>
-            );
-          })}
-        </div>
-        <p className="campaign-terms">{t.campaignTerms}</p>
       </section>
 
       <section className="services bg-ink text-paper" id="hizmetler">
