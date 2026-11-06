@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowRight, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Gift, GraduationCap, MapPin, Menu, MessageCircle, Moon, Quote, Scissors, ShieldCheck, Sun, X } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpDown, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Download, Gift, GraduationCap, MapPin, Menu, MessageCircle, Moon, Quote, RefreshCw, Scissors, Search, ShieldCheck, Sun, X } from "lucide-react";
 import { isSundayDate } from "@/lib/appointment-dates";
 
 const services = [
@@ -52,6 +52,23 @@ const adminContent = {
     phone: "TELEFON",
     service: "HİZMET",
     count: "yaklaşan randevu",
+    search: "Müşteri ara",
+    searchPlaceholder: "İsim veya telefon numarası",
+    filterDate: "Tarihe göre filtrele",
+    allServices: "Tüm hizmetler",
+    clearFilters: "Filtreleri temizle",
+    showing: "gösteriliyor",
+    previousPage: "Önceki sayfa",
+    nextPage: "Sonraki sayfa",
+    pageOf: " / ",
+    rowsPerPage: "Sayfa başına",
+    noResults: "Bu filtrelerle eşleşen randevu yok.",
+    upcoming: "YAKLAŞAN",
+    today: "BUGÜN",
+    thisWeek: "BU HAFTA",
+    sortDate: "Tarihe göre sırala",
+    todayBadge: "BUGÜN",
+    exportCsv: "CSV İNDİR",
     actions: "İŞLEM",
     edit: "DÜZENLE",
     cancel: "İPTAL ET",
@@ -83,6 +100,23 @@ const adminContent = {
     phone: "PHONE",
     service: "SERVICE",
     count: "upcoming appointments",
+    search: "Search customers",
+    searchPlaceholder: "Name or phone number",
+    filterDate: "Filter by date",
+    allServices: "All services",
+    clearFilters: "Clear filters",
+    showing: "shown",
+    previousPage: "Previous page",
+    nextPage: "Next page",
+    pageOf: " of ",
+    rowsPerPage: "Rows per page",
+    noResults: "No appointments match these filters.",
+    upcoming: "UPCOMING",
+    today: "TODAY",
+    thisWeek: "THIS WEEK",
+    sortDate: "Sort by date",
+    todayBadge: "TODAY",
+    exportCsv: "EXPORT CSV",
     actions: "ACTIONS",
     edit: "EDIT",
     cancel: "CANCEL",
@@ -121,12 +155,12 @@ const content = {
     nav: ["Hikâyemiz", "Kampanyalar", "Hizmetler", "Yorumlar", "Randevu"], book: "Yerini ayırt", menuOpen: "Menüyü aç", menuClose: "Menüyü kapat", whatsappContact: "WhatsApp'tan yaz", whatsappSetup: "WhatsApp numarası yapılandırılmalı",
     whatsappMessage: "Merhaba, randevu ve hizmetler hakkında bilgi almak istiyorum.",
     location: "TALAS, KAYSERİ", heroTitle: ["İYİ KESİM.", "İYİ HİS."], heroCopy: "Her şeyin hızlandığı bir şehirde, kendine ayırdığın iyi bir saat.", bookNow: "Randevunu oluştur", scroll: "AŞAĞI İN",
-    who: "BİZ KİMİZ?", introTitle: ["Berberlik bir", "ritüeldir."], introCopy: "İyi bir kesimden fazlası. Kapıdan girdiğin andan son dokunuşa kadar, her şey yerli yerinde. Mahallenin ustaları, eski usul özen ve sana ayrılmış bir koltuk.", learn: "KÖK'Ü TANI", stamp: ["İYİ İŞ", "ZAMAN ALIR"],
-    filmKicker: "KÖK'ÜN İÇİNDEN", filmTitle: ["USTALIK", "YAKINDAN."], filmCopy: "Makasın sesi, sıcak havlu, tanıdık bir koltuk. KÖK'te iyi bir kesim böyle başlar.", filmLabel: "KÖK. KISA FİLM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
-    galleryKicker: "KOLTUKTAN KARELER", galleryTitle: ["İŞİMİZ", "KONUŞSUN."], galleryCopy: "Her kesim başka, özen hep aynı.", galleryLabels: ["USTALIK", "DETAY", "SON DOKUNUŞ"], galleryOpen: "Fotoğrafı büyüt", galleryClose: "Galeriyi kapat", galleryPrevious: "Önceki fotoğraf", galleryNext: "Sonraki fotoğraf",
-    campaignKicker: "KÖK'TE BU ARA", campaignTitle: ["KÜÇÜK BİR", "İYİLİK."], campaignCopy: "Koltukta sana iyi gelecek birkaç neden.", campaignAction: "KAMPANYAYI SEÇ", campaignTerms: "Kampanya koşulları randevu sırasında dükkânda teyit edilir.",
+    who: "BİZ KİMİZ?", introTitle: ["Berberlik bir", "ritüeldir."], introCopy: "İyi bir kesimden fazlası. Kapıdan girdiğin andan son dokunuşa kadar, her şey yerli yerinde. Mahallenin ustaları, eski usul özen ve sana ayrılmış bir koltuk.", learn: "BERBERİMİZİ TANI", stamp: ["İYİ İŞ", "ZAMAN ALIR"],
+    filmKicker: "DÜKKÂNIMIZDAN", filmTitle: ["USTALIK", "YAKINDAN."], filmCopy: "Makasın sesi, sıcak havlu, tanıdık bir koltuk. İyi bir kesim burada böyle başlar.", filmLabel: "BERBER SHOP · KISA FİLM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
+    galleryKicker: "KOLTUKTAN KARELER", galleryTitle: ["İŞİMİZ", "KONUŞSUN."], galleryCopy: "Her kesim başka, özen hep aynı.", galleryLabels: ["USTALIK", "DETAY", "SON DOKUNUŞ", "MAKASIN İZİ", "KOLTUKTA RİTÜEL", "TAMAMLANAN İŞ"], galleryOpen: "Fotoğrafı büyüt", galleryClose: "Galeriyi kapat", galleryPrevious: "Önceki fotoğraf", galleryNext: "Sonraki fotoğraf",
+    campaignKicker: "BU ARA", campaignTitle: ["KÜÇÜK BİR", "İYİLİK."], campaignCopy: "Koltukta sana iyi gelecek birkaç neden.", campaignAction: "KAMPANYAYI SEÇ", campaignTerms: "Kampanya koşulları randevu sırasında dükkânda teyit edilir.",
     reviewKicker: "KOLTUKTAN SONRA", reviewTitle: ["SÖZÜ", "SİZDE."], reviewCopy: "Bu alandaki metinler taslak yorum örnekleridir; yayına almadan gerçek müşteri geri bildirimleriyle değiştirin.", reviewSample: "ÖRNEK YORUM", reviewPrevious: "Önceki yorumlar", reviewNext: "Sonraki yorumlar",
-    serviceKicker: "KÖK'TEN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
+    serviceKicker: "USTADAN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
     bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Bilgilerin güvende. Ödeme dükkânda.",
     yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", quickDates: "YAKIN TARİHLER", bookingSummary: "RANDEVU ÖZETİ", summaryChooseDate: "Tarih ve saatini seç", booked: "DOLU", availabilityLoading: "Saatler kontrol ediliyor...", availabilityUnavailable: "Müsait saatler yüklenemedi. Tekrar deneyin.", availableSlots: "Uygun saat", whatsappOptIn: "WhatsApp randevu onayını al", whatsappOptInNote: "Randevu bilgilerimin WhatsApp üzerinden gönderilmesini kabul ediyorum.", successWhatsApp: "Randevun alındı; onay mesajı WhatsApp'tan gönderildi.", successWhatsAppPending: "Randevun alındı. WhatsApp onayı şu an gönderilemedi.", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
     dateClosed: "Berber pazar günleri kapalıdır. Lütfen başka bir gün seçin.",
@@ -137,9 +171,9 @@ const content = {
     nav: ["Our Story", "Offers", "Services", "Reviews", "Book"], book: "Book a chair", menuOpen: "Open menu", menuClose: "Close menu", whatsappContact: "Chat on WhatsApp", whatsappSetup: "Set the WhatsApp number first",
     whatsappMessage: "Hi, I'd like to ask about appointments and services.",
     location: "TALAS, KAYSERİ", heroTitle: ["A GOOD CUT.", "A GOOD FEEL."], heroCopy: "In a city that never slows down, take one good hour for yourself.", bookNow: "Book your appointment", scroll: "SCROLL TO EXPLORE",
-    who: "WHO WE ARE", introTitle: ["A barber visit", "is a ritual."], introCopy: "More than a good cut. From the moment you walk in to the final touch, everything is in its place. Neighbourhood craft, old-school care, and a chair that is yours.", learn: "MEET KÖK", stamp: ["GOOD WORK", "TAKES TIME"],
-    filmKicker: "INSIDE KÖK", filmTitle: ["CRAFT,", "UP CLOSE."], filmCopy: "The sound of shears, a warm towel, a familiar chair. This is where a good cut begins.", filmLabel: "KÖK. SHORT FILM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
-    galleryKicker: "FRAMES FROM THE CHAIR", galleryTitle: ["LET THE", "CRAFT SPEAK."], galleryCopy: "Every cut is different. The care is always the same.", galleryLabels: ["THE CRAFT", "THE DETAIL", "THE FINISH"], galleryOpen: "Enlarge photo", galleryClose: "Close gallery", galleryPrevious: "Previous photo", galleryNext: "Next photo",
+    who: "WHO WE ARE", introTitle: ["A barber visit", "is a ritual."], introCopy: "More than a good cut. From the moment you walk in to the final touch, everything is in its place. Neighbourhood craft, old-school care, and a chair that is yours.", learn: "MEET YOUR BARBER", stamp: ["GOOD WORK", "TAKES TIME"],
+    filmKicker: "INSIDE THE SHOP", filmTitle: ["CRAFT,", "UP CLOSE."], filmCopy: "The sound of shears, a warm towel, a familiar chair. This is where a good cut begins.", filmLabel: "BARBER SHOP · SHORT FILM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
+    galleryKicker: "FRAMES FROM THE CHAIR", galleryTitle: ["LET THE", "CRAFT SPEAK."], galleryCopy: "Every cut is different. The care is always the same.", galleryLabels: ["THE CRAFT", "THE DETAIL", "THE FINISH", "THE ART OF THE CUT", "THE CHAIR RITUAL", "A FINISHED LOOK"], galleryOpen: "Enlarge photo", galleryClose: "Close gallery", galleryPrevious: "Previous photo", galleryNext: "Next photo",
     campaignKicker: "CURRENT OFFERS", campaignTitle: ["A LITTLE", "EXTRA CARE."], campaignCopy: "A few more reasons to take your place in the chair.", campaignAction: "CHOOSE THIS OFFER", campaignTerms: "Offer details are confirmed in-store when you book.",
     reviewKicker: "AFTER THE CHAIR", reviewTitle: ["OVER TO", "YOU."], reviewCopy: "These are sample review drafts; replace them with genuine customer feedback before publishing.", reviewSample: "SAMPLE REVIEW", reviewPrevious: "Previous reviews", reviewNext: "Next reviews",
     serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
@@ -155,6 +189,9 @@ const gallery = [
   { image: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1100&q=85", position: "center 42%" },
   { image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=900&q=85", position: "center 40%" },
   { image: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=900&q=85", position: "center 45%" },
+  { image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=85", position: "center 50%" },
+  { image: "https://images.unsplash.com/photo-1503919005314-30d93d07d823?auto=format&fit=crop&w=900&q=85", position: "center 45%" },
+  { image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=900&q=85", position: "center 50%" },
 ];
 
 function istanbulDateValue(date: Date) {
@@ -179,6 +216,24 @@ function getSuggestedDates(startDate: string) {
   }
 
   return suggestedDates;
+}
+
+function BrandLogo({ footer = false }: { footer?: boolean }) {
+  return (
+    <a className={`wordmark ${footer ? "footer-mark" : ""}`} href="#home" aria-label="Mehmet İrşad Güder Barber Shop — ana sayfa">
+      <svg className="brand-symbol" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="3" y="3" width="58" height="58" rx="14" fill="#172420" />
+        <rect x="5" y="5" width="54" height="54" rx="12" fill="none" stroke="#e5b02e" strokeWidth="2" />
+        <path d="M17 45V19h6l9 12 9-12h6v26h-7V30l-8 10-8-10v15z" fill="#e5b02e" />
+        <path d="M13 51h38" stroke="#f7f9f6" strokeLinecap="round" strokeWidth="2" />
+      </svg>
+      <span className="brand-type">
+        <strong>MEHMET İRŞAD</strong>
+        <strong>GÜDER</strong>
+        <small>BARBER SHOP</small>
+      </span>
+    </a>
+  );
 }
 
 export default function Home() {
@@ -208,6 +263,12 @@ export default function Home() {
   const [appointmentEdit, setAppointmentEdit] = useState<AppointmentEdit | null>(null);
   const [adminActionError, setAdminActionError] = useState<AdminActionError | "">("");
   const [adminBusyId, setAdminBusyId] = useState("");
+  const [adminSearch, setAdminSearch] = useState("");
+  const [adminDateFilter, setAdminDateFilter] = useState("");
+  const [adminServiceFilter, setAdminServiceFilter] = useState("");
+  const [adminPage, setAdminPage] = useState(1);
+  const [adminPageSize, setAdminPageSize] = useState(10);
+  const [adminSortDescending, setAdminSortDescending] = useState(false);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState<number | null>(null);
   const galleryTriggerRef = useRef<HTMLButtonElement | null>(null);
   const galleryDialogRef = useRef<HTMLDivElement | null>(null);
@@ -217,6 +278,28 @@ export default function Home() {
   const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
   const whatsappHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t.whatsappMessage)}` : "";
   const minDate = istanbulDateValue(new Date());
+  const weekEnd = new Date(`${minDate}T00:00:00.000Z`);
+  weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
+  const weekEndDate = weekEnd.toISOString().slice(0, 10);
+  const filteredAdminAppointments = adminAppointments
+    .filter((appointment) => {
+      const query = adminSearch.trim().toLocaleLowerCase(language === "tr" ? "tr-TR" : "en-GB");
+      const matchesSearch = !query || `${appointment.name} ${appointment.phone}`.toLocaleLowerCase(language === "tr" ? "tr-TR" : "en-GB").includes(query);
+      return matchesSearch
+        && (!adminDateFilter || appointment.date === adminDateFilter)
+        && (!adminServiceFilter || appointment.service === adminServiceFilter);
+    })
+    .sort((first, second) => {
+      const order = first.date.localeCompare(second.date) || first.time.localeCompare(second.time);
+      return adminSortDescending ? -order : order;
+    });
+  const adminPageCount = Math.max(1, Math.ceil(filteredAdminAppointments.length / adminPageSize));
+  const visibleAdminPage = Math.min(adminPage, adminPageCount);
+  const adminPageStart = (visibleAdminPage - 1) * adminPageSize;
+  const pagedAdminAppointments = filteredAdminAppointments.slice(adminPageStart, adminPageStart + adminPageSize);
+  const todayAppointments = adminAppointments.filter((appointment) => appointment.date === minDate).length;
+  const weekAppointments = adminAppointments.filter((appointment) => appointment.date >= minDate && appointment.date < weekEndDate).length;
+  const hasAdminFilters = Boolean(adminSearch || adminDateFilter || adminServiceFilter);
   const suggestedDates = getSuggestedDates(minDate);
   const selectedService = services.find((item) => item.key === service) || services[0];
   const currentAvailability = availability?.date === date ? availability : null;
@@ -316,7 +399,9 @@ export default function Home() {
 
   useEffect(() => {
     document.documentElement.lang = language;
-    document.title = language === "tr" ? "KÖK. | Berber Kulübü" : "KÖK. | Barber Club";
+    document.title = language === "tr"
+      ? "Mehmet İrşad Güder Barber Shop | Talas, Kayseri"
+      : "Mehmet İrşad Güder Barber Shop | Talas, Kayseri";
     window.localStorage.setItem("kok-language", language);
     window.localStorage.setItem("kok-theme", theme);
   }, [language, theme]);
@@ -645,10 +730,42 @@ export default function Home() {
     setAdminRefreshKey((key) => key + 1);
   }
 
+  function clearAdminFilters() {
+    setAdminSearch("");
+    setAdminDateFilter("");
+    setAdminServiceFilter("");
+    setAdminPage(1);
+  }
+
+  function exportAdminAppointments() {
+    const rows = [
+      [adminText.date, adminText.time, adminText.name, adminText.phone, adminText.service],
+      ...filteredAdminAppointments.map((appointment) => [
+        appointment.date,
+        appointment.time,
+        appointment.name,
+        appointment.phone,
+        services.find((item) => item.key === appointment.service)?.name[language] || appointment.service,
+      ]),
+    ];
+    const csv = `\uFEFF${rows.map((row) => row.map((value) => {
+      const safeValue = String(value).replace(/^[\t\r ]*[=+\-@]/, (match) => `'${match}`);
+      return `"${safeValue.replace(/"/g, '""')}"`;
+    }).join(",")).join("\r\n")}`;
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `mehmet-irsad-guder-randevular-${minDate}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
   return (
     <main className="site-shell min-h-screen bg-paper text-ink antialiased" data-theme={theme}>
       <header className="site-header">
-        <a className="wordmark" href="#home" aria-label="KÖK. home"><span>KÖK.</span><small>BARBER CLUB</small></a>
+        <BrandLogo />
         <nav className={`desktop-nav ${isMenuOpen ? "is-open" : ""}`} aria-label="Main navigation">
           {t.nav.map((label, index) => <a href={["#hikaye", "#kampanyalar", "#hizmetler", "#yorumlar", "#randevu"][index]} key={label} onClick={() => setIsMenuOpen(false)}>{label}</a>)}
         </nav>
@@ -919,7 +1036,7 @@ export default function Home() {
               {adminAuthenticated && (
                 <div className="admin-actions">
                   <span>{adminAppointments.length} {adminText.count}</span>
-                  <button type="button" onClick={refreshAdminAppointments}>{language === "tr" ? "YENİLE" : "REFRESH"}</button>
+                  <button type="button" onClick={refreshAdminAppointments} disabled={adminLoading}><RefreshCw size={14} />{language === "tr" ? "YENİLE" : "REFRESH"}</button>
                   <button type="button" onClick={logoutAdmin}>{adminText.logout}</button>
                 </div>
               )}
@@ -929,49 +1046,102 @@ export default function Home() {
             {adminLoading ? (
               <p className="admin-message" role="status">{adminText.loading}</p>
             ) : adminAuthenticated ? (
-              adminAppointments.length ? (
-                <div className="admin-table-wrap">
-                  <table className="admin-table">
-                    <thead>
-                      <tr><th>{adminText.date}</th><th>{adminText.time}</th><th>{adminText.name}</th><th>{adminText.phone}</th><th>{adminText.service}</th><th>{adminText.actions}</th></tr>
-                    </thead>
-                    <tbody>
-                      {adminAppointments.map((appointment) => {
-                        const isEditing = editingAppointmentId === appointment.id && appointmentEdit !== null;
-                        const serviceName = services.find((item) => item.key === appointment.service)?.name[language] || appointment.service;
-                        const dateLabel = new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
-                          dateStyle: "medium",
-                          timeZone: "Europe/Istanbul",
-                        }).format(new Date(`${appointment.date}T12:00:00+03:00`));
-                        return (
-                          <tr key={appointment.id}>
-                            {isEditing && appointmentEdit ? (
-                              <td colSpan={6}>
-                                <form className="admin-edit-form" onSubmit={saveAppointmentEdit}>
-                                  <label className="field"><span>{adminText.date}</span><input type="date" min={minDate} value={appointmentEdit.date} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, date: event.currentTarget.value })} required /></label>
-                                  <label className="field"><span>{adminText.time}</span><select value={appointmentEdit.time} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, time: event.currentTarget.value })}>{timeSlots.map((slot) => <option key={slot} value={slot}>{slot}</option>)}</select></label>
-                                  <label className="field"><span>{adminText.name}</span><input value={appointmentEdit.name} minLength={2} maxLength={80} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, name: event.currentTarget.value })} required /></label>
-                                  <label className="field"><span>{adminText.phone}</span><input type="tel" value={appointmentEdit.phone} minLength={7} maxLength={20} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, phone: event.currentTarget.value })} required /></label>
-                                  <label className="field"><span>{adminText.service}</span><select value={appointmentEdit.service} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, service: event.currentTarget.value })}>{services.map((item) => <option key={item.key} value={item.key}>{item.name[language]}</option>)}</select></label>
-                                  <div className="admin-row-actions">
-                                    <button type="submit" disabled={adminBusyId === appointment.id}>{adminText.save}</button>
-                                    <button type="button" onClick={discardAppointmentEdit} disabled={adminBusyId === appointment.id}>{adminText.discard}</button>
-                                  </div>
-                                </form>
-                              </td>
-                            ) : (
-                              <>
-                                <td>{dateLabel}</td><td>{appointment.time}</td><td>{appointment.name}</td><td>{appointment.phone}</td><td>{serviceName}</td>
-                                <td><div className="admin-row-actions"><button type="button" onClick={() => beginAppointmentEdit(appointment)} disabled={Boolean(adminBusyId)}>{adminText.edit}</button><button type="button" onClick={() => cancelAppointment(appointment)} disabled={Boolean(adminBusyId)}>{adminText.cancel}</button></div></td>
-                              </>
-                            )}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+              <>
+                <div className="admin-stats">
+                  <article><span>{adminText.upcoming}</span><strong>{adminAppointments.length}</strong><small>{adminText.count}</small></article>
+                  <article><span>{adminText.today}</span><strong>{todayAppointments}</strong><small>{minDate}</small></article>
+                  <article><span>{adminText.thisWeek}</span><strong>{weekAppointments}</strong><small>{language === "tr" ? "Önümüzdeki 7 gün" : "Next 7 days"}</small></article>
                 </div>
-              ) : <p className="admin-message">{adminText.empty}</p>
+                <div className="admin-toolbar">
+                  <label className="admin-search">
+                    <Search size={16} aria-hidden="true" />
+                    <input type="search" value={adminSearch} placeholder={adminText.searchPlaceholder} aria-label={adminText.search} onChange={(event) => { setAdminSearch(event.currentTarget.value); setAdminPage(1); }} />
+                  </label>
+                  <label className="admin-filter">
+                    <span>{adminText.filterDate}</span>
+                    <input type="date" value={adminDateFilter} aria-label={adminText.filterDate} onChange={(event) => { setAdminDateFilter(event.currentTarget.value); setAdminPage(1); }} />
+                  </label>
+                  <label className="admin-filter">
+                    <span>{adminText.service}</span>
+                    <select value={adminServiceFilter} aria-label={adminText.service} onChange={(event) => { setAdminServiceFilter(event.currentTarget.value); setAdminPage(1); }}>
+                      <option value="">{adminText.allServices}</option>
+                      {services.map((item) => <option key={item.key} value={item.key}>{item.name[language]}</option>)}
+                    </select>
+                  </label>
+                  {hasAdminFilters && <button className="admin-clear-filters" type="button" onClick={clearAdminFilters}>{adminText.clearFilters}</button>}
+                  <button className="admin-export" type="button" onClick={exportAdminAppointments} disabled={!filteredAdminAppointments.length}><Download size={14} />{adminText.exportCsv}</button>
+                </div>
+                {filteredAdminAppointments.length ? (
+                  <>
+                    <div className="admin-table-wrap">
+                      <table className="admin-table">
+                        <thead>
+                          <tr>
+                            <th><button className="admin-sort-button" type="button" aria-label={adminText.sortDate} onClick={() => setAdminSortDescending((descending) => !descending)}>{adminText.date}<ArrowUpDown size={13} /></button></th>
+                            <th>{adminText.time}</th><th>{adminText.name}</th><th>{adminText.phone}</th><th>{adminText.service}</th><th>{adminText.actions}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {pagedAdminAppointments.map((appointment) => {
+                            const isEditing = editingAppointmentId === appointment.id && appointmentEdit !== null;
+                            const serviceName = services.find((item) => item.key === appointment.service)?.name[language] || appointment.service;
+                            const dateLabel = new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
+                              dateStyle: "medium",
+                              timeZone: "Europe/Istanbul",
+                            }).format(new Date(`${appointment.date}T12:00:00+03:00`));
+                            return (
+                              <tr key={appointment.id} className={appointment.date === minDate ? "is-today" : ""}>
+                                {isEditing && appointmentEdit ? (
+                                  <td colSpan={6}>
+                                    <form className="admin-edit-form" onSubmit={saveAppointmentEdit}>
+                                      <label className="field"><span>{adminText.date}</span><input type="date" min={minDate} value={appointmentEdit.date} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, date: event.currentTarget.value })} required /></label>
+                                      <label className="field"><span>{adminText.time}</span><select value={appointmentEdit.time} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, time: event.currentTarget.value })}>{timeSlots.map((slot) => <option key={slot} value={slot}>{slot}</option>)}</select></label>
+                                      <label className="field"><span>{adminText.name}</span><input value={appointmentEdit.name} minLength={2} maxLength={80} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, name: event.currentTarget.value })} required /></label>
+                                      <label className="field"><span>{adminText.phone}</span><input type="tel" value={appointmentEdit.phone} minLength={7} maxLength={20} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, phone: event.currentTarget.value })} required /></label>
+                                      <label className="field"><span>{adminText.service}</span><select value={appointmentEdit.service} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, service: event.currentTarget.value })}>{services.map((item) => <option key={item.key} value={item.key}>{item.name[language]}</option>)}</select></label>
+                                      <div className="admin-row-actions">
+                                        <button type="submit" disabled={adminBusyId === appointment.id}>{adminText.save}</button>
+                                        <button type="button" onClick={discardAppointmentEdit} disabled={adminBusyId === appointment.id}>{adminText.discard}</button>
+                                      </div>
+                                    </form>
+                                  </td>
+                                ) : (
+                                  <>
+                                    <td data-label={adminText.date}><span className="admin-date-cell">{dateLabel}{appointment.date === minDate && <small>{adminText.todayBadge}</small>}</span></td>
+                                    <td data-label={adminText.time}><strong className="admin-time">{appointment.time}</strong></td>
+                                    <td data-label={adminText.name}><strong>{appointment.name}</strong></td>
+                                    <td data-label={adminText.phone}><a className="admin-phone" href={`tel:${appointment.phone.replace(/[^\d+]/g, "")}`}>{appointment.phone}</a></td>
+                                    <td data-label={adminText.service}>{serviceName}</td>
+                                    <td data-label={adminText.actions}><div className="admin-row-actions"><button type="button" onClick={() => beginAppointmentEdit(appointment)} disabled={Boolean(adminBusyId)}>{adminText.edit}</button><button type="button" onClick={() => cancelAppointment(appointment)} disabled={Boolean(adminBusyId)}>{adminText.cancel}</button></div></td>
+                                  </>
+                                )}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="admin-pagination">
+                      <span>{adminPageStart + 1}–{Math.min(adminPageStart + adminPageSize, filteredAdminAppointments.length)} {adminText.showing} {filteredAdminAppointments.length}</span>
+                      <label>{adminText.rowsPerPage}
+                        <select value={adminPageSize} onChange={(event) => { setAdminPageSize(Number(event.currentTarget.value)); setAdminPage(1); }}>
+                          {[10, 25, 50].map((size) => <option key={size} value={size}>{size}</option>)}
+                        </select>
+                      </label>
+                      <div>
+                        <button type="button" aria-label={adminText.previousPage} disabled={visibleAdminPage <= 1} onClick={() => setAdminPage((page) => Math.max(1, Math.min(page, adminPageCount) - 1))}><ChevronLeft size={16} /></button>
+                        <span>{visibleAdminPage}{adminText.pageOf}{adminPageCount}</span>
+                        <button type="button" aria-label={adminText.nextPage} disabled={visibleAdminPage >= adminPageCount} onClick={() => setAdminPage((page) => Math.min(adminPageCount, Math.min(page, adminPageCount) + 1))}><ChevronRight size={16} /></button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="admin-empty">
+                    <p className="admin-message">{hasAdminFilters ? adminText.noResults : adminText.empty}</p>
+                    {hasAdminFilters && <button className="admin-clear-filters" type="button" onClick={clearAdminFilters}>{adminText.clearFilters}</button>}
+                  </div>
+                )}
+              </>
             ) : (
               <form className="admin-login" onSubmit={submitAdminLogin}>
                 <label className="field" htmlFor="admin-password">
@@ -986,11 +1156,11 @@ export default function Home() {
       )}
 
       <footer className="site-footer">
-        <a className="wordmark footer-mark" href="#home"><span>KÖK.</span><small>BARBER CLUB</small></a>
+        <BrandLogo footer />
         <p>{t.footerLine[0]}<br />{t.footerLine[1]}</p>
         <a href="https://www.google.com/maps/place//data=!4m2!3m1!1s0x152b6d1a9cf072ff:0x6db250a86e7c64bd?sa=X&ved=1t:8290&ictx=111" target="_blank" rel="noreferrer">{t.directions} <ArrowRight size={14} /></a>
         <button className="admin-entry" type="button" onClick={toggleAdminPanel} aria-expanded={isAdminOpen}>{adminText.entry}</button>
-        <span className="footer-copy">© 2026 KÖK. BARBER CLUB</span>
+        <span className="footer-copy">© 2026 MEHMET İRŞAD GÜDER BARBER SHOP</span>
       </footer>
 
       {whatsappHref ? (
