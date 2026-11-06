@@ -161,7 +161,7 @@ const content = {
     campaignKicker: "BU ARA", campaignTitle: ["KÜÇÜK BİR", "İYİLİK."], campaignCopy: "Koltukta sana iyi gelecek birkaç neden.", campaignAction: "KAMPANYAYI SEÇ", campaignTerms: "Kampanya koşulları randevu sırasında dükkânda teyit edilir.",
     reviewKicker: "KOLTUKTAN SONRA", reviewTitle: ["SÖZÜ", "SİZDE."], reviewCopy: "Bu alandaki metinler taslak yorum örnekleridir; yayına almadan gerçek müşteri geri bildirimleriyle değiştirin.", reviewSample: "ÖRNEK YORUM", reviewPrevious: "Önceki yorumlar", reviewNext: "Sonraki yorumlar",
     serviceKicker: "USTADAN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
-    bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Bilgilerin güvende. Ödeme dükkânda.",
+    bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Bilgilerin güvende. Ödeme dükkânda.", locationTitle: "DÜKKÂNDA BULUŞALIM.",
     yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "09:30 — 19:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", quickDates: "YAKIN TARİHLER", bookingSummary: "RANDEVU ÖZETİ", summaryChooseDate: "Tarih ve saatini seç", booked: "DOLU", availabilityLoading: "Saatler kontrol ediliyor...", availabilityUnavailable: "Müsait saatler yüklenemedi. Tekrar deneyin.", availableSlots: "Uygun saat", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
     dateClosed: "Berber pazar günleri kapalıdır. Lütfen başka bir gün seçin.",
     success: "Randevunuz alındı. Sizi bekliyoruz!", invalid: "Lütfen bilgileri kontrol edip tekrar deneyin.", conflict: "Bu saat az önce doldu. Lütfen başka bir saat seçin.", unavailable: "Şu an randevu oluşturulamıyor. Lütfen daha sonra tekrar deneyin.", network: "Bağlantı kurulamadı. Lütfen tekrar deneyin.", genericError: "Bir hata oluştu.",
@@ -177,7 +177,7 @@ const content = {
     campaignKicker: "CURRENT OFFERS", campaignTitle: ["A LITTLE", "EXTRA CARE."], campaignCopy: "A few more reasons to take your place in the chair.", campaignAction: "CHOOSE THIS OFFER", campaignTerms: "Offer details are confirmed in-store when you book.",
     reviewKicker: "AFTER THE CHAIR", reviewTitle: ["OVER TO", "YOU."], reviewCopy: "These are sample review drafts; replace them with genuine customer feedback before publishing.", reviewSample: "SAMPLE REVIEW", reviewPrevious: "Previous reviews", reviewNext: "Next reviews",
     serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
-    bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Your details stay private. Pay in-store.",
+    bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Your details stay private. Pay in-store.", locationTitle: "MEET US IN TALAS.",
     yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "09:30 — 19:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", quickDates: "UPCOMING DAYS", bookingSummary: "APPOINTMENT SUMMARY", summaryChooseDate: "Choose a date and time", booked: "FULL", availabilityLoading: "Checking available times...", availabilityUnavailable: "Available times couldn't be loaded. Please try again.", availableSlots: "Available times", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
     dateClosed: "The barber is closed on Sundays. Please choose another day.",
     success: "Your appointment is booked. See you soon!", invalid: "Please check your details and try again.", conflict: "That time just filled up. Please choose another.", unavailable: "We can't book right now. Please try again later.", network: "Connection failed. Please try again.", genericError: "Something went wrong.",
@@ -1024,6 +1024,28 @@ export default function Home() {
           {status && <div className={`form-status ${statusIsSuccess ? "success" : "error"}`} role={statusIsSuccess ? "status" : "alert"}>{statusIsSuccess && <Check size={16} />}<span>{status}</span>{statusIsSuccess && whatsappDraftHref && <a className="whatsapp-draft-link" href={whatsappDraftHref} target="_blank" rel="noreferrer">{language === "tr" ? "WhatsApp taslağını aç" : "Open WhatsApp draft"}<ArrowRight size={13} /></a>}{statusIsSuccess && bookingCancellationHref && <a className="booking-cancel-link" href={bookingCancellationHref} target="_blank" rel="noreferrer">{t.cancellationLink}<ArrowRight size={13} /></a>}</div>}
           <p className="form-privacy">{t.privacy}</p>
         </form>
+      </section>
+
+      <section className="location-section" aria-labelledby="location-title">
+        <div className="section-wrap">
+          <div className="location-heading">
+            <div>
+              <p className="eyebrow">{t.location}</p>
+              <h2 id="location-title">{t.locationTitle}</h2>
+              <p>{t.address[0]}<br />{t.address[1]}</p>
+            </div>
+            <a href="https://www.google.com/maps/place//data=!4m2!3m1!1s0x152b6d1a9cf072ff:0x6db250a86e7c64bd?sa=X&ved=1t:8290&ictx=111" target="_blank" rel="noreferrer">{t.directions} <ArrowRight size={15} /></a>
+          </div>
+          <div className="location-map">
+            <iframe
+              title={language === "tr" ? "Talas'taki berber dükkanımızın Google Haritalar konumu" : "Google Maps location of our barber shop in Talas"}
+              src="https://maps.google.com/maps?q=Mevlana%20Mahallesi%20Mehmet%20Timu%C3%A7in%20Caddesi%2C%20%C3%96zkan%20Sokak%20No%3A1%2C%20Talas%2C%20Kayseri&output=embed"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
+        </div>
       </section>
 
       {isAdminOpen && (

@@ -219,6 +219,15 @@ button { color: inherit; }
 .review-note { max-width: 660px; margin: 20px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
 
 .booking { display: grid; grid-template-columns: .8fr 1.2fr; align-items: start; gap: 76px; padding-block: 100px; }
+.location-section { padding-block: 76px; background: var(--surface-raised); }
+.location-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+.location-heading .eyebrow { margin: 0 0 12px; color: var(--olive); }
+.location-heading h2 { margin: 0; font-size: clamp(2.2rem, 4vw, 3.8rem); font-weight: 600; line-height: .98; }
+.location-heading > div > p:last-child { margin: 12px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.location-heading > a { display: inline-flex; flex-shrink: 0; align-items: center; gap: 8px; padding-bottom: 5px; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 700; }
+.location-heading > a:hover { color: var(--olive); }
+.location-map { aspect-ratio: 2.1 / 1; min-height: 300px; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.location-map iframe { display: block; width: 100%; height: 100%; border: 0; }
 .booking-intro .eyebrow { margin-bottom: 17px; }
 .booking h2 em { font-style: normal; }
 .booking-description { margin: 20px 0 25px; color: var(--muted); font-size: 14px; line-height: 1.75; }
@@ -460,6 +469,9 @@ button { color: inherit; }
   .review-bubble { min-height: 190px; padding: 20px; }
   .review-bubble blockquote { font-size: 16px; }
   .booking { grid-template-columns: 1fr; gap: 30px; padding-block: 70px; }
+  .location-section { padding-block: 56px; }
+  .location-heading { align-items: flex-start; flex-direction: column; gap: 17px; }
+  .location-map { aspect-ratio: 4 / 3; min-height: 260px; }
   .booking-description { font-size: 12px; }
   .booking-form { padding: 18px; border-radius: 15px; }
   .field-grid { grid-template-columns: 1fr; gap: 12px; }
