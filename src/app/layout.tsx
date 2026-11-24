@@ -4,59 +4,139 @@ import "./tailwind.css";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--body" });
 const oswald = Oswald({ subsets: ["latin"], variable: "--display" });
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+  : process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? new URL(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
+    : new URL("http://localhost:3000");
 
 export const metadata: Metadata = {
-  title: "Mehmet İrşad Güder Barber Shop | Talas, Kayseri",
+  metadataBase: siteUrl,
+  title: {
+    default: "Talas Berber | Mehmet İrşad Güder Barber Shop",
+    template: "%s | Mehmet İrşad Güder Barber Shop",
+  },
   description: "Talas, Kayseri'de Mehmet İrşad Güder Barber Shop'ta profesyonel erkek saç kesimi ve sakal tasarımı için randevunuzu alın.",
   applicationName: "Mehmet İrşad Güder Barber Shop",
+  authors: [{ name: "Mehmet İrşad Güder" }],
+  creator: "Mehmet İrşad Güder",
+  publisher: "Mehmet İrşad Güder Barber Shop",
+  category: "Barber Shop",
+  alternates: { canonical: "/" },
+  manifest: "/manifest.webmanifest",
   keywords: [
-    "Mehmet İrşad Güder Barber Shop",
     "Talas berber",
     "Kayseri berber",
     "Talas erkek kuaförü",
-    "erkek saç kesimi",
-    "sakal tasarımı",
+    "erkek saç kesimi Talas",
+    "sakal tasarımı Kayseri",
+    "profesyonel berber Talas",
     "Talas berber randevu",
+    "Mehmet İrşad Güder Barber Shop",
   ],
-  creator: "Mehmet İrşad Güder",
-  publisher: "Mehmet İrşad Güder Barber Shop",
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
       "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
     },
   },
   openGraph: {
     type: "website",
     locale: "tr_TR",
+    url: "/",
     siteName: "Mehmet İrşad Güder Barber Shop",
-    title: "Mehmet İrşad Güder Barber Shop | Talas, Kayseri",
+    title: "Talas Berber | Mehmet İrşad Güder Barber Shop",
     description: "Talas'ta profesyonel erkek saç kesimi ve sakal tasarımı. Koltuğunuzu ayırtın.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Mehmet İrşad Güder Barber Shop — Talas, Kayseri",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mehmet İrşad Güder Barber Shop | Talas, Kayseri",
+    title: "Talas Berber | Mehmet İrşad Güder Barber Shop",
     description: "Talas'ta profesyonel erkek saç kesimi ve sakal tasarımı. Koltuğunuzu ayırtın.",
+    images: ["/twitter-image"],
   },
 };
 
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
-  "@type": "BarberShop",
-  name: "Mehmet İrşad Güder Barber Shop",
-  description: "Talas, Kayseri'de profesyonel erkek saç kesimi ve sakal tasarımı.",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Mevlana Mah. Mehmet Timuçin Cad., Özkan Sok. No: 1 D:C",
-    addressLocality: "Talas",
-    addressRegion: "Kayseri",
-    postalCode: "38280",
-    addressCountry: "TR",
-  },
-  areaServed: ["Talas", "Kayseri"],
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl.toString()}#website`,
+      url: siteUrl.toString(),
+      name: "Mehmet İrşad Güder Barber Shop",
+      inLanguage: "tr-TR",
+      publisher: { "@id": `${siteUrl.toString()}#organization` },
+    },
+    {
+      "@type": ["BarberShop", "HairSalon"],
+      "@id": `${siteUrl.toString()}#organization`,
+      name: "Mehmet İrşad Güder Barber Shop",
+      description: "Talas, Kayseri'de profesyonel erkek saç kesimi, sakal tasarımı ve kişisel bakım.",
+      url: siteUrl.toString(),
+      image: new URL("/opengraph-image", siteUrl).toString(),
+      logo: new URL("/icon.svg", siteUrl).toString(),
+      priceRange: "₺₺",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Mevlana Mah. Mehmet Timuçin Cad., Özkan Sok. No: 1 D:C",
+        addressLocality: "Talas",
+        addressRegion: "Kayseri",
+        postalCode: "38280",
+        addressCountry: "TR",
+      },
+      areaServed: [
+        { "@type": "City", name: "Talas" },
+        { "@type": "City", name: "Kayseri" },
+      ],
+      openingHoursSpecification: [
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          opens: "10:00",
+          closes: "23:00",
+        },
+      ],
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Berber Hizmetleri",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", name: "Klasik Kesim" },
+            price: "650",
+            priceCurrency: "TRY",
+          },
+          {
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", name: "Saç + Sakal" },
+            price: "950",
+            priceCurrency: "TRY",
+          },
+          {
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", name: "Sakal Tasarımı" },
+            price: "450",
+            priceCurrency: "TRY",
+          },
+        ],
+      },
+      sameAs: [],
+    },
+  ],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

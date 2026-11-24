@@ -1,0 +1,18 @@
+{
+  "name": "Mehmet İrşad Güder Barber Shop",
+  "short_name": "Güder Barber",
+  "description": "Talas, Kayseri profesyonel berber hizmetleri ve randevu.",
+  "lang": "tr",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#176b5b",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

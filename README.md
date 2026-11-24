@@ -20,6 +20,12 @@ Site `http://localhost:3000` adresinde açılır. Randevu formu ve API pazar gü
 
 Projeyi Git sağlayıcınıza gönderip Vercel'de içe aktarın. Vercel projesinin **Settings → Environment Variables** bölümüne `MONGODB_URI`, `MONGODB_DB`, `NEXT_PUBLIC_WHATSAPP_NUMBER`, `ADMIN_PASSWORD` ve `ADMIN_SESSION_SECRET` değişkenlerini ekleyin, sonra yeniden dağıtın. WhatsApp numarasını ülke koduyla ve `+`/boşluk olmadan girin. Atlas Network Access'te Vercel'den gelen bağlantılara izin verin; dinamik çıkış IP'leri için Atlas/Vercel planınıza uygun ağ erişimi yapılandırması gerekir.
 
+## SEO yapılandırması
+
+Dağıtım alan adınızı `NEXT_PUBLIC_SITE_URL` değişkenine yalnızca şema dahil yazın, örneğin `https://www.ornek-alanadiniz.com`. Bu değer ana sayfa canonical adresini, Open Graph alanını, sitemap.xml, robots.txt ve yapılandırılmış işletme verisini tek alan adına bağlar. Değer ayarlanmazsa Vercel production domain'i kullanılır; yerel geliştirmede `http://localhost:3000` temel adresi kullanılır.
+
+Arama motorlarına kapatılması gereken randevu iptali sayfası `noindex` olarak işaretlenmiştir. `/api/` yolları ve iptal sayfası robots.txt tarafından tarama dışı bırakılır.
+
 Randevu API'si `POST /api/appointments` yolundadır. API tarih, saat, telefon ve hizmet alanlarını doğrular; aynı saat için eşzamanlı talepleri MongoDB unique index'i engeller. Atlas değişkenleri tanımlı değilse arayüz açılır, randevu kaydı 503 yanıtı verir.
 
 ## WhatsApp otomatik yanıt
