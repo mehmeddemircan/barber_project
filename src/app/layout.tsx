@@ -116,19 +116,19 @@ const localBusinessJsonLd = {
           {
             "@type": "Offer",
             itemOffered: { "@type": "Service", name: "Klasik Kesim" },
-            price: "650",
+            price: "500",
             priceCurrency: "TRY",
           },
           {
             "@type": "Offer",
             itemOffered: { "@type": "Service", name: "Saç + Sakal" },
-            price: "950",
+            price: "500",
             priceCurrency: "TRY",
           },
           {
             "@type": "Offer",
             itemOffered: { "@type": "Service", name: "Sakal Tasarımı" },
-            price: "450",
+            price: "500",
             priceCurrency: "TRY",
           },
           {
@@ -136,9 +136,11 @@ const localBusinessJsonLd = {
             itemOffered: {
               "@type": "Service",
               name: "Evde Kesim",
-              description: "Talas içinde adreste erkek saç kesimi. Fiyat bilgisi WhatsApp üzerinden alınır.",
+              description: "Talas içinde adreste erkek saç kesimi.",
               areaServed: { "@type": "City", name: "Talas" },
             },
+            price: "500",
+            priceCurrency: "TRY",
           },
         ],
       },
