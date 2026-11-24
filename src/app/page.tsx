@@ -320,6 +320,7 @@ export default function Home() {
   const [adminSortDescending, setAdminSortDescending] = useState(false);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState<number | null>(null);
   const [teamIndex, setTeamIndex] = useState(0);
+  const [teamCarouselPaused, setTeamCarouselPaused] = useState(false);
   const galleryTriggerRef = useRef<HTMLButtonElement | null>(null);
   const galleryDialogRef = useRef<HTMLDivElement | null>(null);
   const galleryCloseRef = useRef<HTMLButtonElement | null>(null);
@@ -425,6 +426,18 @@ export default function Home() {
 
     return () => { active = false; };
   }, [isAdminOpen, adminRefreshKey]);
+
+  useEffect(() => {
+    if (t.teamMembers.length < 2) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || teamCarouselPaused) return;
+
+    const interval = window.setInterval(() => {
+      setTeamIndex((currentIndex) => (currentIndex + 1) % t.teamMembers.length);
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [teamCarouselPaused, t.teamMembers.length]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
@@ -869,7 +882,14 @@ export default function Home() {
           <h2 id="team-title">{t.teamTitle[0]}<br /><em>{t.teamTitle[1]}</em></h2>
           <p>{t.teamCopy}</p>
         </div>
-          <article className="team-profile" data-reveal>
+          <article
+            className="team-profile"
+            data-reveal
+            onMouseEnter={() => setTeamCarouselPaused(true)}
+            onMouseLeave={() => setTeamCarouselPaused(false)}
+            onFocusCapture={() => setTeamCarouselPaused(true)}
+            onBlurCapture={() => setTeamCarouselPaused(false)}
+          >
             <div className="team-profile-copy">
               <div className="team-profile-heading">
                 <div className="team-profile-icon"><Scissors size={28} strokeWidth={1.35} /></div>
