@@ -325,6 +325,7 @@ export default function Home() {
   const galleryCloseRef = useRef<HTMLButtonElement | null>(null);
   const t = content[language];
   const adminText = adminContent[language];
+  const activeTeamMember = t.teamMembers[teamIndex] || t.teamMembers[0];
   const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
   const whatsappHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t.whatsappMessage)}` : "";
   const minDate = istanbulDateValue(new Date());
@@ -868,34 +869,32 @@ export default function Home() {
           <h2 id="team-title">{t.teamTitle[0]}<br /><em>{t.teamTitle[1]}</em></h2>
           <p>{t.teamCopy}</p>
         </div>
-        {t.teamMembers.map((member, index) => index === teamIndex && (
-          <article className="team-profile" key={member.name} data-reveal>
+          <article className="team-profile" data-reveal>
             <div className="team-profile-copy">
               <div className="team-profile-heading">
                 <div className="team-profile-icon"><Scissors size={28} strokeWidth={1.35} /></div>
                 <div>
-                  <h3>{member.name}</h3>
-                  <p>{member.specialty}</p>
+                  <h3>{activeTeamMember.name}</h3>
+                  <p>{activeTeamMember.specialty}</p>
                   <div className="team-rating" aria-label="5 out of 5">
                     {[0, 1, 2, 3, 4].map((star) => <Star key={star} size={17} fill="currentColor" strokeWidth={1.5} />)}
                   </div>
                 </div>
               </div>
-              <p className="team-profile-role">{member.role}</p>
-              <p className="team-profile-bio">{member.bio}</p>
+              <p className="team-profile-role">{activeTeamMember.role}</p>
+              <p className="team-profile-bio">{activeTeamMember.bio}</p>
               <div className="team-profile-social">
                 <Instagram size={21} />
-                <span>{member.instagram}</span>
+                <span>{activeTeamMember.instagram}</span>
               </div>
             </div>
-            <div className="team-profile-photo" role="img" aria-label={member.name} style={{ backgroundImage: `url("${member.image}")` }} />
+            <div className="team-profile-photo" role="img" aria-label={activeTeamMember.name} style={{ backgroundImage: `url("${activeTeamMember.image}")` }} />
             <div className="team-profile-controls">
               <button type="button" aria-label={t.galleryPrevious} onClick={() => setTeamIndex((teamIndex + t.teamMembers.length - 1) % t.teamMembers.length)}><ChevronLeft size={20} /></button>
               <span>{String(teamIndex + 1).padStart(2, "0")} / {String(t.teamMembers.length).padStart(2, "0")}</span>
               <button type="button" aria-label={t.galleryNext} onClick={() => setTeamIndex((teamIndex + 1) % t.teamMembers.length)}><ChevronRight size={20} /></button>
             </div>
           </article>
-        ))}
       </section>
 
       <section className="film-section bg-olive text-paper" id="film">
