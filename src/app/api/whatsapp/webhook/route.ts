@@ -31,10 +31,10 @@ function getAutoReply(message: string) {
   const english = /\b(hi|hello|hey|appointment|booking|price|service|thanks)\b/i.test(message);
 
   if (english) {
-    return "Hi, welcome to KÖK. Barber Club! Our services are Classic Cut ₺650, Hair + Beard ₺950, and Beard Shape ₺450. Reply with the service and a day/time that works for you, and our team will get back to you shortly.";
+    return "Hi, welcome to KÖK. Barber Club! Our services are Classic Cut ₺650, Hair + Beard ₺950, Beard Shape ₺450, and at-home haircuts in Talas (message us for pricing). Reply with the service and a day/time that works for you, and our team will get back to you shortly.";
   }
 
-  return "Merhaba, KÖK. Berber Kulübü'ne hoş geldin! Hizmetlerimiz: Klasik kesim ₺650, Saç + Sakal ₺950, Sakal tasarımı ₺450. Randevu için istediğin hizmeti, gün ve saati yazabilirsin; ekibimiz en kısa sürede dönüş yapacak.";
+  return "Merhaba, KÖK. Berber Kulübü'ne hoş geldin! Hizmetlerimiz: Klasik kesim ₺650, Saç + Sakal ₺950, Sakal tasarımı ₺450 ve Talas'ta evde kesim (fiyat için bize yaz). Randevu için istediğin hizmeti, gün ve saati yazabilirsin; ekibimiz en kısa sürede dönüş yapacak.";
 }
 
 export async function GET(request: Request) {

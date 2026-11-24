@@ -2,16 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, ArrowUp, ArrowUpDown, BadgePercent, CalendarDays, Check, ChevronLeft, ChevronRight, Clock3, Download, Gift, GraduationCap, Home as HomeIcon, Instagram, MapPin, MessageCircle, Moon, Quote, RefreshCw, Scissors, Search, ShieldCheck, Star, Sun, UsersRound, X } from "lucide-react";
+import { HOME_VISIT_SERVICE, type AppointmentService } from "@/lib/appointment-services";
 import { isSundayDate } from "@/lib/appointment-dates";
 
 const navTargets = ["#hikaye", "#ekibimiz", "#kampanyalar", "#hizmetler", "#yorumlar", "#randevu"] as const;
 const mobileNavTargets = ["#home", ...navTargets.slice(1)];
 const mobileNavIcons = [HomeIcon, UsersRound, BadgePercent, Scissors, Star, CalendarDays] as const;
 
-const services = [
-  { key: "Klasik Kesim", name: { tr: "Klasik Kesim", en: "Classic Cut" }, detail: { tr: "Yıkama, kesim ve şekillendirme", en: "Wash, cut and styling" }, price: "₺650", duration: { tr: "40 dk", en: "40 min" } },
-  { key: "Saç + Sakal", name: { tr: "Saç + Sakal", en: "Hair + Beard" }, detail: { tr: "Tam bakım, tek koltukta", en: "The complete chair experience" }, price: "₺950", duration: { tr: "60 dk", en: "60 min" } },
-  { key: "Sakal Tasarımı", name: { tr: "Sakal Tasarımı", en: "Beard Shape" }, detail: { tr: "Sıcak havlu ve ustura dokunuşu", en: "Hot towel and straight-razor finish" }, price: "₺450", duration: { tr: "25 dk", en: "25 min" } },
+const services: {
+  key: AppointmentService;
+  name: Record<Language, string>;
+  detail: Record<Language, string>;
+  price: Record<Language, string>;
+  duration: Record<Language, string>;
+}[] = [
+  { key: "Klasik Kesim", name: { tr: "Klasik Kesim", en: "Classic Cut" }, detail: { tr: "Yıkama, kesim ve şekillendirme", en: "Wash, cut and styling" }, price: { tr: "₺650", en: "₺650" }, duration: { tr: "40 dk", en: "40 min" } },
+  { key: "Saç + Sakal", name: { tr: "Saç + Sakal", en: "Hair + Beard" }, detail: { tr: "Tam bakım, tek koltukta", en: "The complete chair experience" }, price: { tr: "₺950", en: "₺950" }, duration: { tr: "60 dk", en: "60 min" } },
+  { key: "Sakal Tasarımı", name: { tr: "Sakal Tasarımı", en: "Beard Shape" }, detail: { tr: "Sıcak havlu ve ustura dokunuşu", en: "Hot towel and straight-razor finish" }, price: { tr: "₺450", en: "₺450" }, duration: { tr: "25 dk", en: "25 min" } },
+  { key: HOME_VISIT_SERVICE, name: { tr: "Evde Kesim", en: "At-home Haircut" }, detail: { tr: "Talas'ta adresinde saç kesimi", en: "At-home haircut in Talas" }, price: { tr: "WhatsApp", en: "WhatsApp" }, duration: { tr: "40 dk", en: "40 min" } },
 ];
 
 
@@ -25,12 +33,12 @@ const timeSlots = [
 ];
 type Language = "tr" | "en";
 type Theme = "light" | "dark";
-type BookingField = "name" | "phone" | "date" | "time";
-type FieldErrorCode = "nameRequired" | "nameTooShort" | "nameTooLong" | "phoneRequired" | "phoneInvalid" | "dateRequired" | "dateInvalid" | "datePast" | "dateClosed" | "timeRequired" | "timeInvalid" | "timePast" | "timeTaken";
+type BookingField = "name" | "phone" | "address" | "date" | "time";
+type FieldErrorCode = "nameRequired" | "nameTooShort" | "nameTooLong" | "phoneRequired" | "phoneInvalid" | "addressRequired" | "addressTooShort" | "addressTooLong" | "dateRequired" | "dateInvalid" | "datePast" | "dateClosed" | "timeRequired" | "timeInvalid" | "timePast" | "timeTaken";
 type FieldErrors = Partial<Record<BookingField, FieldErrorCode>>;
 type AvailabilityState = { date: string; bookedSlots: string[]; failed: boolean };
-type AdminAppointment = { id: string; name: string; phone: string; service: string; date: string; time: string };
-type AppointmentEdit = Pick<AdminAppointment, "name" | "phone" | "service" | "date" | "time">;
+type AdminAppointment = { id: string; name: string; phone: string; service: string; date: string; time: string; address?: string };
+type AppointmentEdit = Pick<AdminAppointment, "name" | "phone" | "service" | "date" | "time"> & { address: string };
 type AdminActionError = "invalid" | "closed" | "conflict" | "notFound" | "unavailable";
 
 async function requestAdminAppointments(): Promise<AdminAppointment[] | null> {
@@ -60,6 +68,7 @@ const adminContent = {
     time: "SAAT",
     name: "MÜŞTERİ",
     phone: "TELEFON",
+    homeAddress: "EV ADRESİ",
     service: "HİZMET",
     count: "yaklaşan randevu",
     search: "Müşteri ara",
@@ -108,6 +117,7 @@ const adminContent = {
     time: "TIME",
     name: "CUSTOMER",
     phone: "PHONE",
+    homeAddress: "HOME ADDRESS",
     service: "SERVICE",
     count: "upcoming appointments",
     search: "Search customers",
@@ -194,8 +204,8 @@ const content = {
     campaignKicker: "BU ARA", campaignTitle: ["KÜÇÜK BİR", "İYİLİK."], campaignCopy: "Koltukta sana iyi gelecek birkaç neden.", campaignAction: "KAMPANYAYI SEÇ", campaignTerms: "Kampanya koşulları randevu sırasında dükkânda teyit edilir.",
     reviewKicker: "KOLTUKTAN SONRA", reviewTitle: ["SÖZÜ", "SİZDE."], reviewPrevious: "Önceki yorumlar", reviewNext: "Sonraki yorumlar",
     serviceKicker: "USTADAN UCA", serviceTitle: ["USTANIN", "ELİNDEN."], serviceAside: ["Ne lazımsa, özenle.", "Gerisi koltuğunda."], serviceNote: "* Fiyatlara KDV dahildir. Öğrenci indirimi için ustana danış.",
-    bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Bilgilerin güvende. Ödeme dükkânda.", locationTitle: "DÜKKÂNDA BULUŞALIM.",
-    yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "10:00 — 23:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", quickDates: "YAKIN TARİHLER", bookingSummary: "RANDEVU ÖZETİ", summaryChooseDate: "Tarih ve saatini seç", booked: "DOLU", availabilityLoading: "Saatler kontrol ediliyor...", availabilityUnavailable: "Müsait saatler yüklenemedi. Tekrar deneyin.", availableSlots: "Uygun saat", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
+    bookingKicker: "KOLTUĞUN HAZIR", bookingTitle: ["TAKVİMİNDE", "YER AÇ."], bookingCopy: ["İyi bir saat kendiliğinden gelmez.", "Senin için ayıralım."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Bilgilerin güvende. Ödeme dükkânda.", homeTrust: "Adresin yalnızca evde kesim randevusu için berberle paylaşılır.", locationTitle: "DÜKKÂNDA BULUŞALIM.",
+    yourDetails: "01 — BİLGİLERİN", required: "* Zorunlu alanlar", fullName: "AD SOYAD *", namePlaceholder: "Adın soyadın", phone: "TELEFON *", phonePlaceholder: "05__ ___ __ __", homeAddress: "EV ADRESİ *", homeAddressPlaceholder: "Mahalle, cadde, bina ve daire no", homeServiceArea: "Evde kesim hizmeti Talas ile sınırlıdır.", homeServicePrice: "Evde kesim fiyatı için WhatsApp'tan bilgi alın.", yourService: "HİZMETİN", chooseDate: "02 — GÜNÜNÜ SEÇ", hours: "10:00 — 23:00", date: "TARİH", time: "SAAT", pickDate: "— önce tarih seç", quickDates: "YAKIN TARİHLER", bookingSummary: "RANDEVU ÖZETİ", summaryChooseDate: "Tarih ve saatini seç", booked: "DOLU", availabilityLoading: "Saatler kontrol ediliyor...", availabilityUnavailable: "Müsait saatler yüklenemedi. Tekrar deneyin.", availableSlots: "Uygun saat", submit: "RANDEVUMU OLUŞTUR", submitting: "RANDEVUN OLUŞTURULUYOR...", privacy: "Randevu talebin onaylandığında seni telefonla arayacağız.", validationSummary: "Lütfen işaretli alanları kontrol et.", nameRequired: "Ad soyad alanı zorunludur.", nameTooShort: "Ad soyad en az 2 karakter olmalı.", nameTooLong: "Ad soyad en fazla 80 karakter olabilir.", phoneRequired: "Telefon numarası zorunludur.", phoneInvalid: "7–20 karakterli, geçerli bir telefon numarası gir.", addressRequired: "Evde kesim için adres alanı zorunludur.", addressTooShort: "Lütfen mahalle, cadde ve bina bilgilerini içeren tam adresi girin.", addressTooLong: "Adres en fazla 200 karakter olabilir.", dateRequired: "Lütfen bir tarih seç.", dateInvalid: "Geçerli bir tarih seç.", datePast: "Geçmiş bir tarih seçilemez.", timeRequired: "Lütfen uygun bir saat seç.", timeInvalid: "Listeden geçerli bir saat seç.", timePast: "Geçmiş bir saat seçilemez.", timeTaken: "Bu saat doldu; lütfen başka bir saat seç.",
     dateClosed: "Berber pazar günleri kapalıdır. Lütfen başka bir gün seçin.",
     success: "Randevunuz alındı. Sizi bekliyoruz!", invalid: "Lütfen bilgileri kontrol edip tekrar deneyin.", conflict: "Bu saat az önce doldu. Lütfen başka bir saat seçin.", unavailable: "Şu an randevu oluşturulamıyor. Lütfen daha sonra tekrar deneyin.", network: "Bağlantı kurulamadı. Lütfen tekrar deneyin.", genericError: "Bir hata oluştu.",
     footerLine: ["İYİ KESİM, İYİ MUHABBET.", "TALAS'TA BULUŞALIM."], directions: "YOL TARİFİ", themeLight: "Açık temaya geç", themeDark: "Koyu temaya geç", languageLabel: "Dili seç",
@@ -229,8 +239,8 @@ const content = {
     campaignKicker: "CURRENT OFFERS", campaignTitle: ["A LITTLE", "EXTRA CARE."], campaignCopy: "A few more reasons to take your place in the chair.", campaignAction: "CHOOSE THIS OFFER", campaignTerms: "Offer details are confirmed in-store when you book.",
     reviewKicker: "AFTER THE CHAIR", reviewTitle: ["OVER TO", "YOU."], reviewPrevious: "Previous reviews", reviewNext: "Next reviews",
     serviceKicker: "FROM ROOT TO TIP", serviceTitle: ["IN GOOD", "HANDS."], serviceAside: ["Whatever you need, done with care.", "The rest is in the chair."], serviceNote: "* Prices include VAT. Ask your barber about student pricing.",
-    bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Your details stay private. Pay in-store.", locationTitle: "MEET US IN TALAS.",
-    yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "10:00 — 23:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", quickDates: "UPCOMING DAYS", bookingSummary: "APPOINTMENT SUMMARY", summaryChooseDate: "Choose a date and time", booked: "FULL", availabilityLoading: "Checking available times...", availabilityUnavailable: "Available times couldn't be loaded. Please try again.", availableSlots: "Available times", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
+    bookingKicker: "YOUR CHAIR IS READY", bookingTitle: ["MAKE ROOM", "IN YOUR DAY."], bookingCopy: ["A good hour doesn't just happen.", "Let's save one for you."], address: ["Mevlana Mah. Mehmet Timuçin Cad.", "Özkan Sok. No: 1 D:C, 38280 Talas / Kayseri"], trust: "Your details stay private. Pay in-store.", homeTrust: "Your address is shared only with the barber for your at-home appointment.", locationTitle: "MEET US IN TALAS.",
+    yourDetails: "01 — YOUR DETAILS", required: "* Required fields", fullName: "FULL NAME *", namePlaceholder: "Your full name", phone: "PHONE *", phonePlaceholder: "+90 ___ ___ __ __", homeAddress: "HOME ADDRESS *", homeAddressPlaceholder: "Neighborhood, street, building and apartment", homeServiceArea: "At-home service is available within Talas.", homeServicePrice: "Ask us on WhatsApp for at-home haircut pricing.", yourService: "YOUR SERVICE", chooseDate: "02 — PICK A DAY", hours: "10:00 — 23:00", date: "DATE", time: "TIME", pickDate: "— choose a date first", quickDates: "UPCOMING DAYS", bookingSummary: "APPOINTMENT SUMMARY", summaryChooseDate: "Choose a date and time", booked: "FULL", availabilityLoading: "Checking available times...", availabilityUnavailable: "Available times couldn't be loaded. Please try again.", availableSlots: "Available times", submit: "BOOK MY APPOINTMENT", submitting: "BOOKING YOUR CHAIR...", privacy: "We'll call to confirm your appointment request.", validationSummary: "Please check the highlighted fields.", nameRequired: "Please enter your full name.", nameTooShort: "Your name must be at least 2 characters.", nameTooLong: "Your name must be 80 characters or fewer.", phoneRequired: "Please enter your phone number.", phoneInvalid: "Enter a valid phone number using 7–20 characters.", addressRequired: "An address is required for an at-home haircut.", addressTooShort: "Enter a complete address including neighborhood, street and building.", addressTooLong: "The address must be 200 characters or fewer.", dateRequired: "Please choose a date.", dateInvalid: "Choose a valid date.", datePast: "Past dates are not available.", timeRequired: "Please choose an available time.", timeInvalid: "Choose a time from the list.", timePast: "Past times are not available.", timeTaken: "That time just filled up. Please choose another.",
     dateClosed: "The barber is closed on Sundays. Please choose another day.",
     success: "Your appointment is booked. See you soon!", invalid: "Please check your details and try again.", conflict: "That time just filled up. Please choose another.", unavailable: "We can't book right now. Please try again later.", network: "Connection failed. Please try again.", genericError: "Something went wrong.",
     footerLine: ["GOOD CUTS. GOOD CONVERSATION.", "SEE YOU IN TALAS."], directions: "GET DIRECTIONS", themeLight: "Switch to light theme", themeDark: "Switch to dark theme", languageLabel: "Choose language",
@@ -290,7 +300,7 @@ function BrandLogo({ footer = false }: { footer?: boolean }) {
 
 export default function Home() {
   const [language, setLanguage] = useState<Language>("tr");
-  const [service, setService] = useState(services[0].key);
+  const [service, setService] = useState<string>(services[0].key);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [status, setStatus] = useState("");
@@ -302,6 +312,7 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [theme, setTheme] = useState<Theme>("light");
+  const [activeNavTarget, setActiveNavTarget] = useState("#home");
   const [reviewIndex, setReviewIndex] = useState(0);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [adminAuthenticated, setAdminAuthenticated] = useState(false);
@@ -332,6 +343,9 @@ export default function Home() {
   const activeTeamMember = t.teamMembers[teamIndex] || t.teamMembers[0];
   const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
   const whatsappHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t.whatsappMessage)}` : "";
+  const homeServiceWhatsappHref = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(language === "tr" ? "Merhaba, Talas'ta evde kesim hizmetiniz ve fiyatı hakkında bilgi alabilir miyim?" : "Hello, could you share details and pricing for your at-home haircut service in Talas?")}`
+    : "";
   const minDate = istanbulDateValue(new Date());
   const weekEnd = new Date(`${minDate}T00:00:00.000Z`);
   weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
@@ -366,6 +380,9 @@ export default function Home() {
     nameTooLong: t.nameTooLong,
     phoneRequired: t.phoneRequired,
     phoneInvalid: t.phoneInvalid,
+    addressRequired: t.addressRequired,
+    addressTooShort: t.addressTooShort,
+    addressTooLong: t.addressTooLong,
     dateRequired: t.dateRequired,
     dateInvalid: t.dateInvalid,
     datePast: t.datePast,
@@ -465,6 +482,25 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const sections = mobileNavTargets
+      .map((target) => document.querySelector<HTMLElement>(target))
+      .filter((section): section is HTMLElement => section !== null);
+    if (!sections.length || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(() => {
+      const activeSection = sections
+        .map((section) => ({ section, top: section.getBoundingClientRect().top }))
+        .filter(({ top }) => top <= window.innerHeight * 0.42)
+        .sort((first, second) => second.top - first.top)[0]?.section;
+
+      if (activeSection) setActiveNavTarget(`#${activeSection.id}`);
+    }, { rootMargin: "-15% 0px -65% 0px" });
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     document.documentElement.lang = language;
     document.title = language === "tr"
       ? "Mehmet İrşad Güder Barber Shop | Talas, Kayseri"
@@ -523,6 +559,13 @@ export default function Home() {
       if (!/^[+\d\s()\-]{7,20}$/.test(phone)) return "phoneInvalid";
     }
 
+    if (field === "address" && service === HOME_VISIT_SERVICE) {
+      const address = value.trim();
+      if (!address) return "addressRequired";
+      if (address.length < 8) return "addressTooShort";
+      if (address.length > 200) return "addressTooLong";
+    }
+
     if (field === "date") {
       if (!value) return "dateRequired";
       const parsedDate = new Date(`${value}T00:00:00.000Z`);
@@ -568,6 +611,15 @@ export default function Home() {
     setFieldErrors((current) => ({ ...current, time: undefined }));
   }
 
+  function selectService(nextService: string) {
+    setService(nextService);
+    setFieldErrors((current) => {
+      const next = { ...current };
+      delete next.address;
+      return next;
+    });
+  }
+
   async function submitAppointment(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setWhatsappDraftHref("");
@@ -576,9 +628,11 @@ export default function Home() {
     const formData = new FormData(form);
     const name = String(formData.get("name") || "");
     const phone = String(formData.get("phone") || "");
+    const address = String(formData.get("address") || "");
     const errors: FieldErrors = {
       name: getFieldError("name", name),
       phone: getFieldError("phone", phone),
+      ...(service === HOME_VISIT_SERVICE ? { address: getFieldError("address", address) } : {}),
       date: getFieldError("date", date),
       time: getFieldError("time", time),
     };
@@ -606,6 +660,7 @@ export default function Home() {
           name: formData.get("name"),
           phone: formData.get("phone"),
           service,
+          ...(service === HOME_VISIT_SERVICE ? { address } : {}),
           date,
           time,
         }),
@@ -623,9 +678,12 @@ export default function Home() {
           dateStyle: "long",
           timeZone: "Europe/Istanbul",
         }).format(new Date(`${date}T12:00:00+03:00`));
+        const homeAddress = service === HOME_VISIT_SERVICE
+          ? language === "tr" ? `\nEv adresim: ${address}` : `\nMy home address: ${address}`
+          : "";
         const message = language === "tr"
-          ? `Merhaba, ben ${name}. ${dateLabel} tarihinde saat ${time} için ${serviceName} randevusu aldım.\n\n${t.cancellationLinkMessage}\n${cancellationHref}`
-          : `Hi, this is ${name}. I booked a ${serviceName} appointment for ${dateLabel} at ${time}.\n\n${t.cancellationLinkMessage}\n${cancellationHref}`;
+          ? `Merhaba, ben ${name}. ${dateLabel} tarihinde saat ${time} için ${serviceName} randevusu aldım.${homeAddress}\n\n${t.cancellationLinkMessage}\n${cancellationHref}`
+          : `Hi, this is ${name}. I booked a ${serviceName} appointment for ${dateLabel} at ${time}.${homeAddress}\n\n${t.cancellationLinkMessage}\n${cancellationHref}`;
         const draftHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}` : "";
         if (draftHref) {
           setWhatsappDraftHref(draftHref);
@@ -722,6 +780,7 @@ export default function Home() {
       service: appointment.service,
       date: appointment.date,
       time: appointment.time,
+      address: appointment.address || "",
     });
     setAdminActionError("");
   }
@@ -736,13 +795,17 @@ export default function Home() {
     event.preventDefault();
     if (!editingAppointmentId || !appointmentEdit) return;
 
+    const updatedAppointment: AppointmentEdit = {
+      ...appointmentEdit,
+      address: appointmentEdit.service === HOME_VISIT_SERVICE ? appointmentEdit.address.trim() : "",
+    };
     setAdminBusyId(editingAppointmentId);
     setAdminActionError("");
     try {
       const response = await fetch(`/api/admin/appointments/${encodeURIComponent(editingAppointmentId)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(appointmentEdit),
+        body: JSON.stringify(updatedAppointment),
       });
       if (!response.ok) {
         const result = await response.json() as { code?: AdminActionError };
@@ -755,7 +818,9 @@ export default function Home() {
       }
 
       setAdminAppointments((appointments) => appointments.map((appointment) =>
-        appointment.id === editingAppointmentId ? { ...appointment, ...appointmentEdit } : appointment,
+        appointment.id === editingAppointmentId
+          ? { ...appointment, ...updatedAppointment, address: updatedAppointment.address || undefined }
+          : appointment,
       ).sort((first, second) => first.date.localeCompare(second.date) || first.time.localeCompare(second.time)));
       discardAppointmentEdit();
     } catch {
@@ -810,13 +875,14 @@ export default function Home() {
 
   function exportAdminAppointments() {
     const rows = [
-      [adminText.date, adminText.time, adminText.name, adminText.phone, adminText.service],
+      [adminText.date, adminText.time, adminText.name, adminText.phone, adminText.service, adminText.homeAddress],
       ...filteredAdminAppointments.map((appointment) => [
         appointment.date,
         appointment.time,
         appointment.name,
         appointment.phone,
         services.find((item) => item.key === appointment.service)?.name[language] || appointment.service,
+        appointment.address || "",
       ]),
     ];
     const csv = `\uFEFF${rows.map((row) => row.map((value) => {
@@ -838,7 +904,7 @@ export default function Home() {
       <header className="site-header">
         <BrandLogo />
         <nav className="desktop-nav" aria-label={language === "tr" ? "Ana menü" : "Main navigation"}>
-          {t.nav.map((label, index) => <a href={navTargets[index]} key={label}>{label}</a>)}
+          {t.nav.map((label, index) => <a href={navTargets[index]} key={label} aria-current={activeNavTarget === navTargets[index] ? "location" : undefined} onClick={() => setActiveNavTarget(navTargets[index])}>{label}</a>)}
         </nav>
         <div className="header-tools">
           <div className="language-switch" role="group" aria-label={t.languageLabel}>
@@ -995,7 +1061,7 @@ export default function Home() {
                   <h3>{campaign.title[language]}</h3>
                   <p>{campaign.description[language]}</p>
                   {campaign.price && <div className="campaign-price"><del>{campaign.oldPrice}</del><strong>{campaign.price}</strong></div>}
-                  <button className="campaign-action" type="button" onClick={() => { setService(campaign.service); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
+                  <button className="campaign-action" type="button" onClick={() => { selectService(campaign.service); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
                     {t.campaignAction}<ArrowRight size={15} />
                   </button>
                 </article>
@@ -1014,11 +1080,11 @@ export default function Home() {
           </div>
           <div className="service-list">
             {services.map((item, index) => (
-              <button className={`service-row ${service === item.key ? "is-selected" : ""}`} key={item.key} type="button" data-reveal onClick={() => { setService(item.key); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
+              <button className={`service-row ${service === item.key ? "is-selected" : ""}`} key={item.key} type="button" data-reveal onClick={() => { selectService(item.key); document.querySelector("#randevu")?.scrollIntoView({ behavior: "smooth" }); }}>
                 <span className="service-number">0{index + 1}</span>
                 <span className="service-info"><strong>{item.name[language]}</strong><small>{item.detail[language]}</small></span>
                 <span className="service-duration"><Clock3 size={14} />{item.duration[language]}</span>
-                <span className="service-price">{item.price}</span>
+                <span className="service-price">{item.price[language]}</span>
                 <ArrowRight className="service-arrow" size={18} />
               </button>
             ))}
@@ -1059,7 +1125,7 @@ export default function Home() {
           <h2>{t.bookingTitle[0]}<br /><em>{t.bookingTitle[1]}</em></h2>
           <p className="booking-description">{t.bookingCopy[0]}<br />{t.bookingCopy[1]}</p>
           <div className="booking-address"><MapPin size={17} /><span>{t.address[0]}<br />{t.address[1]}</span></div>
-          <div className="booking-trust"><ShieldCheck size={18} /><span>{t.trust}</span></div>
+          <div className="booking-trust"><ShieldCheck size={18} /><span>{service === HOME_VISIT_SERVICE ? t.homeTrust : t.trust}</span></div>
         </div>
         <form className="booking-form" data-reveal="right" noValidate onSubmit={submitAppointment}>
           <div className="form-heading"><span>{t.yourDetails}</span><span>{t.required}</span></div>
@@ -1075,7 +1141,17 @@ export default function Home() {
               {fieldErrors.phone && <small className="field-error" id="booking-phone-error">{fieldErrorText[fieldErrors.phone]}</small>}
             </label>
           </div>
-          <label className="field service-select"><span>{t.yourService}</span><select value={service} onChange={(event) => setService(event.target.value)}>{services.map((item) => <option key={item.key} value={item.key}>{item.name[language]}</option>)}</select></label>
+          <label className="field service-select"><span>{t.yourService}</span><select value={service} onChange={(event) => selectService(event.target.value)}>{services.map((item) => <option key={item.key} value={item.key}>{item.name[language]}</option>)}</select></label>
+          {service === HOME_VISIT_SERVICE && (
+            <div className="home-visit-address">
+              <p><MapPin size={15} />{t.homeServiceArea}</p>
+              <label className={`field ${fieldErrors.address ? "has-error" : ""}`} htmlFor="booking-address">
+                <span>{t.homeAddress}</span>
+                <input id="booking-address" name="address" type="text" placeholder={t.homeAddressPlaceholder} autoComplete="street-address" minLength={8} maxLength={200} aria-invalid={Boolean(fieldErrors.address)} aria-describedby={fieldErrors.address ? "booking-address-error" : undefined} required onBlur={(event) => validateField("address", event.currentTarget.value)} onChange={(event) => updateFieldError("address", event.currentTarget.value)} />
+                {fieldErrors.address && <small className="field-error" id="booking-address-error">{fieldErrorText[fieldErrors.address]}</small>}
+              </label>
+            </div>
+          )}
           <div className="form-heading date-heading"><span>{t.chooseDate}</span><span>{t.hours}</span></div>
           <label className={`field date-field ${fieldErrors.date ? "has-error" : ""}`} htmlFor="booking-date">
             <span>{t.date}</span>
@@ -1123,9 +1199,14 @@ export default function Home() {
             </div>
             <div className="booking-summary-selection">
               <span>{date ? new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", { dateStyle: "medium", timeZone: "Europe/Istanbul" }).format(new Date(`${date}T12:00:00+03:00`)) : t.summaryChooseDate}{time ? ` · ${time}` : ""}</span>
-              <strong>{selectedService.price}</strong>
+              <strong>{selectedService.price[language]}</strong>
             </div>
             <small><Clock3 size={13} />{selectedService.duration[language]}</small>
+            {service === HOME_VISIT_SERVICE && (
+              homeServiceWhatsappHref
+                ? <a className="home-service-price-link" href={homeServiceWhatsappHref} target="_blank" rel="noreferrer">{t.homeServicePrice}<ArrowRight size={14} /></a>
+                : <p className="home-service-price-note">{t.whatsappSetup}</p>
+            )}
           </div>
           <button className="submit-button" type="submit" disabled={isSubmitting}>{isSubmitting ? t.submitting : t.submit}<ArrowRight size={17} /></button>
           {status && <div className={`form-status ${statusIsSuccess ? "success" : "error"}`} role={statusIsSuccess ? "status" : "alert"}>{statusIsSuccess && <Check size={16} />}<span>{status}</span>{statusIsSuccess && whatsappDraftHref && <a className="whatsapp-draft-link" href={whatsappDraftHref} target="_blank" rel="noreferrer">{language === "tr" ? "WhatsApp taslağını aç" : "Open WhatsApp draft"}<ArrowRight size={13} /></a>}{statusIsSuccess && bookingCancellationHref && <a className="booking-cancel-link" href={bookingCancellationHref} target="_blank" rel="noreferrer">{t.cancellationLink}<ArrowRight size={13} /></a>}</div>}
@@ -1230,6 +1311,12 @@ export default function Home() {
                                       <label className="field"><span>{adminText.name}</span><input value={appointmentEdit.name} minLength={2} maxLength={80} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, name: event.currentTarget.value })} required /></label>
                                       <label className="field"><span>{adminText.phone}</span><input type="tel" value={appointmentEdit.phone} minLength={7} maxLength={20} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, phone: event.currentTarget.value })} required /></label>
                                       <label className="field"><span>{adminText.service}</span><select value={appointmentEdit.service} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, service: event.currentTarget.value })}>{services.map((item) => <option key={item.key} value={item.key}>{item.name[language]}</option>)}</select></label>
+                                      {appointmentEdit.service === HOME_VISIT_SERVICE && (
+                                        <label className="field">
+                                          <span>{adminText.homeAddress} *</span>
+                                          <input value={appointmentEdit.address} minLength={8} maxLength={200} onChange={(event) => setAppointmentEdit({ ...appointmentEdit, address: event.currentTarget.value })} required />
+                                        </label>
+                                      )}
                                       <div className="admin-row-actions">
                                         <button type="submit" disabled={adminBusyId === appointment.id}>{adminText.save}</button>
                                         <button type="button" onClick={discardAppointmentEdit} disabled={adminBusyId === appointment.id}>{adminText.discard}</button>
@@ -1242,7 +1329,12 @@ export default function Home() {
                                     <td data-label={adminText.time}><strong className="admin-time">{appointment.time}</strong></td>
                                     <td data-label={adminText.name}><strong>{appointment.name}</strong></td>
                                     <td data-label={adminText.phone}><a className="admin-phone" href={`tel:${appointment.phone.replace(/[^\d+]/g, "")}`}>{appointment.phone}</a></td>
-                                    <td data-label={adminText.service}>{serviceName}</td>
+                                    <td data-label={adminText.service}>
+                                      <div className="admin-appointment-service">
+                                        <span>{serviceName}</span>
+                                        {appointment.address && <small className="admin-appointment-address">{appointment.address}</small>}
+                                      </div>
+                                    </td>
                                     <td data-label={adminText.actions}><div className="admin-row-actions"><button type="button" onClick={() => beginAppointmentEdit(appointment)} disabled={Boolean(adminBusyId)}>{adminText.edit}</button><button type="button" onClick={() => cancelAppointment(appointment)} disabled={Boolean(adminBusyId)}>{adminText.cancel}</button></div></td>
                                   </>
                                 )}
@@ -1298,12 +1390,12 @@ export default function Home() {
         {[language === "tr" ? "Ana sayfa" : "Home", ...t.nav.slice(1)].map((label, index) => {
           const Icon = mobileNavIcons[index];
           return (
-            <a href={mobileNavTargets[index]} key={label} aria-label={label} title={label}>
+            <a href={mobileNavTargets[index]} key={label} aria-label={label} title={label} aria-current={activeNavTarget === mobileNavTargets[index] ? "location" : undefined} onClick={() => setActiveNavTarget(mobileNavTargets[index])}>
               <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
             </a>
           );
         })}
-        <a className="mobile-back-to-top" href="#home" aria-label={language === "tr" ? "Başa dön" : "Back to top"} title={language === "tr" ? "Başa dön" : "Back to top"}>
+        <a className="mobile-back-to-top" href="#home" aria-label={language === "tr" ? "Başa dön" : "Back to top"} title={language === "tr" ? "Başa dön" : "Back to top"} onClick={() => setActiveNavTarget("#home")}>
           <ArrowUp size={21} strokeWidth={1.8} aria-hidden="true" />
         </a>
       </nav>

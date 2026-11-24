@@ -28,7 +28,7 @@ export async function GET(request: Request) {
       .collection("appointments")
       .find(
         { date: { $gte: today } },
-        { projection: { name: 1, phone: 1, service: 1, date: 1, time: 1 } },
+        { projection: { name: 1, phone: 1, service: 1, date: 1, time: 1, address: 1 } },
       )
       .sort({ date: 1, time: 1 })
       .limit(250)

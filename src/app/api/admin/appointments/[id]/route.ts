@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
+import { HOME_VISIT_SERVICE, isAppointmentService } from "@/lib/appointment-services";
 import { getAdminAuthConfig, isAdminRequest } from "@/lib/admin-auth";
 import { isCalendarDate, isSundayDate } from "@/lib/appointment-dates";
 import { connectToDatabase } from "@/lib/mongodb";
 
 export const runtime = "nodejs";
 
-const services = ["Klasik Kesim", "Saç + Sakal", "Sakal Tasarımı"] as const;
 const timeSlots = [
   "10:00", "10:30", "11:00", "11:30", "12:00", "12:30",
   "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
@@ -47,7 +47,7 @@ export async function PUT(request: Request, context: RouteContext<"/api/admin/ap
     return NextResponse.json({ code: "notFound" }, { status: 404 });
   }
 
-  let payload: { name?: unknown; phone?: unknown; service?: unknown; date?: unknown; time?: unknown };
+  let payload: { name?: unknown; phone?: unknown; service?: unknown; date?: unknown; time?: unknown; address?: unknown };
   try {
     payload = await request.json();
   } catch {
@@ -56,6 +56,7 @@ export async function PUT(request: Request, context: RouteContext<"/api/admin/ap
 
   const name = typeof payload.name === "string" ? payload.name.trim() : "";
   const phone = typeof payload.phone === "string" ? payload.phone.trim() : "";
+  const address = typeof payload.address === "string" ? payload.address.trim() : "";
   const { service, date, time } = payload;
   if (typeof date === "string" && isSundayDate(date)) {
     return NextResponse.json({ code: "closed" }, { status: 400 });
@@ -63,7 +64,8 @@ export async function PUT(request: Request, context: RouteContext<"/api/admin/ap
   if (
     name.length < 2 || name.length > 80 ||
     !/^[+\d\s()\-]{7,20}$/.test(phone) ||
-    typeof service !== "string" || !services.includes(service as (typeof services)[number]) ||
+    !isAppointmentService(service) ||
+    (service === HOME_VISIT_SERVICE && (address.length < 8 || address.length > 200)) ||
     typeof date !== "string" || !isCalendarDate(date) || date < currentIstanbulDate() ||
     typeof time !== "string" || !timeSlots.includes(time) ||
     new Date(`${date}T${time}:00+03:00`).getTime() <= Date.now()
@@ -73,13 +75,13 @@ export async function PUT(request: Request, context: RouteContext<"/api/admin/ap
 
   try {
     const client = await connectToDatabase();
+    const update = service === HOME_VISIT_SERVICE
+      ? { $set: { name, phone, service, date, time, address } }
+      : { $set: { name, phone, service, date, time }, $unset: { address: "" } };
     const result = await client
       .db(process.env.MONGODB_DB || "kok_barber")
       .collection("appointments")
-      .updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { name, phone, service, date, time } },
-      );
+      .updateOne({ _id: new ObjectId(id) }, update);
     if (!result.matchedCount) {
       return NextResponse.json({ code: "notFound" }, { status: 404 });
     }

@@ -84,8 +84,9 @@ button { color: inherit; }
 .brand-type strong:nth-child(2) { margin-top: 3px; font-size: 18px; font-weight: 650; letter-spacing: -.04em; }
 .brand-type small { margin-top: 4px; color: var(--muted); font-size: 6px; font-weight: 650; letter-spacing: .19em; }
 .desktop-nav { display: flex; align-items: center; gap: clamp(16px, 2.4vw, 32px); margin-left: auto; }
-.desktop-nav a { color: var(--muted); font-size: 12px; transition: color .2s ease; }
-.desktop-nav a:hover, .site-footer a:hover { color: var(--olive); }
+.desktop-nav a { position: relative; color: var(--muted); font-size: 12px; transition: color .2s ease; }
+.desktop-nav a:hover, .desktop-nav a[aria-current="location"], .site-footer a:hover { color: var(--olive); }
+.desktop-nav a[aria-current="location"]::after { position: absolute; right: 0; bottom: -7px; left: 0; height: 1px; background: currentColor; content: ""; }
 .header-tools { display: flex; align-items: center; gap: 10px; }
 .language-switch { display: flex; height: 32px; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--line); border-radius: 20px; }
 .language-switch button { min-width: 29px; padding: 5px; border: 0; border-radius: 16px; background: transparent; color: var(--muted); cursor: pointer; font-size: 9px; font-weight: 700; }
@@ -230,6 +231,12 @@ button { color: inherit; }
 .service-arrow { color: #e3c77d; opacity: 0; transition: transform .2s ease, opacity .2s ease; }
 .service-row:hover .service-arrow, .service-row.is-selected .service-arrow { transform: translateX(3px); opacity: 1; }
 .service-footnote { margin: 16px 0 0; color: rgba(255,255,255,.5); font-size: 10px; line-height: 1.7; }
+.home-visit-address { display: grid; gap: 12px; margin-top: 16px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-raised); }
+.home-visit-address > p { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.home-visit-address > p svg { flex: 0 0 auto; color: var(--olive); }
+.home-service-price-link { display: inline-flex; align-items: center; gap: 7px; color: var(--olive); font-size: 11px; font-weight: 700; }
+.home-service-price-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.home-service-price-note { margin: 0; color: var(--muted); font-size: 10px; }
 
 .reviews-section { padding-block: 100px; background: var(--paper); }
 .reviews-heading { margin-bottom: 30px; }
@@ -464,6 +471,7 @@ button { color: inherit; }
     -webkit-backdrop-filter: saturate(180%) blur(18px);
   }
   .mobile-bottom-nav a {
+    position: relative;
     display: grid;
     min-width: 0;
     min-height: 44px;
@@ -472,12 +480,25 @@ button { color: inherit; }
     color: inherit;
     transition: background-color .2s ease, color .2s ease;
   }
+  .mobile-bottom-nav a[aria-current="location"] {
+    background: rgba(227,199,125,.12);
+    color: #e3c77d;
+  }
+  .mobile-bottom-nav a[aria-current="location"]::after {
+    position: absolute;
+    bottom: 3px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+  }
   .mobile-bottom-nav a:hover, .mobile-bottom-nav a:focus-visible {
     background: rgba(255,255,255,.1);
     color: #e3c77d;
   }
   .mobile-bottom-nav a:focus-visible { outline: 2px solid #e3c77d; outline-offset: 1px; }
-  .mobile-bottom-nav .mobile-back-to-top { margin-left: 4px; }
+  .mobile-bottom-nav .mobile-back-to-top { margin-left: 4px; padding-left: 4px; border-left: 1px solid rgba(255,255,255,.14); border-radius: 0; }
   .whatsapp-float { right: 14px; bottom: calc(78px + env(safe-area-inset-bottom)); }
   .hero { min-height: 620px; height: 78svh; }
   .hero-image { background-position: 60% center; }
@@ -573,6 +594,8 @@ button { color: inherit; }
   .admin-table td { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 12px; padding: 10px; border-bottom: 1px solid var(--line); text-align: right; }
   .admin-table td::before { flex: 0 0 auto; color: var(--muted); content: attr(data-label); font-size: 8px; font-weight: 700; letter-spacing: .06em; text-align: left; }
   .admin-table tbody tr td:last-child { border-bottom: 0; }
+  .admin-appointment-service { display: grid; gap: 4px; }
+  .admin-appointment-address { max-width: 260px; color: var(--muted); font-size: 10px; line-height: 1.4; overflow-wrap: anywhere; }
   .admin-table td[colspan] { display: block; text-align: left; }
   .admin-table td[colspan]::before { content: none; }
   .admin-date-cell { flex-wrap: wrap; justify-content: flex-end; }

@@ -131,6 +131,15 @@ const localBusinessJsonLd = {
             price: "450",
             priceCurrency: "TRY",
           },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Evde Kesim",
+              description: "Talas içinde adreste erkek saç kesimi. Fiyat bilgisi WhatsApp üzerinden alınır.",
+              areaServed: { "@type": "City", name: "Talas" },
+            },
+          },
         ],
       },
       sameAs: [],

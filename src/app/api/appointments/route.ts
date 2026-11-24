@@ -1,11 +1,11 @@
 import { createHash, randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
+import { HOME_VISIT_SERVICE, isAppointmentService, type AppointmentService } from "@/lib/appointment-services";
 import { isCalendarDate, isSundayDate } from "@/lib/appointment-dates";
 import { connectToDatabase } from "@/lib/mongodb";
 
 export const runtime = "nodejs";
 
-const services = ["Klasik Kesim", "Saç + Sakal", "Sakal Tasarımı"] as const;
 const timeSlots = [
   "10:00", "10:30", "11:00", "11:30", "12:00", "12:30",
   "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
@@ -27,9 +27,10 @@ function istanbulDateValue(date: Date) {
 type Appointment = {
   name: string;
   phone: string;
-  service: (typeof services)[number];
+  service: AppointmentService;
   date: string;
   time: string;
+  address?: string;
   createdAt: Date;
   cancellationTokenHash: string;
 };
@@ -37,9 +38,10 @@ type Appointment = {
 type AppointmentPayload = {
   name?: string;
   phone?: string;
-  service?: string;
+  service?: unknown;
   date?: string;
   time?: string;
+  address?: unknown;
 };
 
 export async function GET(request: Request) {
@@ -82,6 +84,7 @@ export async function POST(request: Request) {
   const date = payload.date;
   const time = payload.time;
   const service = payload.service;
+  const address = typeof payload.address === "string" ? payload.address.trim() : "";
   const today = new Date();
   const todayIstanbul = istanbulDateValue(today);
   const requestedTime = date && time ? new Date(`${date}T${time}:00+03:00`) : null;
@@ -96,7 +99,8 @@ export async function POST(request: Request) {
     !date || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !isCalendarDate(date) || date < todayIstanbul ||
     !time || !timeSlots.includes(time) ||
     !requestedTime || requestedTime.getTime() <= today.getTime() ||
-    !service || !services.includes(service as (typeof services)[number])
+    !isAppointmentService(service) ||
+    (service === HOME_VISIT_SERVICE && (address.length < 8 || address.length > 200))
   ) {
     return NextResponse.json({ message: "Lütfen bilgileri kontrol edip tekrar deneyin." }, { status: 400 });
   }
@@ -110,9 +114,10 @@ export async function POST(request: Request) {
     const appointment: Appointment = {
       name,
       phone,
-      service: service as Appointment["service"],
+      service,
       date,
       time,
+      ...(service === HOME_VISIT_SERVICE ? { address } : {}),
       createdAt: new Date(),
       cancellationTokenHash: createHash("sha256").update(cancellationToken).digest("hex"),
     };
