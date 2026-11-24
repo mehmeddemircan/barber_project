@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowRight, ArrowUpDown, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Download, Gift, GraduationCap, MapPin, Menu, MessageCircle, Moon, Quote, RefreshCw, Scissors, Search, ShieldCheck, Sun, X } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpDown, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Download, Gift, GraduationCap, Instagram, MapPin, Menu, MessageCircle, Moon, Quote, RefreshCw, Scissors, Search, ShieldCheck, Star, Sun, X } from "lucide-react";
 import { isSundayDate } from "@/lib/appointment-dates";
 
 const services = [
@@ -168,8 +168,22 @@ const content = {
     who: "BİZ KİMİZ?", introTitle: ["Berberlik bir", "ritüeldir."], introCopy: "İyi bir kesimden fazlası. Kapıdan girdiğin andan son dokunuşa kadar, her şey yerli yerinde. Mahallenin ustaları, eski usul özen ve sana ayrılmış bir koltuk.", learn: "BERBERİMİZİ TANI", stamp: ["İYİ İŞ", "ZAMAN ALIR"],
     teamKicker: "EKİBİMİZ", teamTitle: ["BİRBİRİMİZİ", "TAMAMLARIZ."], teamCopy: "Tecrübe, detay ve samimi hizmet aynı çatı altında buluşur.",
     teamMembers: [
-      { name: "Mehmet İrşad Güder", role: "Kurucu & Baş Berber", specialty: "Klasik kesim · Sakal tasarımı" },
-      { name: "Berber Ekibi", role: "Saç & Sakal Uzmanları", specialty: "Modern stil · Detaylı bakım" },
+      {
+        name: "Mehmet İrşad Güder",
+        role: "Kurucu & Baş Berber",
+        specialty: "Saç Kesimi Uzmanı",
+        bio: "Merhaba, ben Mehmet İrşad Güder. Yılların deneyimini klasik kesim ve modern berberlikte birleştiriyorum. Her müşterimin yüz hatlarına, saç yapısına ve kişisel tarzına uygun bir görünüm tasarlıyorum.",
+        instagram: "Instagram",
+        image: "https://images.pexels.com/photos/2061820/pexels-photo-2061820.jpeg?auto=compress&cs=tinysrgb&w=1100",
+      },
+      {
+        name: "Berber Ekibi",
+        role: "Saç & Sakal Uzmanları",
+        specialty: "Stil & Sakal Tasarımı",
+        bio: "Ekibimiz; klasik kesimden modern saç tasarımına, sakal bakımından son dokunuşa kadar her aşamada özenli ve profesyonel hizmet sunar. Her görüşü özel, her kesimi sana göre planlar.",
+        instagram: "Instagram",
+        image: "https://images.pexels.com/photos/32329615/pexels-photo-32329615.jpeg?auto=compress&cs=tinysrgb&w=1100",
+      },
     ],
     filmKicker: "DÜKKÂNIMIZDAN", filmTitle: ["USTALIK", "YAKINDAN."], filmCopy: "Makasın sesi, sıcak havlu, tanıdık bir koltuk. İyi bir kesim burada böyle başlar.", filmLabel: "BERBER SHOP · KISA FİLM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
     galleryKicker: "KOLTUKTAN KARELER", galleryTitle: ["İŞİMİZ", "KONUŞSUN."], galleryCopy: "Her kesim başka, özen hep aynı.", galleryLabels: ["USTALIK", "DETAY", "SON DOKUNUŞ", "MAKASIN İZİ", "KOLTUKTA RİTÜEL", "TAMAMLANAN İŞ"], galleryOpen: "Fotoğrafı büyüt", galleryClose: "Galeriyi kapat", galleryPrevious: "Önceki fotoğraf", galleryNext: "Sonraki fotoğraf",
@@ -189,8 +203,22 @@ const content = {
     who: "WHO WE ARE", introTitle: ["A barber visit", "is a ritual."], introCopy: "More than a good cut. From the moment you walk in to the final touch, everything is in its place. Neighbourhood craft, old-school care, and a chair that is yours.", learn: "MEET YOUR BARBER", stamp: ["GOOD WORK", "TAKES TIME"],
     teamKicker: "OUR TEAM", teamTitle: ["EXPERT HANDS,", "ONE STANDARD."], teamCopy: "Experience, attention to detail and warm service come together under one roof.",
     teamMembers: [
-      { name: "Mehmet İrşad Güder", role: "Founder & Master Barber", specialty: "Classic cuts · Beard design" },
-      { name: "The Barber Team", role: "Hair & Beard Specialists", specialty: "Modern styling · Detailed grooming" },
+      {
+        name: "Mehmet İrşad Güder",
+        role: "Founder & Master Barber",
+        specialty: "Haircut Specialist",
+        bio: "Hi, I'm Mehmet İrşad Güder. I combine years of experience with classic barbering and modern style, creating a look shaped around each client's face, hair type and personality.",
+        instagram: "Instagram",
+        image: "https://images.pexels.com/photos/2061820/pexels-photo-2061820.jpeg?auto=compress&cs=tinysrgb&w=1100",
+      },
+      {
+        name: "The Barber Team",
+        role: "Hair & Beard Specialists",
+        specialty: "Styling & Beard Design",
+        bio: "Our team provides careful, professional service from classic cuts and modern styles to beard care and finishing details. Every visit is personal, and every look is planned for you.",
+        instagram: "Instagram",
+        image: "https://images.pexels.com/photos/32329615/pexels-photo-32329615.jpeg?auto=compress&cs=tinysrgb&w=1100",
+      },
     ],
     filmKicker: "INSIDE THE SHOP", filmTitle: ["CRAFT,", "UP CLOSE."], filmCopy: "The sound of shears, a warm towel, a familiar chair. This is where a good cut begins.", filmLabel: "BARBER SHOP · SHORT FILM · 00:08", filmCredit: "Video: Pexels / RDNE Stock project",
     galleryKicker: "FRAMES FROM THE CHAIR", galleryTitle: ["LET THE", "CRAFT SPEAK."], galleryCopy: "Every cut is different. The care is always the same.", galleryLabels: ["THE CRAFT", "THE DETAIL", "THE FINISH", "THE ART OF THE CUT", "THE CHAIR RITUAL", "A FINISHED LOOK"], galleryOpen: "Enlarge photo", galleryClose: "Close gallery", galleryPrevious: "Previous photo", galleryNext: "Next photo",
@@ -291,6 +319,7 @@ export default function Home() {
   const [adminPageSize, setAdminPageSize] = useState(10);
   const [adminSortDescending, setAdminSortDescending] = useState(false);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState<number | null>(null);
+  const [teamIndex, setTeamIndex] = useState(0);
   const galleryTriggerRef = useRef<HTMLButtonElement | null>(null);
   const galleryDialogRef = useRef<HTMLDivElement | null>(null);
   const galleryCloseRef = useRef<HTMLButtonElement | null>(null);
@@ -839,22 +868,34 @@ export default function Home() {
           <h2 id="team-title">{t.teamTitle[0]}<br /><em>{t.teamTitle[1]}</em></h2>
           <p>{t.teamCopy}</p>
         </div>
-        <div className="team-grid">
-          {t.teamMembers.map((member, index) => (
-            <article className="team-card" key={member.name} data-reveal>
-              <div className={`team-photo team-photo-${index + 1}`} role="img" aria-label={member.name}>
-                <span>0{index + 1}</span>
-              </div>
-              <div className="team-card-copy">
+        {t.teamMembers.map((member, index) => index === teamIndex && (
+          <article className="team-profile" key={member.name} data-reveal>
+            <div className="team-profile-copy">
+              <div className="team-profile-heading">
+                <div className="team-profile-icon"><Scissors size={28} strokeWidth={1.35} /></div>
                 <div>
                   <h3>{member.name}</h3>
-                  <p>{member.role}</p>
+                  <p>{member.specialty}</p>
+                  <div className="team-rating" aria-label="5 out of 5">
+                    {[0, 1, 2, 3, 4].map((star) => <Star key={star} size={17} fill="currentColor" strokeWidth={1.5} />)}
+                  </div>
                 </div>
-                <span>{member.specialty}</span>
               </div>
-            </article>
-          ))}
-        </div>
+              <p className="team-profile-role">{member.role}</p>
+              <p className="team-profile-bio">{member.bio}</p>
+              <div className="team-profile-social">
+                <Instagram size={21} />
+                <span>{member.instagram}</span>
+              </div>
+            </div>
+            <div className="team-profile-photo" role="img" aria-label={member.name} style={{ backgroundImage: `url("${member.image}")` }} />
+            <div className="team-profile-controls">
+              <button type="button" aria-label={t.galleryPrevious} onClick={() => setTeamIndex((teamIndex + t.teamMembers.length - 1) % t.teamMembers.length)}><ChevronLeft size={20} /></button>
+              <span>{String(teamIndex + 1).padStart(2, "0")} / {String(t.teamMembers.length).padStart(2, "0")}</span>
+              <button type="button" aria-label={t.galleryNext} onClick={() => setTeamIndex((teamIndex + 1) % t.teamMembers.length)}><ChevronRight size={20} /></button>
+            </div>
+          </article>
+        ))}
       </section>
 
       <section className="film-section bg-olive text-paper" id="film">

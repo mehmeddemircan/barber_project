@@ -132,15 +132,21 @@ button { color: inherit; }
 .team-heading h2 { margin: 0; font-size: clamp(2.4rem, 4.5vw, 4.2rem); letter-spacing: -.06em; line-height: .98; }
 .team-heading h2 em { color: var(--olive); font-style: normal; }
 .team-heading > p:not(.eyebrow) { margin: 0 0 4px; color: var(--muted); font-size: 13px; line-height: 1.7; }
-.team-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.team-card { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
-.team-photo { position: relative; min-height: 330px; background-image: url("https://images.pexels.com/photos/2061820/pexels-photo-2061820.jpeg?auto=compress&cs=tinysrgb&w=1100"); background-position: center 34%; background-size: cover; }
-.team-photo-2 { background-image: url("https://images.pexels.com/photos/32329615/pexels-photo-32329615.jpeg?auto=compress&cs=tinysrgb&w=1100"); background-position: center 34%; }
-.team-photo > span { position: absolute; top: 14px; left: 14px; display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(29,29,31,.68); color: #fff; font-size: 9px; }
-.team-card-copy { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 20px; }
-.team-card-copy h3 { margin: 0 0 5px; font-size: 19px; letter-spacing: -.03em; }
-.team-card-copy p { margin: 0; color: var(--muted); font-size: 11px; }
-.team-card-copy > span { max-width: 190px; color: var(--olive); font-size: 9px; font-weight: 700; line-height: 1.5; text-align: right; text-transform: uppercase; }
+.team-profile { position: relative; display: grid; grid-template-columns: 1fr minmax(300px, .75fr); min-height: 520px; overflow: hidden; border: 1px solid rgba(255,255,255,.12); border-radius: 22px; background: #141b2b; color: #fff; box-shadow: 0 24px 70px rgba(18,24,38,.12); }
+.team-profile-copy { display: flex; flex-direction: column; padding: 42px 42px 62px; }
+.team-profile-heading { display: flex; align-items: flex-start; gap: 22px; }
+.team-profile-icon { display: grid; width: 86px; height: 86px; flex-shrink: 0; place-items: center; border: 1px solid rgba(255,255,255,.12); border-radius: 18px; color: #f5f7ff; background: rgba(255,255,255,.025); }
+.team-profile-heading h3 { margin: 2px 0 6px; font-size: clamp(2rem, 3.5vw, 3.15rem); font-weight: 500; letter-spacing: -.055em; line-height: 1; }
+.team-profile-heading p { margin: 0 0 10px; color: #b0bacd; font-size: 13px; }
+.team-rating { display: flex; gap: 7px; color: #fff; }
+.team-profile-role { margin: 30px 0 0; color: #7dd6c4; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.team-profile-bio { max-width: 540px; margin: 15px 0 30px; color: rgba(245,247,255,.82); font-size: clamp(13px, 1.25vw, 16px); line-height: 1.75; }
+.team-profile-social { display: flex; align-items: center; gap: 10px; margin-top: auto; font-size: 16px; }
+.team-profile-photo { min-height: 520px; margin: 26px; border-radius: 18px; background-position: center 34%; background-size: cover; }
+.team-profile-controls { position: absolute; bottom: 18px; left: 42px; display: flex; align-items: center; gap: 10px; }
+.team-profile-controls button { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; background: transparent; color: #fff; cursor: pointer; }
+.team-profile-controls button:hover { border-color: #7dd6c4; color: #7dd6c4; }
+.team-profile-controls span { min-width: 56px; color: rgba(255,255,255,.58); font-size: 10px; text-align: center; }
 
 .film-section { overflow: hidden; padding-block: 100px; background: #1d1d1f; color: #f5f5f7; }
 .film-inner { display: grid; grid-template-columns: 1fr .8fr; align-items: center; gap: 80px; }
@@ -455,10 +461,16 @@ button { color: inherit; }
   .team-heading { grid-template-columns: 1fr; gap: 12px; margin-bottom: 22px; }
   .team-heading h2 { font-size: clamp(2.4rem, 10vw, 3.8rem); }
   .team-heading > p:not(.eyebrow) { font-size: 12px; }
-  .team-grid { grid-template-columns: 1fr; gap: 12px; }
-  .team-photo { min-height: 280px; }
-  .team-card-copy { align-items: flex-start; padding: 16px; }
-  .team-card-copy h3 { font-size: 16px; }
+  .team-profile { grid-template-columns: 1fr; min-height: 0; border-radius: 16px; }
+  .team-profile-copy { min-height: 390px; padding: 24px 20px 58px; }
+  .team-profile-heading { gap: 14px; }
+  .team-profile-icon { width: 58px; height: 58px; border-radius: 13px; }
+  .team-profile-heading h3 { font-size: 25px; }
+  .team-profile-heading p { font-size: 11px; }
+  .team-profile-role { margin-top: 22px; }
+  .team-profile-bio { font-size: 12px; line-height: 1.65; }
+  .team-profile-photo { grid-row: 1; min-height: 320px; margin: 12px 12px 0; }
+  .team-profile-controls { bottom: 14px; left: 20px; }
   .film-section, .gallery-section, .campaigns-section, .services, .reviews-section { padding-block: 70px; }
   .campaigns-section { padding-block: 52px; }
   .film-inner { grid-template-columns: 1fr; gap: 28px; }
