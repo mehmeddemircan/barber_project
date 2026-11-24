@@ -4,16 +4,12 @@ import "./tailwind.css";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--body" });
 const oswald = Oswald({ subsets: ["latin"], variable: "--display" });
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
-  : process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? new URL(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
-    : new URL("http://localhost:3000");
+const siteUrl = new URL("https://mehmetirsadguder.vercel.app");
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
   title: {
-    default: "Talas Berber | Mehmet İrşad Güder Barber Shop",
+    default: "Mehmet İrşad Güder Barber Shop | Talas Berber",
     template: "%s | Mehmet İrşad Güder Barber Shop",
   },
   description: "Talas, Kayseri'de Mehmet İrşad Güder Barber Shop'ta profesyonel erkek saç kesimi ve sakal tasarımı için randevunuzu alın.",
@@ -24,6 +20,9 @@ export const metadata: Metadata = {
   category: "Barber Shop",
   alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
   keywords: [
     "Talas berber",
     "Kayseri berber",
@@ -51,7 +50,7 @@ export const metadata: Metadata = {
     locale: "tr_TR",
     url: "/",
     siteName: "Mehmet İrşad Güder Barber Shop",
-    title: "Talas Berber | Mehmet İrşad Güder Barber Shop",
+    title: "Mehmet İrşad Güder Barber Shop | Talas Berber",
     description: "Talas'ta profesyonel erkek saç kesimi ve sakal tasarımı. Koltuğunuzu ayırtın.",
     images: [
       {
@@ -64,7 +63,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Talas Berber | Mehmet İrşad Güder Barber Shop",
+    title: "Mehmet İrşad Güder Barber Shop | Talas Berber",
     description: "Talas'ta profesyonel erkek saç kesimi ve sakal tasarımı. Koltuğunuzu ayırtın.",
     images: ["/twitter-image"],
   },

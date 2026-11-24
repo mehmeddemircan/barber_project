@@ -22,7 +22,9 @@ Projeyi Git sağlayıcınıza gönderip Vercel'de içe aktarın. Vercel projesin
 
 ## SEO yapılandırması
 
-Dağıtım alan adınızı `NEXT_PUBLIC_SITE_URL` değişkenine yalnızca şema dahil yazın, örneğin `https://www.ornek-alanadiniz.com`. Bu değer ana sayfa canonical adresini, Open Graph alanını, sitemap.xml, robots.txt ve yapılandırılmış işletme verisini tek alan adına bağlar. Değer ayarlanmazsa Vercel production domain'i kullanılır; yerel geliştirmede `http://localhost:3000` temel adresi kullanılır.
+Dağıtım alan adınızı `NEXT_PUBLIC_SITE_URL` değişkenine yalnızca şema dahil yazın. Bu proje için değer `https://mehmetirsadguder.vercel.app` olarak ayarlanmıştır. Bu değer ana sayfa canonical adresini, Open Graph alanını, sitemap.xml, robots.txt ve yapılandırılmış işletme verisini tek alan adına bağlar.
+
+Google'da daha hızlı doğrulama ve tarama için Google Search Console'a gidin, özelliği URL ön eki yöntemiyle `https://mehmetirsadguder.vercel.app` olarak ekleyin. HTML etiketini doğrulama seçeneğinde size verilen `content` değerini Vercel Environment Variables içinde `GOOGLE_SITE_VERIFICATION` değişkenine ekleyin ve yeniden dağıtın. Sitemaps bölümüne `https://mehmetirsadguder.vercel.app/sitemap.xml` adresini ekleyin. Google, ilk tarama ve sıralama süresini garanti etmez; hızlı indeksleme için Search Console'da URL İnceleme aracından ana sayfayı isteyin.
 
 Arama motorlarına kapatılması gereken randevu iptali sayfası `noindex` olarak işaretlenmiştir. `/api/` yolları ve iptal sayfası robots.txt tarafından tarama dışı bırakılır.
 
