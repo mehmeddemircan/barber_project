@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowRight, ArrowUp, ArrowUpDown, BadgePercent, CalendarDays, Check, ChevronLeft, ChevronRight, Clock3, Download, Gift, GraduationCap, Home as HomeIcon, Instagram, MapPin, MessageCircle, Moon, Quote, RefreshCw, Scissors, Search, ShieldCheck, Star, Sun, UsersRound, X } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpDown, BadgePercent, Check, ChevronLeft, ChevronRight, Clock3, Download, Gift, GraduationCap, Instagram, MapPin, Menu, MessageCircle, Moon, Quote, RefreshCw, Scissors, Search, ShieldCheck, Star, Sun, X } from "lucide-react";
 import { HOME_VISIT_SERVICE, type AppointmentService } from "@/lib/appointment-services";
 import { isSundayDate } from "@/lib/appointment-dates";
 
 const navTargets = ["#hikaye", "#ekibimiz", "#kampanyalar", "#hizmetler", "#yorumlar", "#randevu"] as const;
 const mobileNavTargets = ["#home", ...navTargets.slice(1)];
-const mobileNavIcons = [HomeIcon, UsersRound, BadgePercent, Scissors, Star, CalendarDays] as const;
 
 const services: {
   key: AppointmentService;
@@ -310,6 +309,7 @@ export default function Home() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [availability, setAvailability] = useState<AvailabilityState | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [theme, setTheme] = useState<Theme>("light");
   const [activeNavTarget, setActiveNavTarget] = useState("#home");
@@ -900,8 +900,8 @@ export default function Home() {
     <main className="site-shell min-h-screen bg-paper text-ink antialiased" data-theme={theme}>
       <header className="site-header">
         <BrandLogo />
-        <nav className="desktop-nav" aria-label={language === "tr" ? "Ana menü" : "Main navigation"}>
-          {t.nav.map((label, index) => <a href={navTargets[index]} key={label} aria-current={activeNavTarget === navTargets[index] ? "location" : undefined} onClick={() => setActiveNavTarget(navTargets[index])}>{label}</a>)}
+        <nav id="primary-navigation" className={`desktop-nav ${isMenuOpen ? "is-open" : ""}`} aria-label={language === "tr" ? "Ana menü" : "Main navigation"}>
+          {t.nav.map((label, index) => <a href={navTargets[index]} key={label} aria-current={activeNavTarget === navTargets[index] ? "location" : undefined} onClick={() => { setActiveNavTarget(navTargets[index]); setIsMenuOpen(false); }}>{label}</a>)}
         </nav>
         <div className="header-tools">
           <div className="language-switch" role="group" aria-label={t.languageLabel}>
@@ -912,6 +912,9 @@ export default function Home() {
             {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
           </button>
           <a className="header-cta" href="#randevu">{t.book} <ArrowRight size={15} /></a>
+          <button className="mobile-menu" type="button" aria-label={isMenuOpen ? t.menuClose : t.menuOpen} aria-expanded={isMenuOpen} aria-controls="primary-navigation" onClick={() => setIsMenuOpen((isOpen) => !isOpen)}>
+            {isMenuOpen ? <X size={21} /> : <Menu size={21} />}
+          </button>
         </div>
       </header>
 
@@ -1376,20 +1379,6 @@ export default function Home() {
         <button className="admin-entry" type="button" onClick={toggleAdminPanel} aria-expanded={isAdminOpen}>{adminText.entry}</button>
         <span className="footer-copy">© 2026 MEHMET İRŞAD GÜDER BARBER SHOP</span>
       </footer>
-
-      <nav className="mobile-bottom-nav" aria-label={language === "tr" ? "Hızlı gezinme" : "Quick navigation"}>
-        {[language === "tr" ? "Ana sayfa" : "Home", ...t.nav.slice(1)].map((label, index) => {
-          const Icon = mobileNavIcons[index];
-          return (
-            <a href={mobileNavTargets[index]} key={label} aria-label={label} title={label} aria-current={activeNavTarget === mobileNavTargets[index] ? "location" : undefined} onClick={() => setActiveNavTarget(mobileNavTargets[index])}>
-              <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
-            </a>
-          );
-        })}
-        <a className="mobile-back-to-top" href="#home" aria-label={language === "tr" ? "Başa dön" : "Back to top"} title={language === "tr" ? "Başa dön" : "Back to top"} onClick={() => setActiveNavTarget("#home")}>
-          <ArrowUp size={21} strokeWidth={1.8} aria-hidden="true" />
-        </a>
-      </nav>
 
       {whatsappHref ? (
         <a className="whatsapp-float fixed right-5 z-[60] inline-flex h-14 items-center gap-3 rounded-full bg-[#25D366] px-5 text-sm font-bold text-[#10251A] shadow-xl shadow-black/20 transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-olive max-sm:h-12 max-sm:px-4" href={whatsappHref} target="_blank" rel="noreferrer" aria-label={t.whatsappContact}>
